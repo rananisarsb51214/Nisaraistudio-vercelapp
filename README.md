@@ -261,4 +261,31 @@ you tube ---https://www.youtube.com/@nisaraistudio89
 
 [⬆ Back to Top](#table-of-contents)
 
+## 🎥 YouTube Automation
 
+Nisar AI Studio includes a powerful AI-driven YouTube Automation system designed to simplify content creation and channel management.
+
+### Features
+- 🤖 AI Video Idea Generator
+- ✍️ AI Script Writer
+- 📝 SEO Title & Description Generator
+- 🔍 Keyword & Tag Generator
+- 🖼️ Thumbnail Prompt Generator
+- 📅 Video Scheduling
+- 📤 YouTube Data API Upload
+- 📊 Channel Analytics Dashboard
+- 🌍 Multi-Channel Support
+
+### Tech Stack
+- Next.js
+- TypeScript
+- Tailwind CSS
+- Supabase
+- YouTube Data API v3
+- OpenAI / Gemini / Claude APIs
+- Vercel
+
+### Status
+🚧 In Developmentgit add .
+git commit -m "feat: add YouTube Automation module documentation"
+git push origin main
