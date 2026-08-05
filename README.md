@@ -134,7 +134,7 @@ The project follows a standard Next.js application structure with a focus on com
     *   Copy the contents of `.env.example` to `.env.local` and fill in your specific API keys and URLs:
         ```dotenv
         GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
-        APP_URL="YOUR_APP_URL"
+        APP_URL="https://console.cloud.google.com/iam-admin/serviceaccounts/details/116935465562908832954%3Bedit=true?previousPage=%2Fapis%2Fcredentials%3Fproject%3Dsuper-ai-toolbox&project=super-ai-toolbox"
         # For Firebase, ensure your firebase-applet-config.json is correctly configured
         # or set Firebase credentials here if not using the config file.
         NEXT_PUBLIC_FIREBASE_API_KEY="YOUR_FIREBASE_API_KEY"
