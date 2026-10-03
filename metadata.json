@@ -1,6 +1,6 @@
 {
-  "name": "Nisara Studio",
-  "description": "Autonomous AI-powered blog production and SEO optimization SaaS.",
+  "name": "NISAR AI Studio Super AI Toolbox",
+  "description": "An all-in-one platform powered exclusively by Google Gemini and Firebase, featuring intelligent agents, e-commerce automation, and developer tools in a unified workspace.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

@@ -1,0 +1,320 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Nisar AI Studio Firebase Database Blueprint",
+  "description": "Schema definitions and paths for Nisar AI Studio collections.",
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "A workspace project owned by a specific tenant/user.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["name", "tenantId"]
+    },
+    "Job": {
+      "title": "Job",
+      "description": "An autonomous AI blog generation task.",
+      "type": "object",
+      "properties": {
+        "topic": { "type": "string" },
+        "projectId": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "status": { "type": "string" },
+        "title": { "type": "string" },
+        "metaDescription": { "type": "string" },
+        "keywords": { "type": "array" },
+        "content": { "type": "string" },
+        "readTime": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["topic", "projectId", "tenantId", "status"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "An optimized affiliate product or funnel campaign.",
+      "type": "object",
+      "properties": {
+        "url": { "type": "string" },
+        "brand": { "type": "string" },
+        "country": { "type": "string" },
+        "projectId": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "generatedData": { "type": "object" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["url", "brand", "country", "projectId", "tenantId"]
+    },
+    "Memory": {
+      "title": "Memory",
+      "description": "An evolved semantic AI or SEO guideline memory node.",
+      "type": "object",
+      "properties": {
+        "key": { "type": "string" },
+        "value": { "type": "string" },
+        "category": { "type": "string" },
+        "projectId": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["key", "value", "category", "projectId", "tenantId"]
+    },
+    "SocialPost": {
+      "title": "SocialPost",
+      "description": "A scheduled or automated social media posting campaign.",
+      "type": "object",
+      "properties": {
+        "platform": { "type": "string" },
+        "content": { "type": "string" },
+        "scheduledTime": { "type": "string" },
+        "status": { "type": "string" },
+        "projectId": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["platform", "content", "scheduledTime", "status", "projectId", "tenantId"]
+    },
+    "Agent": {
+      "title": "Agent",
+      "description": "A customized AI Agent with persona, instructions, temperature, and specific model capabilities.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "persona": { "type": "string" },
+        "instructions": { "type": "string" },
+        "temperature": { "type": "number" },
+        "model": { "type": "string" },
+        "projectId": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["name", "persona", "instructions", "temperature", "model", "projectId", "tenantId"]
+    },
+    "Page": {
+      "title": "Page",
+      "description": "A customized website template page with multiple layout blocks and content definitions.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "blocks": { "type": "array" },
+        "projectId": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["name", "blocks", "projectId", "tenantId"]
+    },
+    "Activity": {
+      "title": "Activity",
+      "description": "A chronological action or event logged in the Studio workspace.",
+      "type": "object",
+      "properties": {
+        "description": { "type": "string" },
+        "type": { "type": "string" },
+        "projectId": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["description", "type", "projectId", "tenantId"]
+    },
+    "UserPreference": {
+      "title": "UserPreference",
+      "description": "User preference settings including favorited AI tools.",
+      "type": "object",
+      "properties": {
+        "favoriteTools": { "type": "array" },
+        "tenantId": { "type": "string" },
+        "updatedAt": { "type": "object" }
+      },
+      "required": ["favoriteTools", "tenantId"]
+    },
+    "VibeAccount": {
+      "title": "VibeAccount",
+      "description": "Connected social account definition.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "platform": { "type": "string" },
+        "accountName": { "type": "string" }
+      },
+      "required": ["userId", "platform", "accountName"]
+    },
+    "VibeConversation": {
+      "title": "VibeConversation",
+      "description": "Social media conversation item.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "platform": { "type": "string" },
+        "customerName": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["userId", "platform", "customerName", "status"]
+    },
+    "VibeMessage": {
+      "title": "VibeMessage",
+      "description": "Individual message in a vibe conversation.",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string" },
+        "sender": { "type": "string" },
+        "text": { "type": "string" }
+      },
+      "required": ["conversationId", "sender", "text"]
+    },
+    "VibeRule": {
+      "title": "VibeRule",
+      "description": "Vibe automation rule.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "triggerKeyword": { "type": "string" }
+      },
+      "required": ["userId", "name", "triggerKeyword"]
+    },
+    "VibeBrandProfile": {
+      "title": "VibeBrandProfile",
+      "description": "Vibe brand voice profile.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "brandName": { "type": "string" },
+        "style": { "type": "string" }
+      },
+      "required": ["userId", "brandName"]
+    },
+    "VibeSetting": {
+      "title": "VibeSetting",
+      "description": "Vibe system settings.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "automationStatus": { "type": "string" },
+        "mode": { "type": "string" }
+      },
+      "required": ["userId", "automationStatus", "mode"]
+    },
+    "VibeAuditLog": {
+      "title": "VibeAuditLog",
+      "description": "Vibe system audit log entry.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "action": { "type": "string" }
+      },
+      "required": ["userId", "action"]
+    },
+    "VibeNotification": {
+      "title": "VibeNotification",
+      "description": "Vibe system notification item.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" }
+      },
+      "required": ["userId", "title"]
+    },
+    "UserCredits": {
+      "title": "UserCredits",
+      "description": "User credits balance and tier details for Super AI Toolbox.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "balance": { "type": "number" },
+        "tier": { "type": "string" }
+      },
+      "required": ["userId", "balance"]
+    },
+    "AiHistoryItem": {
+      "title": "AiHistoryItem",
+      "description": "Generated AI output item stored in history.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "toolId": { "type": "string" },
+        "output": { "type": "string" }
+      },
+      "required": ["userId", "toolId", "output"]
+    }
+  },
+  "firestore": {
+    "/user_credits/{userId}": {
+      "schema": "UserCredits",
+      "description": "User credit balances and tier entitlements."
+    },
+    "/ai_history/{historyId}": {
+      "schema": "AiHistoryItem",
+      "description": "AI tool generation history and saved artifacts."
+    },
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Collection of projects organized by workspace."
+    },
+    "/jobs/{jobId}": {
+      "schema": "Job",
+      "description": "Autonomous jobs and blog pipelines associated with projects."
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Products containing full marketing suites, copy, and ads."
+    },
+    "/memory/{memoryId}": {
+      "schema": "Memory",
+      "description": "SEO guidelines and extracted customer intelligence stored as memories."
+    },
+    "/social_posts/{postId}": {
+      "schema": "SocialPost",
+      "description": "Scheduled social media posts for direct marketing execution."
+    },
+    "/agents/{agentId}": {
+      "schema": "Agent",
+      "description": "Custom user-defined AI Agents stored in the workspace."
+    },
+    "/pages/{pageId}": {
+      "schema": "Page",
+      "description": "User-designed landing pages and block structures persistent in Firestore."
+    },
+    "/activities/{activityId}": {
+      "schema": "Activity",
+      "description": "Recent activity feed logs of user actions within projects."
+    },
+    "/user_preferences/{userId}": {
+      "schema": "UserPreference",
+      "description": "User preferences and favorited tools settings per user account."
+    },
+    "/vibe_accounts/{accountId}": {
+      "schema": "VibeAccount",
+      "description": "Connected social media accounts for Vibe Responding."
+    },
+    "/vibe_conversations/{conversationId}": {
+      "schema": "VibeConversation",
+      "description": "Customer conversations for Vibe Responding."
+    },
+    "/vibe_messages/{messageId}": {
+      "schema": "VibeMessage",
+      "description": "Messages within Vibe Responding conversations."
+    },
+    "/vibe_rules/{ruleId}": {
+      "schema": "VibeRule",
+      "description": "Automation rules for Vibe Responding."
+    },
+    "/vibe_brand_profiles/{userId}": {
+      "schema": "VibeBrandProfile",
+      "description": "Brand voice and persona configuration for Vibe Responding."
+    },
+    "/vibe_settings/{userId}": {
+      "schema": "VibeSetting",
+      "description": "Global engine settings for Vibe Responding."
+    },
+    "/vibe_audit_logs/{logId}": {
+      "schema": "VibeAuditLog",
+      "description": "Audit logs for Vibe Responding actions."
+    },
+    "/vibe_notifications/{notificationId}": {
+      "schema": "VibeNotification",
+      "description": "System notifications for Vibe Responding."
+    }
+  }
+}

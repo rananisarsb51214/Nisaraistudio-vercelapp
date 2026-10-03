@@ -1,14 +1,116 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /blogs/{blogId} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.tenantId;
+    // Helper function to check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
     }
+
+    // Projects Rules
+    match /projects/{projectId} {
+      allow create: if !isAuthenticated() || request.resource.data.tenantId == request.auth.uid;
+      allow read, update, delete: if !isAuthenticated() || resource.data.tenantId == request.auth.uid;
+    }
+
+    // Jobs Rules
     match /jobs/{jobId} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.tenantId;
+      allow create: if !isAuthenticated() || request.resource.data.tenantId == request.auth.uid;
+      allow read, update, delete: if !isAuthenticated() || resource.data.tenantId == request.auth.uid;
     }
-    match /{document=**} {
-      allow read, write: if false;
+
+    // Products Rules
+    match /products/{productId} {
+      allow create: if !isAuthenticated() || request.resource.data.tenantId == request.auth.uid;
+      allow read, update, delete: if !isAuthenticated() || resource.data.tenantId == request.auth.uid;
+    }
+
+    // Memory Rules
+    match /memory/{memoryId} {
+      allow create: if !isAuthenticated() || request.resource.data.tenantId == request.auth.uid;
+      allow read, update, delete: if !isAuthenticated() || resource.data.tenantId == request.auth.uid;
+    }
+
+    // Social Posts Rules
+    match /social_posts/{postId} {
+      allow create: if !isAuthenticated() || request.resource.data.tenantId == request.auth.uid;
+      allow read, update, delete: if !isAuthenticated() || resource.data.tenantId == request.auth.uid;
+    }
+
+    // Agents Rules
+    match /agents/{agentId} {
+      allow create: if !isAuthenticated() || request.resource.data.tenantId == request.auth.uid;
+      allow read, update, delete: if !isAuthenticated() || resource.data.tenantId == request.auth.uid;
+    }
+
+    // Pages Rules (Website Builder)
+    match /pages/{pageId} {
+      allow create: if !isAuthenticated() || request.resource.data.tenantId == request.auth.uid;
+      allow read, update, delete: if !isAuthenticated() || resource.data.tenantId == request.auth.uid;
+    }
+
+    // Activities Rules (Recent Activity logs)
+    match /activities/{activityId} {
+      allow create: if !isAuthenticated() || request.resource.data.tenantId == request.auth.uid;
+      allow read, update, delete: if !isAuthenticated() || resource.data.tenantId == request.auth.uid;
+    }
+
+    // User Preferences Rules (Favorite AI tools, workspace layout settings)
+    match /user_preferences/{userId} {
+      allow create, read, update, delete: if !isAuthenticated() || request.auth.uid == userId || resource.data.tenantId == request.auth.uid;
+    }
+
+    // Super AI Toolbox: User Credits & Transactions
+    match /user_credits/{userId} {
+      allow create, read, update, delete: if true;
+
+      match /transactions/{txId} {
+        allow create, read, update, delete: if true;
+      }
+    }
+
+    // Super AI Toolbox: Generation History
+    match /ai_history/{historyId} {
+      allow create, read, update, delete: if true;
+    }
+
+    // Vibe Accounts Rules
+    match /vibe_accounts/{accountId} {
+      allow create, read, update, delete: if true;
+    }
+
+    // Vibe Conversations Rules
+    match /vibe_conversations/{conversationId} {
+      allow create, read, update, delete: if true;
+    }
+
+    // Vibe Messages Rules
+    match /vibe_messages/{messageId} {
+      allow create, read, update, delete: if true;
+    }
+
+    // Vibe Rules
+    match /vibe_rules/{ruleId} {
+      allow create, read, update, delete: if true;
+    }
+
+    // Vibe Brand Profiles Rules
+    match /vibe_brand_profiles/{userId} {
+      allow create, read, update, delete: if true;
+    }
+
+    // Vibe Settings Rules
+    match /vibe_settings/{userId} {
+      allow create, read, update, delete: if true;
+    }
+
+    // Vibe Audit Logs Rules
+    match /vibe_audit_logs/{logId} {
+      allow create, read, update, delete: if true;
+    }
+
+    // Vibe Notifications Rules
+    match /vibe_notifications/{notificationId} {
+      allow create, read, update, delete: if true;
     }
   }
 }
