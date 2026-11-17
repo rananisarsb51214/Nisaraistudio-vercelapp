@@ -17,9 +17,9 @@ export default function DashboardPageRoute() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#0b0c10] text-slate-100">
-        <RefreshCw className="w-8 h-8 animate-spin text-emerald-400 mb-4" />
-        <p className="font-mono text-xs text-slate-400">Loading user session...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-slate-950 dark:bg-[#0b0c10] dark:text-slate-100 transition-colors">
+        <RefreshCw className="w-8 h-8 animate-spin text-emerald-700 dark:text-emerald-400 mb-4" />
+        <p className="font-mono text-xs text-slate-700 dark:text-slate-400">Loading user session...</p>
       </div>
     );
   }

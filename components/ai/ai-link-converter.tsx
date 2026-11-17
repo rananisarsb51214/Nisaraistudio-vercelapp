@@ -67,30 +67,30 @@ export function AiLinkConverter() {
   };
 
   return (
-    <div className="space-y-8 p-6 max-w-6xl mx-auto text-slate-100">
+    <div className="space-y-8 p-6 max-w-6xl mx-auto text-slate-950 dark:text-slate-100">
       {/* Header Banner */}
-      <div className="p-8 bg-gradient-to-r from-emerald-950/60 via-teal-950/40 to-slate-900 border border-emerald-500/30 rounded-3xl shadow-2xl relative overflow-hidden">
-        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="p-8 bg-gradient-to-r from-emerald-100 dark:from-emerald-950/60 via-teal-50 dark:via-teal-950/40 to-white dark:to-slate-900 border border-emerald-500/30 rounded-3xl shadow-2xl relative overflow-hidden">
+        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-50 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 space-y-3">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-mono font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-mono font-bold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
             <span>AI Link & Asset Conversion Engine</span>
           </div>
-          <h1 className="text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
+          <h1 className="text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-800 dark:from-emerald-400 via-teal-700 dark:via-teal-300 to-cyan-800 dark:to-cyan-400">
             AI Add Link & URL Converter
           </h1>
-          <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
+          <p className="text-sm text-slate-800 dark:text-slate-300 max-w-2xl leading-relaxed">
             Paste any link, URL, or asset reference (including blob links and media URLs) to instantly analyze, ground with Google Search, and convert into high-converting campaigns, code blueprints, or SEO content.
           </p>
         </div>
       </div>
 
       {/* Main Form Input */}
-      <div className="p-6 bg-slate-950/80 border border-slate-800 rounded-2xl shadow-xl space-y-6">
+      <div className="p-6 bg-white dark:bg-slate-950/80 border border-slate-300 dark:border-slate-800 rounded-2xl shadow-xl space-y-6">
         <form onSubmit={handleConvertLink} className="space-y-5">
           <div>
-            <label className="block text-xs font-mono font-bold text-slate-300 uppercase mb-2 flex items-center space-x-2">
-              <LinkIcon className="w-4 h-4 text-emerald-400" />
+            <label className="block text-xs font-mono font-bold text-slate-800 dark:text-slate-300 uppercase mb-2 flex items-center space-x-2">
+              <LinkIcon className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
               <span>Target Link / URL / Blob Reference</span>
             </label>
             <div className="relative">
@@ -98,16 +98,16 @@ export function AiLinkConverter() {
                 type="text"
                 required
                 placeholder="https://... or blob:https://..."
-                className="w-full bg-[#12141c] border border-slate-700 rounded-xl px-4 py-3.5 text-sm text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono"
+                className="w-full bg-white dark:bg-[#12141c] border border-slate-400 dark:border-slate-700 rounded-xl px-4 py-3.5 text-sm text-slate-950 dark:text-slate-100 placeholder-slate-600 dark:placeholder-slate-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono"
                 value={inputUrl}
                 onChange={(e) => setInputUrl(e.target.value)}
               />
-              <div className="absolute right-3 top-3.5 text-xs text-slate-500 font-mono flex items-center space-x-1">
-                <Globe className="w-4 h-4 text-emerald-400" />
+              <div className="absolute right-3 top-3.5 text-xs text-slate-600 dark:text-slate-500 font-mono flex items-center space-x-1">
+                <Globe className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
               </div>
             </div>
             {inputUrl.includes('blob:') && (
-              <p className="text-[11px] text-amber-400 font-mono mt-1.5 flex items-center space-x-1">
+              <p className="text-[11px] text-amber-800 dark:text-amber-400 font-mono mt-1.5 flex items-center space-x-1">
                 <span>⚠️ Detected local blob reference. AI will analyze structure and generate matching synthetic assets.</span>
               </p>
             )}
@@ -115,11 +115,11 @@ export function AiLinkConverter() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-mono font-bold text-slate-300 uppercase mb-2">
+              <label className="block text-xs font-mono font-bold text-slate-800 dark:text-slate-300 uppercase mb-2">
                 Conversion Mode
               </label>
               <select
-                className="w-full bg-[#12141c] border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono"
+                className="w-full bg-white dark:bg-[#12141c] border border-slate-400 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-950 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono"
                 value={conversionMode}
                 onChange={(e: any) => setConversionMode(e.target.value)}
               >
@@ -131,16 +131,16 @@ export function AiLinkConverter() {
             </div>
 
             <div className="flex flex-col justify-end">
-              <label className="flex items-center space-x-3 p-3 bg-[#12141c] border border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500/50 transition">
+              <label className="flex items-center space-x-3 p-3 bg-white dark:bg-[#12141c] border border-slate-400 dark:border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500/50 transition">
                 <input
                   type="checkbox"
                   checked={useSearchGrounding}
                   onChange={(e) => setUseSearchGrounding(e.target.checked)}
-                  className="rounded border-slate-700 text-emerald-500 focus:ring-emerald-500 w-4 h-4 bg-slate-900"
+                  className="rounded border-slate-400 dark:border-slate-700 text-emerald-500 focus:ring-emerald-500 w-4 h-4 bg-white dark:bg-slate-900"
                 />
                 <div className="text-xs">
-                  <span className="font-bold text-slate-200 block">Enable Google Search Grounding</span>
-                  <span className="text-slate-400 text-[10px]">Fetch real-time web context using Gemini 3.5 Flash</span>
+                  <span className="font-bold text-slate-900 dark:text-slate-200 block">Enable Google Search Grounding</span>
+                  <span className="text-slate-700 dark:text-slate-400 text-[10px]">Fetch real-time web context using Gemini 3.5 Flash</span>
                 </div>
               </label>
             </div>
@@ -153,7 +153,7 @@ export function AiLinkConverter() {
           >
             {isLoading ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin text-white" />
+                <Loader2 className="w-5 h-5 animate-spin text-slate-950 dark:text-white" />
                 <span>Analyzing & Converting Link with Google Gemini...</span>
               </>
             ) : (
@@ -168,34 +168,34 @@ export function AiLinkConverter() {
 
       {/* Output Results */}
       {result && (
-        <div className="p-6 bg-slate-950/80 border border-emerald-500/40 rounded-2xl shadow-xl space-y-4 animate-in fade-in duration-300">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="p-6 bg-white dark:bg-slate-950/80 border border-emerald-500/40 rounded-2xl shadow-xl space-y-4 animate-in fade-in duration-300">
+          <div className="flex items-center justify-between border-b border-slate-300 dark:border-slate-800 pb-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 bg-emerald-500/20 text-emerald-400 rounded-xl border border-emerald-500/30">
+              <div className="p-2.5 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-xl border border-emerald-500/30">
                 <FileText className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-slate-100">Conversion Output Result</h3>
-                <p className="text-xs text-slate-400">Successfully generated by Google Gemini 3.5 Flash</p>
+                <h3 className="text-lg font-bold text-slate-950 dark:text-slate-100">Conversion Output Result</h3>
+                <p className="text-xs text-slate-700 dark:text-slate-400">Successfully generated by Google Gemini 3.5 Flash</p>
               </div>
             </div>
             <button
               onClick={handleCopyResult}
-              className="inline-flex items-center space-x-1.5 px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded-xl border border-emerald-500/30 text-xs font-mono font-bold transition"
+              className="inline-flex items-center space-x-1.5 px-4 py-2 bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-900 dark:text-emerald-300 rounded-xl border border-emerald-500/30 text-xs font-mono font-bold transition"
             >
-              {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+              {copied ? <Check className="w-4 h-4 text-emerald-700 dark:text-emerald-400" /> : <Copy className="w-4 h-4" />}
               <span>{copied ? 'Copied to Clipboard!' : 'Copy Result'}</span>
             </button>
           </div>
 
-          <div className="p-5 bg-slate-900/80 border border-slate-800 rounded-xl font-mono text-xs text-slate-200 whitespace-pre-wrap leading-relaxed max-h-[500px] overflow-y-auto">
+          <div className="p-5 bg-white dark:bg-slate-900/80 border border-slate-300 dark:border-slate-800 rounded-xl font-mono text-xs text-slate-900 dark:text-slate-200 whitespace-pre-wrap leading-relaxed max-h-[500px] overflow-y-auto">
             {typeof result === 'string' ? result : JSON.stringify(result, null, 2)}
           </div>
         </div>
       )}
 
       {errorMessage && (
-        <div className="p-4 bg-rose-950/40 border border-rose-500/50 text-rose-300 rounded-xl text-xs font-mono">
+        <div className="p-4 bg-rose-100 dark:bg-rose-950/40 border border-rose-500/50 text-rose-900 dark:text-rose-300 rounded-xl text-xs font-mono">
           <span>Error: {errorMessage}</span>
         </div>
       )}

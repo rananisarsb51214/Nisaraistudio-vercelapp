@@ -8,14 +8,16 @@ import {
   Briefcase, CheckCircle2, AlertCircle, Share2, CornerDownRight,
   Send, ExternalLink, Bookmark, Cpu, Globe, History, Flame
 } from 'lucide-react';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { AI_TOOL_CATEGORIES, AI_TOOLS_REGISTRY } from '@/lib/ai/schemas';
 import { ToolCategory, ToolDefinition, ToolExecutionResponse } from '@/types/ai';
-import { UserCredits } from '@/types/credits';
+import { DAILY_FREE_LIMIT, UserCredits, normalizeUserCredits } from '@/types/credits';
 import { GenerationHistoryItem } from '@/types/generation';
+import { db, handleFirestoreError, OperationType } from '@/lib/firebase';
 import { useAuth } from '../auth-provider';
 
 export function SuperAiToolbox() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const userId = user?.uid || 'default_user';
 
   // Active Navigation State
@@ -60,18 +62,38 @@ export function SuperAiToolbox() {
     setErrorMessage(null);
   }, [selectedToolId]);
 
-  // Load Credits & History on Mount or User Change
+  // Load Credits & History + Real-time Firestore onSnapshot Quota Listener
   useEffect(() => {
-    fetchCredits();
-    fetchHistory();
-  }, [userId]);
+    if (authLoading) return;
+
+    void fetchCredits();
+    void fetchHistory();
+
+    if (!db) return;
+
+    const creditsPath = `user_credits/${userId}`;
+    const creditsRef = doc(db, 'user_credits', userId);
+    const unsubscribe = onSnapshot(
+      creditsRef,
+      (snap) => {
+        if (snap.exists()) {
+          setCredits(normalizeUserCredits(userId, snap.data() as Partial<UserCredits>));
+        }
+      },
+      (error) => {
+        handleFirestoreError(error, OperationType.GET, creditsPath);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [userId, authLoading]);
 
   const fetchCredits = async () => {
     try {
       const res = await fetch(`/api/ai/credits?userId=${encodeURIComponent(userId)}`);
       const data = await res.json();
       if (data.success && data.credits) {
-        setCredits(data.credits);
+        setCredits(normalizeUserCredits(userId, data.credits));
       }
     } catch (e) {
       console.warn('Failed to load user credits:', e);
@@ -138,13 +160,43 @@ export function SuperAiToolbox() {
 
       const data = await res.json();
 
+      if (res.status === 429) {
+        if (data.quota) {
+          setCredits((prev) =>
+            normalizeUserCredits(userId, {
+              ...(prev || {}),
+              dailyUsed: data.quota.dailyUsed,
+              dailyLimit: data.quota.dailyLimit,
+              lastResetDate: data.quota.lastResetDate,
+              paidCredits: data.quota.paidCredits,
+              balance: data.quota.paidCredits,
+            })
+          );
+        }
+        throw new Error(
+          data.error ||
+            'Daily free limit (10/10) reached. Top up paid credits or wait for tomorrow UTC reset.'
+        );
+      }
+
       if (!res.ok || !data.success) {
         throw new Error(data.error || 'Generation failed.');
       }
 
       setActiveOutput(data);
-      if (credits) {
-        setCredits({ ...credits, balance: data.remainingCredits });
+      if (data.quota) {
+        setCredits((prev) =>
+          normalizeUserCredits(userId, {
+            ...(prev || {}),
+            dailyUsed: data.quota.dailyUsed,
+            dailyLimit: data.quota.dailyLimit,
+            lastResetDate: data.quota.lastResetDate,
+            paidCredits: data.quota.paidCredits,
+            balance: data.quota.paidCredits,
+          })
+        );
+      } else if (credits) {
+        setCredits({ ...credits, balance: data.remainingCredits, paidCredits: data.remainingCredits });
       }
       fetchHistory(); // refresh history list
     } catch (err: any) {
@@ -220,23 +272,23 @@ export function SuperAiToolbox() {
   });
 
   return (
-    <div id="super-ai-toolbox-root" className="w-full min-h-screen text-slate-100 pb-16">
+    <div id="super-ai-toolbox-root" className="w-full min-h-screen text-slate-950 dark:text-slate-100 pb-16">
       {/* Top Banner / System Ribbon */}
-      <div className="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-30">
+      <div className="bg-white/95 dark:bg-slate-900/90 border-b border-slate-300 dark:border-slate-800 backdrop-blur-md px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-30">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 ring-1 ring-emerald-400/30">
-            <Sparkles className="w-5 h-5 text-white animate-pulse" />
+            <Sparkles className="w-5 h-5 text-slate-950 dark:text-white animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+              <h1 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white tracking-tight flex items-center gap-2">
                 NISAR AI STUDIO
-                <span className="text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full">
+                <span className="text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-900 dark:text-emerald-300 border border-emerald-500/30 rounded-full">
                   Super AI Toolbox V1
                 </span>
               </h1>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-700 dark:text-slate-400">
               Modular Architecture • Google Gemini 2.5 • Firebase Auth & Firestore Engine
             </p>
           </div>
@@ -248,45 +300,70 @@ export function SuperAiToolbox() {
             href="https://nisaraistudiovercel-app.vercel.app/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition-all shadow-sm"
+            className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-900 dark:text-emerald-300 border border-emerald-500/40 transition-all shadow-sm"
             title="Live NISAR AI Studio Deployment"
           >
-            <Globe className="w-3.5 h-3.5 text-emerald-400" />
+            <Globe className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
             <span className="hidden sm:inline">Live Vercel App</span>
             <ExternalLink className="w-3 h-3 opacity-70" />
           </a>
 
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 shadow-inner">
-            <Coins className="w-4 h-4 text-amber-400 animate-spin-slow" />
+          <div
+            id="daily-free-quota-badge"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 shadow-inner"
+            title="Resets daily at 00:00 UTC"
+          >
+            <Zap className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
             <div className="text-xs">
-              <span className="text-slate-400">Credits:</span>{' '}
-              <strong className="text-amber-300 font-bold text-sm">
-                {credits ? credits.balance : '...'}
+              <span className="text-slate-700 dark:text-slate-400">Free Today:</span>{' '}
+              <strong
+                className={`font-bold text-sm ${
+                  credits && credits.dailyLimit - credits.dailyUsed <= 0
+                    ? 'text-rose-700 dark:text-rose-400'
+                    : 'text-emerald-800 dark:text-emerald-300'
+                }`}
+              >
+                {credits
+                  ? `${Math.max(0, credits.dailyLimit - credits.dailyUsed)}/${credits.dailyLimit}`
+                  : `.../${DAILY_FREE_LIMIT}`}
               </strong>
             </div>
-            <span className="text-[10px] font-medium text-slate-400 uppercase bg-slate-800 px-1.5 py-0.5 rounded">
-              {credits?.tier || 'Pro'}
+          </div>
+
+          <div
+            id="paid-credits-badge"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 shadow-inner"
+          >
+            <Coins className="w-4 h-4 text-amber-800 dark:text-amber-400 animate-spin-slow" />
+            <div className="text-xs">
+              <span className="text-slate-700 dark:text-slate-400">Paid Credits:</span>{' '}
+              <strong className="text-amber-900 dark:text-amber-300 font-bold text-sm">
+                {credits ? credits.paidCredits : '...'}
+              </strong>
+            </div>
+            <span className="text-[10px] font-medium text-slate-700 dark:text-slate-400 uppercase bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded">
+              {credits?.tier || 'Free'}
             </span>
           </div>
 
           <button
             id="claim-daily-credits-btn"
             onClick={handleClaimDailyCredits}
-            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition-all shadow-sm active:scale-95"
-            title="Claim daily bonus credits"
+            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-900 dark:text-emerald-300 border border-emerald-500/30 transition-all shadow-sm active:scale-95"
+            title="Top up +50 paid credits"
           >
             <RefreshCw className="w-3.5 h-3.5" />
-            +50 Daily Refill
+            +50 Paid Credits
           </button>
 
-          <div className="flex rounded-lg bg-slate-950 p-1 border border-slate-800">
+          <div className="flex rounded-lg bg-slate-50 dark:bg-slate-950 p-1 border border-slate-300 dark:border-slate-800">
             <button
               id="view-studio-tab-btn"
               onClick={() => setActiveTab('studio')}
               className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
                 activeTab === 'studio'
                   ? 'bg-emerald-500 text-slate-950 font-semibold shadow'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-700 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
               }`}
             >
               Toolbox
@@ -297,7 +374,7 @@ export function SuperAiToolbox() {
               className={`px-3 py-1 text-xs font-medium rounded-md transition-all flex items-center gap-1 ${
                 activeTab === 'history'
                   ? 'bg-emerald-500 text-slate-950 font-semibold shadow'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-700 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
               }`}
             >
               <History className="w-3.5 h-3.5" />
@@ -312,24 +389,24 @@ export function SuperAiToolbox() {
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <History className="w-5 h-5 text-emerald-400" />
+              <h2 className="text-xl font-bold text-slate-950 dark:text-white flex items-center gap-2">
+                <History className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                 Generation History & Saved Outputs
               </h2>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-700 dark:text-slate-400 mt-1">
                 All previous Gemini executions persisted in your private Firestore collection.
               </p>
             </div>
 
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <div className="relative flex-1 sm:w-64">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-slate-700 dark:text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Search outputs..."
                   value={historySearch}
                   onChange={(e) => setHistorySearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-white dark:bg-slate-900 border border-slate-400 dark:border-slate-700 rounded-lg text-slate-950 dark:text-white placeholder-slate-600 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
@@ -337,11 +414,11 @@ export function SuperAiToolbox() {
                 onClick={() => setHistoryFavoritesOnly(!historyFavoritesOnly)}
                 className={`px-3 py-1.5 text-xs font-medium rounded-lg border flex items-center gap-1.5 transition-all ${
                   historyFavoritesOnly
-                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                    : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
+                    ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 border-amber-500/40'
+                    : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-400 border-slate-300 dark:border-slate-800 hover:text-slate-950 dark:hover:text-white'
                 }`}
               >
-                <Star className={`w-3.5 h-3.5 ${historyFavoritesOnly ? 'fill-amber-400 text-amber-400' : ''}`} />
+                <Star className={`w-3.5 h-3.5 ${historyFavoritesOnly ? 'fill-amber-400 text-amber-800 dark:text-amber-400' : ''}`} />
                 Favorites Only
               </button>
             </div>
@@ -349,14 +426,14 @@ export function SuperAiToolbox() {
 
           {isLoadingHistory ? (
             <div className="py-20 text-center">
-              <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin mx-auto mb-3" />
-              <p className="text-sm text-slate-400">Loading your generation history from Firestore...</p>
+              <RefreshCw className="w-8 h-8 text-emerald-700 dark:text-emerald-400 animate-spin mx-auto mb-3" />
+              <p className="text-sm text-slate-700 dark:text-slate-400">Loading your generation history from Firestore...</p>
             </div>
           ) : filteredHistory.length === 0 ? (
-            <div className="py-16 text-center bg-slate-900/40 border border-slate-800 rounded-2xl p-8">
+            <div className="py-16 text-center bg-slate-100 dark:bg-slate-900/40 border border-slate-300 dark:border-slate-800 rounded-2xl p-8">
               <History className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-              <h3 className="text-base font-semibold text-slate-300">No Generations Found</h3>
-              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+              <h3 className="text-base font-semibold text-slate-800 dark:text-slate-300">No Generations Found</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-500 mt-1 max-w-sm mx-auto">
                 Execute any of the 30+ AI tools in the Toolbox to see your outputs stored here.
               </p>
               <button
@@ -371,29 +448,29 @@ export function SuperAiToolbox() {
               {filteredHistory.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-slate-900/70 border border-slate-800 hover:border-slate-700 rounded-xl p-4 transition-all flex flex-col justify-between"
+                  className="bg-white dark:bg-slate-900/70 border border-slate-300 dark:border-slate-800 hover:border-slate-500 dark:hover:border-slate-700 rounded-xl p-4 transition-all flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
                           {item.category}
                         </span>
-                        <h4 className="text-sm font-bold text-white">{item.toolName}</h4>
+                        <h4 className="text-sm font-bold text-slate-950 dark:text-white">{item.toolName}</h4>
                       </div>
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => handleToggleFavorite(item.id, item.isFavorite)}
-                          className="p-1 text-slate-400 hover:text-amber-400 transition-colors"
+                          className="p-1 text-slate-700 dark:text-slate-400 hover:text-amber-400 transition-colors"
                           title="Favorite"
                         >
                           <Star
-                            className={`w-4 h-4 ${item.isFavorite ? 'fill-amber-400 text-amber-400' : ''}`}
+                            className={`w-4 h-4 ${item.isFavorite ? 'fill-amber-400 text-amber-800 dark:text-amber-400' : ''}`}
                           />
                         </button>
                         <button
                           onClick={() => handleDeleteHistory(item.id)}
-                          className="p-1 text-slate-500 hover:text-rose-400 transition-colors"
+                          className="p-1 text-slate-600 dark:text-slate-500 hover:text-rose-400 transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -401,16 +478,16 @@ export function SuperAiToolbox() {
                       </div>
                     </div>
 
-                    <p className="text-xs text-slate-400 line-clamp-1 mb-2">
+                    <p className="text-xs text-slate-700 dark:text-slate-400 line-clamp-1 mb-2">
                       <strong>Input:</strong> {item.promptSummary}
                     </p>
 
-                    <div className="p-3 bg-slate-950/80 rounded-lg border border-slate-800/80 text-xs text-slate-300 font-mono whitespace-pre-wrap max-h-48 overflow-y-auto leading-relaxed">
+                    <div className="p-3 bg-white dark:bg-slate-950/80 rounded-lg border border-slate-300 dark:border-slate-800/80 text-xs text-slate-800 dark:text-slate-300 font-mono whitespace-pre-wrap max-h-48 overflow-y-auto leading-relaxed">
                       {item.output}
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-800/60 text-[11px] text-slate-500">
+                  <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-300 dark:border-slate-800/60 text-[11px] text-slate-600 dark:text-slate-500">
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {new Date(item.createdAt).toLocaleDateString()} • {item.modelUsed}
@@ -419,7 +496,7 @@ export function SuperAiToolbox() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleCopy(item.output)}
-                        className="px-2.5 py-1 text-xs rounded bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center gap-1 transition-all"
+                        className="px-2.5 py-1 text-xs rounded bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-200 flex items-center gap-1 transition-all"
                       >
                         <Copy className="w-3 h-3" />
                         Copy
@@ -442,7 +519,7 @@ export function SuperAiToolbox() {
                           });
                           setActiveTab('studio');
                         }}
-                        className="px-2.5 py-1 text-xs rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 transition-all"
+                        className="px-2.5 py-1 text-xs rounded bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-900 dark:text-emerald-300 border border-emerald-500/30 flex items-center gap-1 transition-all"
                       >
                         Open in Runner
                         <ArrowRight className="w-3 h-3" />
@@ -477,11 +554,11 @@ export function SuperAiToolbox() {
                     className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-2 ${
                       isActive
                         ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md shadow-emerald-500/20 scale-[1.02]'
-                        : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                        : 'bg-white dark:bg-slate-900/80 hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-800'
                     }`}
                   >
                     <span>{cat.label}</span>
-                    <span className={`text-[10px] opacity-75 font-normal ${isActive ? 'text-slate-950 font-bold' : 'text-slate-400'}`}>
+                    <span className={`text-[10px] opacity-75 font-normal ${isActive ? 'text-slate-950 font-bold' : 'text-slate-700 dark:text-slate-400'}`}>
                       ({Object.values(AI_TOOLS_REGISTRY).filter((t) => t.category === cat.id).length})
                     </span>
                   </button>
@@ -491,14 +568,14 @@ export function SuperAiToolbox() {
 
             {/* Quick Search Input */}
             <div className="relative w-full md:w-72">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-slate-700 dark:text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 id="search-tools-input"
                 type="text"
                 placeholder="Search 30+ AI tools (e.g. blog, hooks, seo)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-xs bg-slate-900 border border-slate-700/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all shadow-inner"
+                className="w-full pl-9 pr-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-400 dark:border-slate-700/80 rounded-xl text-slate-950 dark:text-white placeholder-slate-600 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all shadow-inner"
               />
             </div>
           </div>
@@ -508,12 +585,12 @@ export function SuperAiToolbox() {
             {/* LEFT COLUMN: Tool Browser & Parameter Configuration Form */}
             <div className="lg:col-span-5 flex flex-col gap-4">
               {/* Tool Selector Chips Carousel/Grid */}
-              <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-3.5 backdrop-blur">
+              <div className="bg-white dark:bg-slate-900/70 border border-slate-300 dark:border-slate-800 rounded-2xl p-3.5 backdrop-blur">
                 <div className="flex items-center justify-between mb-2.5 px-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-400">
                     {searchQuery ? `Search Results (${filteredTools.length})` : `${AI_TOOL_CATEGORIES.find((c) => c.id === activeCategory)?.label} Tools`}
                   </span>
-                  <span className="text-[10px] text-emerald-400 font-medium">
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium">
                     {filteredTools.length} tools available
                   </span>
                 </div>
@@ -528,23 +605,23 @@ export function SuperAiToolbox() {
                         onClick={() => setSelectedToolId(tool.id)}
                         className={`text-left p-2.5 rounded-xl border transition-all flex flex-col justify-between ${
                           isSelected
-                            ? 'bg-emerald-500/15 border-emerald-500/60 ring-1 ring-emerald-500/40 shadow-sm'
-                            : 'bg-slate-950/60 border-slate-800/80 hover:border-slate-700 text-slate-300'
+                            ? 'bg-emerald-100 dark:bg-emerald-500/15 border-emerald-500/60 ring-1 ring-emerald-500/40 shadow-sm'
+                            : 'bg-slate-50 dark:bg-slate-950/60 border-slate-300 dark:border-slate-800/80 hover:border-slate-500 dark:hover:border-slate-700 text-slate-800 dark:text-slate-300'
                         }`}
                       >
                         <div className="flex items-start justify-between gap-1 mb-1">
-                          <span className="text-xs font-bold text-white line-clamp-1">
+                          <span className="text-xs font-bold text-slate-950 dark:text-white line-clamp-1">
                             {tool.name}
                           </span>
                           {tool.badge && (
-                            <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 border border-amber-500/30">
                               {tool.badge}
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center justify-between text-[10px] text-slate-400 mt-1">
+                        <div className="flex items-center justify-between text-[10px] text-slate-700 dark:text-slate-400 mt-1">
                           <span className="truncate">{tool.urduName || tool.category}</span>
-                          <span className="font-semibold text-amber-400 flex items-center gap-0.5">
+                          <span className="font-semibold text-amber-800 dark:text-amber-400 flex items-center gap-0.5">
                             {tool.creditCost} <Coins className="w-2.5 h-2.5" />
                           </span>
                         </div>
@@ -555,19 +632,19 @@ export function SuperAiToolbox() {
               </div>
 
               {/* Dynamic Parameter Input Form */}
-              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl">
-                <div className="flex items-start justify-between gap-3 pb-4 mb-4 border-b border-slate-800">
+              <div className="bg-white dark:bg-slate-900/80 border border-slate-300 dark:border-slate-800 rounded-2xl p-5 shadow-xl">
+                <div className="flex items-start justify-between gap-3 pb-4 mb-4 border-b border-slate-300 dark:border-slate-800">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-base font-bold text-white">{selectedTool.name}</h3>
+                      <h3 className="text-base font-bold text-slate-950 dark:text-white">{selectedTool.name}</h3>
                       {selectedTool.urduName && (
-                        <span className="text-xs text-slate-400 font-urdu">{selectedTool.urduName}</span>
+                        <span className="text-xs text-slate-700 dark:text-slate-400 font-urdu">{selectedTool.urduName}</span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-400 mt-0.5">{selectedTool.description}</p>
+                    <p className="text-xs text-slate-700 dark:text-slate-400 mt-0.5">{selectedTool.description}</p>
                   </div>
                   <div className="text-right whitespace-nowrap">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-300 text-xs font-bold">
                       <Coins className="w-3.5 h-3.5" /> {selectedTool.creditCost} Credits
                     </span>
                   </div>
@@ -577,11 +654,11 @@ export function SuperAiToolbox() {
                 <div className="space-y-4">
                   {selectedTool.fields.map((field) => (
                     <div key={field.name} className="space-y-1.5">
-                      <label className="text-xs font-semibold text-slate-200 flex items-center justify-between">
+                      <label className="text-xs font-semibold text-slate-900 dark:text-slate-200 flex items-center justify-between">
                         <span>
-                          {field.label} {field.required && <span className="text-rose-400">*</span>}
+                          {field.label} {field.required && <span className="text-rose-700 dark:text-rose-400">*</span>}
                         </span>
-                        {field.helpText && <span className="text-[10px] text-slate-500">{field.helpText}</span>}
+                        {field.helpText && <span className="text-[10px] text-slate-600 dark:text-slate-500">{field.helpText}</span>}
                       </label>
 
                       {field.type === 'textarea' ? (
@@ -590,13 +667,13 @@ export function SuperAiToolbox() {
                           placeholder={field.placeholder}
                           value={parameters[field.name] || ''}
                           onChange={(e) => handleParamChange(field.name, e.target.value)}
-                          className="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all resize-y"
+                          className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl text-slate-950 dark:text-white placeholder-slate-600 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all resize-y"
                         />
                       ) : field.type === 'select' ? (
                         <select
                           value={parameters[field.name] || field.defaultValue || ''}
                           onChange={(e) => handleParamChange(field.name, e.target.value)}
-                          className="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                          className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl text-slate-950 dark:text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                         >
                           {field.options?.map((opt) => (
                             <option key={opt.value} value={opt.value}>
@@ -610,22 +687,22 @@ export function SuperAiToolbox() {
                           placeholder={field.placeholder}
                           value={parameters[field.name] || ''}
                           onChange={(e) => handleParamChange(field.name, e.target.value)}
-                          className="w-full px-3 py-2 text-xs bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                          className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl text-slate-950 dark:text-white placeholder-slate-600 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                         />
                       )}
                     </div>
                   ))}
 
                   {/* Global Modifiers (Language, Tone, Model) */}
-                  <div className="pt-3 mt-3 border-t border-slate-800 grid grid-cols-2 gap-3">
+                  <div className="pt-3 mt-3 border-t border-slate-300 dark:border-slate-800 grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[11px] font-semibold text-slate-400 block mb-1">
+                      <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-400 block mb-1">
                         Language
                       </label>
                       <select
                         value={selectedLanguage}
                         onChange={(e) => setSelectedLanguage(e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                        className="w-full px-2.5 py-1.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-950 dark:text-white focus:border-emerald-500 focus:outline-none"
                       >
                         <option value="English">English (Global)</option>
                         <option value="Urdu">Urdu (اردو)</option>
@@ -636,13 +713,13 @@ export function SuperAiToolbox() {
                     </div>
 
                     <div>
-                      <label className="text-[11px] font-semibold text-slate-400 block mb-1">
+                      <label className="text-[11px] font-semibold text-slate-700 dark:text-slate-400 block mb-1">
                         Gemini Model
                       </label>
                       <select
                         value={selectedModel}
                         onChange={(e) => setSelectedModel(e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs bg-slate-950 border border-slate-800 rounded-lg text-white focus:border-emerald-500 focus:outline-none"
+                        className="w-full px-2.5 py-1.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-950 dark:text-white focus:border-emerald-500 focus:outline-none"
                       >
                         <option value="gemini-2.5-flash">Gemini 2.5 Flash (Ultra Fast)</option>
                         <option value="gemini-2.5-pro">Gemini 2.5 Pro (Deep Reasoning)</option>
@@ -652,8 +729,8 @@ export function SuperAiToolbox() {
 
                   {/* Error Notification */}
                   {errorMessage && (
-                    <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-500/40 flex items-start gap-2.5 text-xs text-rose-300">
-                      <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                    <div className="p-3 rounded-xl bg-rose-100 dark:bg-rose-950/40 border border-rose-500/40 flex items-start gap-2.5 text-xs text-rose-900 dark:text-rose-300">
+                      <AlertCircle className="w-4 h-4 text-rose-700 dark:text-rose-400 shrink-0 mt-0.5" />
                       <span>{errorMessage}</span>
                     </div>
                   )}
@@ -665,19 +742,23 @@ export function SuperAiToolbox() {
                     onClick={handleExecuteTool}
                     className={`w-full mt-2 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-all ${
                       isGenerating
-                        ? 'bg-slate-800 text-slate-400 cursor-not-allowed'
+                        ? 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400 cursor-not-allowed'
                         : 'bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 shadow-emerald-500/20 hover:scale-[1.01] active:scale-95'
                     }`}
                   >
                     {isGenerating ? (
                       <>
-                        <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
+                        <RefreshCw className="w-4 h-4 animate-spin text-emerald-700 dark:text-emerald-400" />
                         <span>{generationStep || 'Executing Tool...'}</span>
                       </>
                     ) : (
                       <>
                         <Sparkles className="w-4 h-4 fill-slate-950" />
-                        <span>Generate with Gemini ({selectedTool.creditCost} Credits)</span>
+                        <span>
+                          {credits && credits.dailyLimit - credits.dailyUsed > 0
+                            ? `Generate Free (${credits.dailyLimit - credits.dailyUsed}/${credits.dailyLimit} left today)`
+                            : `Generate with Gemini (${selectedTool.creditCost} Credits)`}
+                        </span>
                       </>
                     )}
                   </button>
@@ -687,14 +768,14 @@ export function SuperAiToolbox() {
 
             {/* RIGHT COLUMN: Output Canvas & Export Station */}
             <div className="lg:col-span-7 flex flex-col gap-4">
-              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-2xl min-h-[560px] flex flex-col justify-between">
+              <div className="bg-white dark:bg-slate-900/80 border border-slate-300 dark:border-slate-800 rounded-2xl p-5 shadow-2xl min-h-[560px] flex flex-col justify-between">
                 {/* Header Toolbar */}
-                <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-300 dark:border-slate-800">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <h3 className="text-sm font-bold text-white">AI Output Canvas</h3>
+                    <h3 className="text-sm font-bold text-slate-950 dark:text-white">AI Output Canvas</h3>
                     {activeOutput && (
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-400 dark:border-slate-700">
                         ⚡ {(activeOutput.executionTimeMs / 1000).toFixed(2)}s • {activeOutput.modelUsed}
                       </span>
                     )}
@@ -705,13 +786,13 @@ export function SuperAiToolbox() {
                       <button
                         id="copy-output-btn"
                         onClick={() => handleCopy(activeOutput.output)}
-                        className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center gap-1.5 transition-all border border-slate-700"
+                        className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-200 flex items-center gap-1.5 transition-all border border-slate-400 dark:border-slate-700"
                         title="Copy to Clipboard"
                       >
                         {copied ? (
                           <>
-                            <Check className="w-3.5 h-3.5 text-emerald-400" />
-                            <span className="text-emerald-400">Copied!</span>
+                            <Check className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
+                            <span className="text-emerald-700 dark:text-emerald-400">Copied!</span>
                           </>
                         ) : (
                           <>
@@ -726,7 +807,7 @@ export function SuperAiToolbox() {
                         onClick={() =>
                           handleDownload(activeOutput.output, selectedTool.name, 'md')
                         }
-                        className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center gap-1.5 transition-all border border-slate-700"
+                        className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-200 flex items-center gap-1.5 transition-all border border-slate-400 dark:border-slate-700"
                         title="Download Markdown"
                       >
                         <Download className="w-3.5 h-3.5" />
@@ -741,8 +822,8 @@ export function SuperAiToolbox() {
                   {isGenerating ? (
                     <div className="h-full min-h-[380px] flex flex-col items-center justify-center text-center p-8 space-y-4">
                       <div className="relative">
-                        <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center animate-spin">
-                          <Cpu className="w-8 h-8 text-emerald-400" />
+                        <div className="w-16 h-16 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center animate-spin">
+                          <Cpu className="w-8 h-8 text-emerald-700 dark:text-emerald-400" />
                         </div>
                         <span className="absolute -top-1 -right-1 flex h-4 w-4">
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -750,33 +831,33 @@ export function SuperAiToolbox() {
                         </span>
                       </div>
                       <div>
-                        <h4 className="text-base font-bold text-white">Gemini Super AI Engine Active</h4>
-                        <p className="text-xs text-slate-400 mt-1 max-w-sm font-mono">
+                        <h4 className="text-base font-bold text-slate-950 dark:text-white">Gemini Super AI Engine Active</h4>
+                        <p className="text-xs text-slate-700 dark:text-slate-400 mt-1 max-w-sm font-mono">
                           {generationStep || 'Synthesizing output...'}
                         </p>
                       </div>
                     </div>
                   ) : activeOutput ? (
-                    <div className="bg-slate-950 p-5 rounded-xl border border-slate-800/90 text-slate-200 text-xs sm:text-sm font-sans leading-relaxed whitespace-pre-wrap selection:bg-emerald-500 selection:text-slate-950">
+                    <div className="bg-slate-50 dark:bg-slate-950 p-5 rounded-xl border border-slate-300 dark:border-slate-800/90 text-slate-900 dark:text-slate-200 text-xs sm:text-sm font-sans leading-relaxed whitespace-pre-wrap selection:bg-emerald-500 selection:text-slate-950">
                       {activeOutput.output}
                     </div>
                   ) : (
-                    <div className="h-full min-h-[380px] flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-slate-800/80 rounded-xl">
-                      <div className="w-12 h-12 rounded-xl bg-slate-800/50 flex items-center justify-center mb-3 text-slate-500">
+                    <div className="h-full min-h-[380px] flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-slate-300 dark:border-slate-800/80 rounded-xl">
+                      <div className="w-12 h-12 rounded-xl bg-slate-200/70 dark:bg-slate-800/50 flex items-center justify-center mb-3 text-slate-600 dark:text-slate-500">
                         <Sparkles className="w-6 h-6" />
                       </div>
-                      <h4 className="text-sm font-bold text-slate-300">Ready to Generate</h4>
-                      <p className="text-xs text-slate-500 mt-1 max-w-xs">
-                        Configure the parameters on the left and hit <strong className="text-emerald-400">Generate with Gemini</strong> to stream high-precision outputs.
+                      <h4 className="text-sm font-bold text-slate-800 dark:text-slate-300">Ready to Generate</h4>
+                      <p className="text-xs text-slate-600 dark:text-slate-500 mt-1 max-w-xs">
+                        Configure the parameters on the left and hit <strong className="text-emerald-700 dark:text-emerald-400">Generate with Gemini</strong> to stream high-precision outputs.
                       </p>
                       <div className="mt-4 flex flex-wrap justify-center gap-1.5">
-                        <span className="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-400 border border-slate-700">
+                        <span className="px-2 py-0.5 rounded text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400 border border-slate-400 dark:border-slate-700">
                           ✨ 31 Built-in Tools
                         </span>
-                        <span className="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-400 border border-slate-700">
+                        <span className="px-2 py-0.5 rounded text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400 border border-slate-400 dark:border-slate-700">
                           🔒 Server-Side Key Security
                         </span>
-                        <span className="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-400 border border-slate-700">
+                        <span className="px-2 py-0.5 rounded text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400 border border-slate-400 dark:border-slate-700">
                           ⚡ Firestore Persisted History
                         </span>
                       </div>
@@ -785,7 +866,7 @@ export function SuperAiToolbox() {
                 </div>
 
                 {/* Footer Status */}
-                <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-500">
+                <div className="pt-3 border-t border-slate-300 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-500">
                   <span>NISAR AI STUDIO Engine • Architecture V1</span>
                   <span>Google Cloud + Gemini 2.5 + Firestore</span>
                 </div>

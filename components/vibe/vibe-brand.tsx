@@ -44,44 +44,44 @@ export function VibeBrand({ brandProfile, onSaveBrandProfile, loading }: VibeBra
   return (
     <div className="space-y-6 max-w-4xl">
       {/* Header Banner */}
-      <div className="p-6 bg-[#12141c] border border-slate-800/80 rounded-2xl shadow-xl space-y-2">
-        <div className="flex items-center space-x-2 text-emerald-400 text-xs font-mono font-bold">
+      <div className="p-6 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800/80 rounded-2xl shadow-xl space-y-2">
+        <div className="flex items-center space-x-2 text-emerald-700 dark:text-emerald-400 text-xs font-mono font-bold">
           <Sparkles className="w-4 h-4" />
           <span>Brand Voice & Personality Customization Engine</span>
         </div>
-        <h2 className="text-xl font-black text-white">Brand Voice & AI Persona Setup</h2>
-        <p className="text-xs text-slate-400 leading-relaxed">
+        <h2 className="text-xl font-black text-slate-950 dark:text-white">Brand Voice & AI Persona Setup</h2>
+        <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed">
           Configure how Gemini AI models reflect your company tone, language preferences, formality, prohibited words, and business context across all social channels.
         </p>
       </div>
 
       {savedSuccess && (
-        <div className="p-4 bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs font-mono rounded-xl flex items-center space-x-2">
+        <div className="p-4 bg-emerald-950/80 border border-emerald-700/40 dark:border-emerald-800 text-emerald-900 dark:text-emerald-300 text-xs font-mono rounded-xl flex items-center space-x-2">
           <CheckCircle2 className="w-4 h-4" />
           <span>Brand Profile & Voice settings saved successfully!</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="p-6 bg-[#12141c] border border-slate-800/80 rounded-2xl space-y-6 shadow-xl text-xs">
+      <form onSubmit={handleSubmit} className="p-6 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800/80 rounded-2xl space-y-6 shadow-xl text-xs">
         {/* Brand Name & Style */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-slate-300 font-mono font-bold">Brand / Company Name</label>
+            <label className="text-slate-800 dark:text-slate-300 font-mono font-bold">Brand / Company Name</label>
             <input
               type="text"
               value={formData.brandName || ''}
               onChange={(e) => setFormData({ ...formData, brandName: e.target.value })}
-              className="w-full bg-[#171a24] border border-slate-700 rounded-xl p-3 text-white mt-1.5 focus:ring-1 focus:ring-emerald-500"
+              className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-slate-950 dark:text-white mt-1.5 focus:ring-1 focus:ring-emerald-500"
               required
             />
           </div>
 
           <div>
-            <label className="text-slate-300 font-mono font-bold">Primary Brand Voice Style</label>
+            <label className="text-slate-800 dark:text-slate-300 font-mono font-bold">Primary Brand Voice Style</label>
             <select
               value={formData.style || 'Friendly'}
               onChange={(e) => setFormData({ ...formData, style: e.target.value as any })}
-              className="w-full bg-[#171a24] border border-slate-700 rounded-xl p-3 text-white mt-1.5 font-mono focus:ring-1 focus:ring-emerald-500"
+              className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-slate-950 dark:text-white mt-1.5 font-mono focus:ring-1 focus:ring-emerald-500"
             >
               {VOICE_STYLES.map(s => (
                 <option key={s} value={s}>{s}</option>
@@ -92,36 +92,36 @@ export function VibeBrand({ brandProfile, onSaveBrandProfile, loading }: VibeBra
 
         {/* Custom Persona Description */}
         <div>
-          <label className="text-slate-300 font-mono font-bold">Custom Persona Description</label>
+          <label className="text-slate-800 dark:text-slate-300 font-mono font-bold">Custom Persona Description</label>
           <textarea
             value={formData.customDescription || ''}
             onChange={(e) => setFormData({ ...formData, customDescription: e.target.value })}
             rows={3}
             placeholder="Describe how your brand should communicate with customers on social media..."
-            className="w-full bg-[#171a24] border border-slate-700 rounded-xl p-3 text-white mt-1.5 focus:ring-1 focus:ring-emerald-500 font-sans leading-relaxed"
+            className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-slate-950 dark:text-white mt-1.5 focus:ring-1 focus:ring-emerald-500 font-sans leading-relaxed"
           />
         </div>
 
         {/* Business Knowledge Context */}
         <div>
-          <label className="text-slate-300 font-mono font-bold">Business Context & Knowledge Base</label>
+          <label className="text-slate-800 dark:text-slate-300 font-mono font-bold">Business Context & Knowledge Base</label>
           <textarea
             value={formData.businessInfo || ''}
             onChange={(e) => setFormData({ ...formData, businessInfo: e.target.value })}
             rows={3}
             placeholder="Key products, services, contact info, pricing model, operating hours..."
-            className="w-full bg-[#171a24] border border-slate-700 rounded-xl p-3 text-white mt-1.5 focus:ring-1 focus:ring-emerald-500 font-sans leading-relaxed"
+            className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-slate-950 dark:text-white mt-1.5 focus:ring-1 focus:ring-emerald-500 font-sans leading-relaxed"
           />
         </div>
 
         {/* Formality, Length, Emoji */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="text-slate-300 font-mono font-bold">Formality Level</label>
+            <label className="text-slate-800 dark:text-slate-300 font-mono font-bold">Formality Level</label>
             <select
               value={formData.formality || 'balanced'}
               onChange={(e) => setFormData({ ...formData, formality: e.target.value as any })}
-              className="w-full bg-[#171a24] border border-slate-700 rounded-xl p-3 text-white mt-1.5 font-mono"
+              className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-slate-950 dark:text-white mt-1.5 font-mono"
             >
               <option value="casual">Casual & Relaxed</option>
               <option value="balanced">Balanced & Professional</option>
@@ -130,11 +130,11 @@ export function VibeBrand({ brandProfile, onSaveBrandProfile, loading }: VibeBra
           </div>
 
           <div>
-            <label className="text-slate-300 font-mono font-bold">Response Length</label>
+            <label className="text-slate-800 dark:text-slate-300 font-mono font-bold">Response Length</label>
             <select
               value={formData.responseLength || 'medium'}
               onChange={(e) => setFormData({ ...formData, responseLength: e.target.value as any })}
-              className="w-full bg-[#171a24] border border-slate-700 rounded-xl p-3 text-white mt-1.5 font-mono"
+              className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-slate-950 dark:text-white mt-1.5 font-mono"
             >
               <option value="short">Short & Punchy (1-2 sentences)</option>
               <option value="medium">Medium (2-3 sentences)</option>
@@ -143,11 +143,11 @@ export function VibeBrand({ brandProfile, onSaveBrandProfile, loading }: VibeBra
           </div>
 
           <div>
-            <label className="text-slate-300 font-mono font-bold">Emoji Usage</label>
+            <label className="text-slate-800 dark:text-slate-300 font-mono font-bold">Emoji Usage</label>
             <select
               value={formData.emojiUsage || 'minimal'}
               onChange={(e) => setFormData({ ...formData, emojiUsage: e.target.value as any })}
-              className="w-full bg-[#171a24] border border-slate-700 rounded-xl p-3 text-white mt-1.5 font-mono"
+              className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-slate-950 dark:text-white mt-1.5 font-mono"
             >
               <option value="none">None</option>
               <option value="minimal">Minimal (1-2 emojis)</option>
@@ -159,7 +159,7 @@ export function VibeBrand({ brandProfile, onSaveBrandProfile, loading }: VibeBra
         {/* Forbidden Words & Required Phrases */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-slate-300 font-mono font-bold">Forbidden Words (comma separated)</label>
+            <label className="text-slate-800 dark:text-slate-300 font-mono font-bold">Forbidden Words (comma separated)</label>
             <input
               type="text"
               value={(formData.forbiddenWords || []).join(', ')}
@@ -168,12 +168,12 @@ export function VibeBrand({ brandProfile, onSaveBrandProfile, loading }: VibeBra
                 forbiddenWords: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
               })}
               placeholder="cheap, free, guarantee"
-              className="w-full bg-[#171a24] border border-slate-700 rounded-xl p-3 text-white mt-1.5"
+              className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-slate-950 dark:text-white mt-1.5"
             />
           </div>
 
           <div>
-            <label className="text-slate-300 font-mono font-bold">Required Phrases (comma separated)</label>
+            <label className="text-slate-800 dark:text-slate-300 font-mono font-bold">Required Phrases (comma separated)</label>
             <input
               type="text"
               value={(formData.requiredPhrases || []).join(', ')}
@@ -182,12 +182,12 @@ export function VibeBrand({ brandProfile, onSaveBrandProfile, loading }: VibeBra
                 requiredPhrases: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
               })}
               placeholder="Nisar AI Studio"
-              className="w-full bg-[#171a24] border border-slate-700 rounded-xl p-3 text-white mt-1.5"
+              className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-slate-950 dark:text-white mt-1.5"
             />
           </div>
         </div>
 
-        <div className="pt-4 border-t border-slate-800 flex justify-end">
+        <div className="pt-4 border-t border-slate-300 dark:border-slate-800 flex justify-end">
           <button
             type="submit"
             disabled={loading}

@@ -289,13 +289,13 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
   );
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 h-[750px] bg-slate-950/90 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
+    <div className="grid grid-cols-1 lg:grid-cols-4 h-[750px] bg-white dark:bg-slate-950/90 border border-slate-300 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
       {/* Sidebar List */}
-      <div className="lg:col-span-1 border-r border-slate-800 bg-[#0d0f14]/80 flex flex-col">
-        <div className="p-4 border-b border-slate-800 space-y-3">
+      <div className="lg:col-span-1 border-r border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-[#0d0f14]/80 flex flex-col">
+        <div className="p-4 border-b border-slate-300 dark:border-slate-800 space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-100 flex items-center space-x-2">
-              <MessageSquare className="w-4 h-4 text-emerald-400" />
+            <h3 className="text-sm font-bold text-slate-950 dark:text-slate-100 flex items-center space-x-2">
+              <MessageSquare className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
               <span>Chat History</span>
             </h3>
             <button
@@ -307,11 +307,11 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
             </button>
           </div>
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-3" />
+            <Search className="w-3.5 h-3.5 text-slate-600 dark:text-slate-500 absolute left-3 top-3" />
             <input
               type="text"
               placeholder="Search past chats..."
-              className="w-full bg-[#161922] border border-slate-800 rounded-lg pl-8 pr-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono"
+              className="w-full bg-slate-50 dark:bg-[#161922] border border-slate-300 dark:border-slate-800 rounded-lg pl-8 pr-3 py-2 text-xs text-slate-950 dark:text-slate-100 placeholder-slate-600 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -321,12 +321,12 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
         <div className="flex-1 overflow-y-auto p-2 space-y-1">
           {isLoadingSessions ? (
             <div className="flex justify-center items-center py-12">
-              <Loader2 className="w-5 h-5 animate-spin text-emerald-400" />
+              <Loader2 className="w-5 h-5 animate-spin text-emerald-700 dark:text-emerald-400" />
             </div>
           ) : filteredSessions.length === 0 ? (
             <div className="text-center py-12 px-4">
               <Clock className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-              <p className="text-xs text-slate-400">No chat history found</p>
+              <p className="text-xs text-slate-700 dark:text-slate-400">No chat history found</p>
             </div>
           ) : (
             filteredSessions.map((session) => (
@@ -335,12 +335,12 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
                 onClick={() => handleSelectSession(session)}
                 className={`group flex items-center justify-between p-3 rounded-xl cursor-pointer transition text-xs ${
                   activeSessionId === session.id
-                    ? 'bg-emerald-950/40 border border-emerald-500/40 text-slate-100 font-medium'
-                    : 'hover:bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-transparent'
+                    ? 'bg-emerald-100 dark:bg-emerald-950/40 border border-emerald-500/40 text-slate-950 dark:text-slate-100 font-medium'
+                    : 'hover:bg-slate-200 dark:hover:bg-slate-900/60 text-slate-700 dark:text-slate-400 hover:text-slate-950 dark:hover:text-slate-200 border border-transparent'
                 }`}
               >
                 <div className="flex items-center space-x-2.5 truncate">
-                  <Bot className={`w-4 h-4 shrink-0 ${activeSessionId === session.id ? 'text-emerald-400' : 'text-slate-500'}`} />
+                  <Bot className={`w-4 h-4 shrink-0 ${activeSessionId === session.id ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-500'}`} />
                   <span className="truncate">{session.title}</span>
                 </div>
                 <button
@@ -357,34 +357,34 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
       </div>
 
       {/* Main Chat Thread Area */}
-      <div className="lg:col-span-3 flex flex-col bg-slate-950">
+      <div className="lg:col-span-3 flex flex-col bg-slate-50 dark:bg-slate-950">
         {activeSessionId ? (
           <>
-            <div className="p-4 border-b border-slate-800 bg-[#0d0f14]/50 flex items-center justify-between">
+            <div className="p-4 border-b border-slate-300 dark:border-slate-800 bg-slate-100/90 dark:bg-[#0d0f14]/50 flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Sparkles className="w-4 h-4 text-emerald-400" />
-                <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">
+                <Sparkles className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
+                <h4 className="text-xs font-bold text-slate-900 dark:text-slate-200 uppercase tracking-wider font-mono">
                   {sessions.find(s => s.id === activeSessionId)?.title || 'Active Session'}
                 </h4>
               </div>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={handleDownloadJson}
-                  className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 rounded-lg text-[10px] font-mono flex items-center space-x-1 transition cursor-pointer"
+                  className="px-2.5 py-1 bg-white dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-400 dark:border-slate-700 rounded-lg text-[10px] font-mono flex items-center space-x-1 transition cursor-pointer"
                   title="Export as JSON"
                 >
-                  <FileJson className="w-3 h-3 text-emerald-400" />
+                  <FileJson className="w-3 h-3 text-emerald-700 dark:text-emerald-400" />
                   <span>JSON</span>
                 </button>
                 <button
                   onClick={handleDownloadPdf}
-                  className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 rounded-lg text-[10px] font-mono flex items-center space-x-1 transition cursor-pointer"
+                  className="px-2.5 py-1 bg-white dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-400 dark:border-slate-700 rounded-lg text-[10px] font-mono flex items-center space-x-1 transition cursor-pointer"
                   title="Export as PDF / Print"
                 >
-                  <FileText className="w-3 h-3 text-cyan-400" />
+                  <FileText className="w-3 h-3 text-cyan-800 dark:text-cyan-400" />
                   <span>PDF / Print</span>
                 </button>
-                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-900">
+                <span className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-700/40 dark:border-emerald-900">
                   Firestore Persisted
                 </span>
               </div>
@@ -400,7 +400,7 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
                     className={`max-w-[80%] p-4 rounded-2xl text-xs leading-relaxed font-sans ${
                       msg.role === 'user'
                         ? 'bg-emerald-600 text-white rounded-br-none shadow-md'
-                        : 'bg-[#181b24] text-slate-100 border border-slate-800 rounded-bl-none shadow-inner whitespace-pre-wrap'
+                        : 'bg-slate-100 dark:bg-[#181b24] text-slate-950 dark:text-slate-100 border border-slate-300 dark:border-slate-800 rounded-bl-none shadow-inner whitespace-pre-wrap'
                     }`}
                   >
                     {msg.text}
@@ -409,19 +409,19 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
               ))}
               {isGenerating && (
                 <div className="flex justify-start">
-                  <div className="bg-[#181b24] border border-slate-800 p-4 rounded-2xl rounded-bl-none flex items-center space-x-2 text-xs text-slate-400">
-                    <Loader2 className="w-4 h-4 animate-spin text-emerald-400" />
+                  <div className="bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 p-4 rounded-2xl rounded-bl-none flex items-center space-x-2 text-xs text-slate-700 dark:text-slate-400">
+                    <Loader2 className="w-4 h-4 animate-spin text-emerald-700 dark:text-emerald-400" />
                     <span>Gemini is thinking...</span>
                   </div>
                 </div>
               )}
             </div>
 
-            <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-800 bg-[#0d0f14]/80 flex space-x-2">
+            <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-[#0d0f14]/80 flex space-x-2">
               <input
                 type="text"
                 placeholder="Type your message to Gemini..."
-                className="flex-1 bg-[#161922] border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono"
+                className="flex-1 bg-slate-50 dark:bg-[#161922] border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-950 dark:text-slate-100 placeholder-slate-600 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 disabled={isGenerating}
@@ -439,8 +439,8 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
             <Bot className="w-12 h-12 text-slate-600 mb-3" />
-            <h4 className="text-sm font-bold text-slate-200">No Chat Selected</h4>
-            <p className="text-xs text-slate-400 max-w-sm mt-1 mb-4">
+            <h4 className="text-sm font-bold text-slate-900 dark:text-slate-200">No Chat Selected</h4>
+            <p className="text-xs text-slate-700 dark:text-slate-400 max-w-sm mt-1 mb-4">
               Select an existing conversation from the sidebar or start a new chat to begin interacting with Gemini.
             </p>
             <button

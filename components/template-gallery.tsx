@@ -279,16 +279,16 @@ export default function TemplateGallery({ onSelectTemplate, selectedProjectId }:
   };
 
   return (
-    <div className="bg-[#12141c] border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
+    <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-2xl p-6 shadow-2xl space-y-6">
       {/* Header & Search */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-slate-300 dark:border-slate-800">
         <div>
-          <h2 className="text-xl font-extrabold text-slate-100 flex items-center space-x-2.5">
-            <Sparkles className="w-6 h-6 text-emerald-400 animate-pulse" />
+          <h2 className="text-xl font-extrabold text-slate-950 dark:text-slate-100 flex items-center space-x-2.5">
+            <Sparkles className="w-6 h-6 text-emerald-700 dark:text-emerald-400 animate-pulse" />
             <span>AI Prompt & Live Demo Template Gallery</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Explore battle-tested viral templates. Click <strong className="text-emerald-400">"Live Demo & AI Test"</strong> on any template to customize variables and execute real-time Gemini AI prompts.
+          <p className="text-xs text-slate-700 dark:text-slate-400 mt-1">
+            Explore battle-tested viral templates. Click <strong className="text-emerald-700 dark:text-emerald-400">"Live Demo & AI Test"</strong> on any template to customize variables and execute real-time Gemini AI prompts.
           </p>
         </div>
 
@@ -302,10 +302,10 @@ export default function TemplateGallery({ onSelectTemplate, selectedProjectId }:
           </button>
 
           <div className="relative flex-1 md:w-64">
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-600 dark:text-slate-500" />
             <input
               type="text"
-              className="w-full bg-[#181b24] border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none placeholder-slate-500"
+              className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none placeholder-slate-600 dark:placeholder-slate-500"
               placeholder="Search live templates..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -323,7 +323,7 @@ export default function TemplateGallery({ onSelectTemplate, selectedProjectId }:
             className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
               selectedCategory === cat
                 ? 'bg-emerald-600 text-white shadow-md'
-                : 'bg-[#181b24] text-slate-400 hover:text-slate-200 border border-slate-800 hover:border-slate-700'
+                : 'bg-slate-100 dark:bg-[#181b24] text-slate-700 dark:text-slate-400 hover:text-slate-950 dark:hover:text-slate-200 border border-slate-300 dark:border-slate-800 hover:border-slate-500 dark:hover:border-slate-700'
             }`}
           >
             {cat}
@@ -336,40 +336,40 @@ export default function TemplateGallery({ onSelectTemplate, selectedProjectId }:
         {filteredTemplates.map((t) => (
           <div
             key={t.id}
-            className="bg-[#181b24] border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-xl group"
+            className="bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 hover:border-emerald-500/50 rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-xl group"
           >
             <div className="space-y-3">
               <div className="flex justify-between items-start">
-                <span className="text-[10px] font-mono bg-emerald-950 text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-900/50 font-bold">
+                <span className="text-[10px] font-mono bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-900/50 font-bold">
                   {t.category}
                 </span>
-                <span className="text-[10px] font-mono text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded font-semibold">
+                <span className="text-[10px] font-mono text-slate-700 dark:text-slate-400 bg-slate-200 dark:bg-slate-800/80 px-2 py-0.5 rounded font-semibold">
                   {t.platform}
                 </span>
               </div>
 
-              <h3 className="text-sm font-bold text-slate-100 group-hover:text-emerald-400 transition">
+              <h3 className="text-sm font-bold text-slate-950 dark:text-slate-100 group-hover:text-emerald-400 transition">
                 {t.title}
               </h3>
 
-              <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
+              <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed line-clamp-2">
                 {t.description}
               </p>
 
-              <div className="p-3 bg-[#0d0f14] rounded-xl border border-slate-800 text-[11px] font-mono text-slate-300 line-clamp-3 leading-relaxed whitespace-pre-wrap">
+              <div className="p-3 bg-slate-50 dark:bg-[#0d0f14] rounded-xl border border-slate-300 dark:border-slate-800 text-[11px] font-mono text-slate-800 dark:text-slate-300 line-clamp-3 leading-relaxed whitespace-pre-wrap">
                 {t.template}
               </div>
             </div>
 
-            <div className="pt-4 mt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2">
+            <div className="pt-4 mt-4 border-t border-slate-300 dark:border-slate-800/80 flex flex-wrap items-center justify-between gap-2">
               <button
                 onClick={() => handleCopy(t)}
-                className="flex items-center space-x-1 text-xs text-slate-400 hover:text-slate-200 transition font-mono cursor-pointer"
+                className="flex items-center space-x-1 text-xs text-slate-700 dark:text-slate-400 hover:text-slate-950 dark:hover:text-slate-200 transition font-mono cursor-pointer"
               >
                 {copiedId === t.id ? (
                   <>
-                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="text-emerald-400">Copied!</span>
+                    <Check className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
+                    <span className="text-emerald-700 dark:text-emerald-400">Copied!</span>
                   </>
                 ) : (
                   <>
@@ -382,9 +382,9 @@ export default function TemplateGallery({ onSelectTemplate, selectedProjectId }:
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => handleOpenLiveDemo(t)}
-                  className="flex items-center space-x-1.5 bg-[#1f2937] hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
+                  className="flex items-center space-x-1.5 bg-slate-200 dark:bg-[#1f2937] hover:bg-slate-300 dark:hover:bg-slate-700 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
                 >
-                  <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                  <Eye className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                   <span>Live Demo</span>
                 </button>
 
@@ -403,8 +403,8 @@ export default function TemplateGallery({ onSelectTemplate, selectedProjectId }:
         {filteredTemplates.length === 0 && (
           <div className="col-span-full py-16 text-center">
             <Layers className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-300 font-bold text-sm">No templates found matching "{searchQuery}"</p>
-            <p className="text-xs text-slate-500 mt-1">Try searching for another keyword or category.</p>
+            <p className="text-slate-800 dark:text-slate-300 font-bold text-sm">No templates found matching "{searchQuery}"</p>
+            <p className="text-xs text-slate-600 dark:text-slate-500 mt-1">Try searching for another keyword or category.</p>
           </div>
         )}
       </div>
@@ -412,21 +412,21 @@ export default function TemplateGallery({ onSelectTemplate, selectedProjectId }:
       {/* ==================== INTERACTIVE LIVE DEMO MODAL ==================== */}
       {liveDemoTemplate && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
-          <div className="bg-[#12141c] border border-slate-700 rounded-2xl max-w-3xl w-full p-6 space-y-5 shadow-2xl relative my-8">
+          <div className="bg-white dark:bg-[#12141c] border border-slate-400 dark:border-slate-700 rounded-2xl max-w-3xl w-full p-6 space-y-5 shadow-2xl relative my-8">
             {/* Modal Header */}
-            <div className="flex justify-between items-start pb-4 border-b border-slate-800">
+            <div className="flex justify-between items-start pb-4 border-b border-slate-300 dark:border-slate-800">
               <div className="flex items-center space-x-3">
-                <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
-                  <Play className="w-5 h-5 text-emerald-400 fill-emerald-400" />
+                <div className="p-2.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                  <Play className="w-5 h-5 text-emerald-700 dark:text-emerald-400 fill-emerald-400" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-extrabold text-slate-100 flex items-center space-x-2">
+                  <h3 className="text-lg font-extrabold text-slate-950 dark:text-slate-100 flex items-center space-x-2">
                     <span>{liveDemoTemplate.title}</span>
-                    <span className="text-[10px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold">
+                    <span className="text-[10px] font-mono bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-700/40 dark:border-emerald-800 px-2 py-0.5 rounded font-bold">
                       Interactive Live Demo
                     </span>
                   </h3>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-700 dark:text-slate-400 mt-0.5">
                     Test live auto-replacements and execute Gemini AI enhancements in real time.
                   </p>
                 </div>
@@ -434,7 +434,7 @@ export default function TemplateGallery({ onSelectTemplate, selectedProjectId }:
 
               <button
                 onClick={() => setLiveDemoTemplate(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-lg transition"
+                className="p-1.5 text-slate-700 dark:text-slate-400 hover:text-slate-950 dark:hover:text-slate-100 hover:bg-slate-300 dark:hover:bg-slate-800 rounded-lg transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -442,18 +442,18 @@ export default function TemplateGallery({ onSelectTemplate, selectedProjectId }:
 
             {/* Live Input Variables */}
             <div className="space-y-3">
-              <h4 className="text-xs font-mono uppercase font-bold text-emerald-400 flex items-center space-x-1">
+              <h4 className="text-xs font-mono uppercase font-bold text-emerald-700 dark:text-emerald-400 flex items-center space-x-1">
                 <span>1. Customize Live Preset Variables</span>
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {liveDemoTemplate.variables?.map((v: string) => (
                   <div key={v}>
-                    <label className="block text-[10px] font-mono text-slate-400 uppercase font-bold mb-1">
+                    <label className="block text-[10px] font-mono text-slate-700 dark:text-slate-400 uppercase font-bold mb-1">
                       {'{{' + v + '}}'}
                     </label>
                     <input
                       type="text"
-                      className="w-full bg-[#171a24] border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none font-mono"
+                      className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none font-mono"
                       value={demoVariables[v] !== undefined ? demoVariables[v] : ''}
                       onChange={(e) => setDemoVariables({ ...demoVariables, [v]: e.target.value })}
                       placeholder={`Value for {{${v}}}`}
@@ -464,38 +464,38 @@ export default function TemplateGallery({ onSelectTemplate, selectedProjectId }:
             </div>
 
             {/* Live Output Box */}
-            <div className="space-y-2 pt-2 border-t border-slate-800">
+            <div className="space-y-2 pt-2 border-t border-slate-300 dark:border-slate-800">
               <div className="flex justify-between items-center">
-                <h4 className="text-xs font-mono uppercase font-bold text-slate-300">
+                <h4 className="text-xs font-mono uppercase font-bold text-slate-800 dark:text-slate-300">
                   2. Live Auto-Replaced Output
                 </h4>
-                <span className="text-[10px] font-mono text-slate-500">
+                <span className="text-[10px] font-mono text-slate-600 dark:text-slate-500">
                   {getRenderedText().length} Chars
                 </span>
               </div>
-              <div className="p-4 bg-[#0d0f14] border border-slate-800 rounded-xl text-slate-200 font-sans text-xs whitespace-pre-wrap leading-relaxed">
+              <div className="p-4 bg-slate-50 dark:bg-[#0d0f14] border border-slate-300 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-200 font-sans text-xs whitespace-pre-wrap leading-relaxed">
                 {getRenderedText()}
               </div>
             </div>
 
             {/* Gemini AI Enhancement Box */}
             {aiGeneratedOutput && (
-              <div className="space-y-2 pt-2 border-t border-slate-800 animate-in fade-in duration-300">
+              <div className="space-y-2 pt-2 border-t border-slate-300 dark:border-slate-800 animate-in fade-in duration-300">
                 <div className="flex justify-between items-center">
-                  <h4 className="text-xs font-mono uppercase font-bold text-emerald-400 flex items-center space-x-1.5">
+                  <h4 className="text-xs font-mono uppercase font-bold text-emerald-700 dark:text-emerald-400 flex items-center space-x-1.5">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>3. Gemini AI Enhanced Version</span>
                   </h4>
-                  <span className="text-[10px] text-emerald-400 font-mono font-bold">gemini-3.5-flash</span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono font-bold">gemini-3.5-flash</span>
                 </div>
-                <div className="p-4 bg-[#0c1813] border border-emerald-500/40 rounded-xl text-emerald-100 font-sans text-xs whitespace-pre-wrap leading-relaxed">
+                <div className="p-4 bg-emerald-50 dark:bg-[#0c1813] border border-emerald-500/40 rounded-xl text-emerald-100 font-sans text-xs whitespace-pre-wrap leading-relaxed">
                   {aiGeneratedOutput}
                 </div>
               </div>
             )}
 
             {/* Action Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-800">
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-300 dark:border-slate-800">
               <div className="flex items-center space-x-2">
                 <button
                   onClick={handleRunAiDemo}
@@ -517,16 +517,16 @@ export default function TemplateGallery({ onSelectTemplate, selectedProjectId }:
 
                 <button
                   onClick={handleDispatchSocial}
-                  className="bg-[#1e2230] hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center space-x-2 cursor-pointer"
+                  className="bg-slate-200 dark:bg-[#1e2230] hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-200 border border-slate-400 dark:border-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center space-x-2 cursor-pointer"
                 >
-                  <Calendar className="w-4 h-4 text-emerald-400" />
+                  <Calendar className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
                   <span>Dispatch to Automation</span>
                 </button>
               </div>
 
               <div className="flex items-center space-x-2">
                 {dispatchSuccess && (
-                  <span className="text-xs font-mono text-emerald-400 font-bold flex items-center space-x-1">
+                  <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 font-bold flex items-center space-x-1">
                     <Check className="w-4 h-4" />
                     <span>Dispatched to Firestore!</span>
                   </span>
@@ -540,7 +540,7 @@ export default function TemplateGallery({ onSelectTemplate, selectedProjectId }:
                     });
                     setLiveDemoTemplate(null);
                   }}
-                  className="bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center space-x-1.5 cursor-pointer"
+                  className="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-950 dark:text-slate-100 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center space-x-1.5 cursor-pointer"
                 >
                   <span>Open in Workspace</span>
                   <Send className="w-3.5 h-3.5" />

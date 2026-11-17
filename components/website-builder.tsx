@@ -332,10 +332,10 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
 
   if (!selectedProjectId) {
     return (
-      <div className="h-[450px] flex flex-col items-center justify-center text-center bg-[#12141c] border border-slate-800 rounded-2xl p-8 max-w-xl mx-auto">
+      <div className="h-[450px] flex flex-col items-center justify-center text-center bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-2xl p-8 max-w-xl mx-auto">
         <AlertCircle className="w-12 h-12 text-slate-600 mb-4 animate-bounce" />
-        <h4 className="text-md font-bold text-slate-200">No Workspace Active</h4>
-        <p className="text-xs text-slate-400 max-w-sm mt-2">
+        <h4 className="text-md font-bold text-slate-900 dark:text-slate-200">No Workspace Active</h4>
+        <p className="text-xs text-slate-700 dark:text-slate-400 max-w-sm mt-2">
           The Website Builder operates on landing pages belonging to individual workspace folders. Please select or create a Workspace Project folder in the sidebar menu first.
         </p>
       </div>
@@ -344,7 +344,7 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
 
   return (
     <div
-      className="w-full h-full min-h-[650px] flex flex-col rounded-2xl border border-slate-800 overflow-hidden shadow-2xl relative"
+      className="w-full h-full min-h-[650px] flex flex-col rounded-2xl border border-slate-300 dark:border-slate-800 overflow-hidden shadow-2xl relative"
       style={{ background: C.bg, color: "#eaf2ff", fontFamily: "'Share Tech Mono', monospace" }}
     >
       <style dangerouslySetInnerHTML={{ __html: `
@@ -373,12 +373,12 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
             N
           </div>
           <div className="min-w-0">
-            <span className="nx-display text-xs tracking-widest text-emerald-400 block">WEBSITE BUILDER</span>
+            <span className="nx-display text-xs tracking-widest text-emerald-700 dark:text-emerald-400 block">WEBSITE BUILDER</span>
             <input 
               type="text" 
               value={pageName}
               onChange={(e) => setPageName(e.target.value)}
-              className="bg-transparent border-b border-transparent hover:border-slate-700 focus:border-emerald-500 text-sm font-bold text-slate-100 focus:outline-none py-0.5 truncate w-full"
+              className="bg-transparent border-b border-transparent hover:border-slate-500 dark:hover:border-slate-700 focus:border-emerald-500 text-sm font-bold text-slate-950 dark:text-slate-100 focus:outline-none py-0.5 truncate w-full"
               title="Click to rename page campaign"
             />
           </div>
@@ -389,7 +389,7 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
           {/* Quick feedback indicator */}
           {feedback && (
             <span className={`text-xs px-2.5 py-1 rounded font-mono flex items-center gap-1.5 ${
-              feedback.type === 'success' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
+              feedback.type === 'success' ? 'bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30'
             }`}>
               <Check size={12} /> {feedback.message}
             </span>
@@ -406,7 +406,7 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
           <button
             onClick={undo}
             disabled={!history.length}
-            className="p-2 rounded border border-white/10 disabled:opacity-30 hover:border-white/30 transition bg-slate-950 text-slate-200 cursor-pointer"
+            className="p-2 rounded border border-white/10 disabled:opacity-30 hover:border-white/30 transition bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 cursor-pointer"
             title="Undo"
           >
             <Undo2 size={14} />
@@ -414,7 +414,7 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
           <button
             onClick={redo}
             disabled={!future.length}
-            className="p-2 rounded border border-white/10 disabled:opacity-30 hover:border-white/30 transition bg-slate-950 text-slate-200 cursor-pointer"
+            className="p-2 rounded border border-white/10 disabled:opacity-30 hover:border-white/30 transition bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 cursor-pointer"
             title="Redo"
           >
             <Redo2 size={14} />
@@ -423,7 +423,7 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
           <button
             onClick={handleSavePage}
             disabled={isSaving}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded text-xs font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded text-xs font-semibold border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 transition cursor-pointer"
           >
             {isSaving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Save size={13} />}
             <span>{activePageId ? 'Sync Cloud' : 'Save New'}</span>
@@ -457,25 +457,25 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
           <aside className="w-56 shrink-0 border-r flex flex-col overflow-hidden" style={{ borderColor: "#141622", background: C.panel }}>
             
             {/* Quick 20 Site Gallery Callout */}
-            <div className="p-2.5 border-b border-slate-800 bg-slate-900/50">
+            <div className="p-2.5 border-b border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-slate-900/50">
               <button
                 onClick={() => setIsGalleryModalOpen(true)}
-                className="w-full py-2 px-2.5 rounded-lg text-xs font-bold bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 text-emerald-300 hover:border-emerald-400 transition flex items-center justify-center space-x-1.5 cursor-pointer"
+                className="w-full py-2 px-2.5 rounded-lg text-xs font-bold bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 text-emerald-900 dark:text-emerald-300 hover:border-emerald-400 transition flex items-center justify-center space-x-1.5 cursor-pointer"
               >
-                <BookOpen size={13} className="text-emerald-400" />
+                <BookOpen size={13} className="text-emerald-700 dark:text-emerald-400" />
                 <span>20 Site Templates</span>
               </button>
             </div>
             
             {/* Pages Directory List */}
-            <div className="p-3 border-b border-slate-800 shrink-0">
+            <div className="p-3 border-b border-slate-300 dark:border-slate-800 shrink-0">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1">
-                  <FolderOpen className="w-3 h-3 text-cyan-400" /> Saved Pages
+                <span className="text-[9px] uppercase tracking-wider text-slate-600 dark:text-slate-500 font-bold flex items-center gap-1">
+                  <FolderOpen className="w-3 h-3 text-cyan-800 dark:text-cyan-400" /> Saved Pages
                 </span>
                 <button 
                   onClick={handleNewPage}
-                  className="text-[9px] text-emerald-400 hover:text-emerald-300 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded"
+                  className="text-[9px] text-emerald-700 dark:text-emerald-400 hover:text-emerald-300 font-bold bg-emerald-50 dark:bg-emerald-500/10 px-1.5 py-0.5 rounded"
                 >
                   + New
                 </button>
@@ -493,14 +493,14 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
                       onClick={() => handleLoadPage(p)}
                       className={`group flex items-center justify-between px-2 py-1.5 rounded text-[11px] cursor-pointer transition ${
                         activePageId === p.id 
-                          ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300' 
-                          : 'bg-slate-900/40 hover:bg-slate-850 text-slate-300 hover:text-slate-100'
+                          ? 'bg-emerald-100 dark:bg-emerald-500/15 border border-emerald-500/30 text-emerald-900 dark:text-emerald-300' 
+                          : 'bg-slate-100 dark:bg-slate-900/40 hover:bg-slate-850 text-slate-800 dark:text-slate-300 hover:text-slate-950 dark:hover:text-slate-100'
                       }`}
                     >
                       <span className="truncate font-mono font-bold max-w-[120px]">{p.name}</span>
                       <button 
                         onClick={(e) => handleDeletePage(p.id, e)}
-                        className="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-rose-400 transition"
+                        className="opacity-0 group-hover:opacity-100 text-slate-600 dark:text-slate-500 hover:text-rose-400 transition"
                         title="Delete Page"
                       >
                         <Trash2 size={11} />
@@ -516,7 +516,7 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
 
             {/* Block palette */}
             <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
-              <p className="text-[9px] uppercase tracking-[0.2em] text-slate-500 mb-2 px-1 font-bold">Add Campaign Block</p>
+              <p className="text-[9px] uppercase tracking-[0.2em] text-slate-600 dark:text-slate-500 mb-2 px-1 font-bold">Add Campaign Block</p>
               {BLOCK_DEFS.map((d) => {
                 const Icon = d.icon;
                 return (
@@ -531,7 +531,7 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
                     >
                       <Icon size={12} />
                     </span>
-                    <span className="text-slate-300 group-hover:text-white font-mono">{d.label} Block</span>
+                    <span className="text-slate-800 dark:text-slate-300 group-hover:text-white font-mono">{d.label} Block</span>
                     <Plus size={11} className="ml-auto text-white/20 group-hover:text-white/50" />
                   </button>
                 );
@@ -541,13 +541,13 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
         )}
 
         {/* Canvas Body */}
-        <main className="flex-1 overflow-y-auto p-6 bg-[#090a10]">
+        <main className="flex-1 overflow-y-auto p-6 bg-slate-100 dark:bg-[#090a10]">
           <div className="max-w-xl mx-auto space-y-6">
             {blocks.length === 0 && (
-              <div className="text-center py-20 border border-dashed border-slate-800 rounded-xl">
+              <div className="text-center py-20 border border-dashed border-slate-300 dark:border-slate-800 rounded-xl">
                 <Layout className="w-12 h-12 text-slate-700 mx-auto mb-3" />
                 <p className="text-white/40 text-sm font-mono">Empty Builder Canvas</p>
-                <p className="text-xs text-slate-500 max-w-xs mx-auto mt-1">Add conversion components from the block catalog on the left to start building your campaign layout.</p>
+                <p className="text-xs text-slate-600 dark:text-slate-500 max-w-xs mx-auto mt-1">Add conversion components from the block catalog on the left to start building your campaign layout.</p>
               </div>
             )}
             {blocks.map((b, i) => (
@@ -592,8 +592,8 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
         {/* Properties configuration panel */}
         {mode === "edit" && (
           <aside className="w-64 shrink-0 border-l p-4 overflow-y-auto" style={{ borderColor: "#141622", background: C.panel }}>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 mb-4 flex items-center gap-1.5 font-bold">
-              <Settings2 size={12} className="text-cyan-400" /> Block Parameters
+            <p className="text-[10px] uppercase tracking-[0.2em] text-slate-600 dark:text-slate-500 mb-4 flex items-center gap-1.5 font-bold">
+              <Settings2 size={12} className="text-cyan-800 dark:text-cyan-400" /> Block Parameters
             </p>
             {!selected ? (
               <div className="py-12 text-center text-slate-600">
@@ -611,27 +611,27 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
       {/* Export Static Code Modal */}
       {exportModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-[#12141c] border border-slate-800 rounded-xl p-6 w-full max-w-2xl shadow-2xl space-y-4">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-              <h3 className="text-md font-bold text-slate-200 flex items-center gap-2">
-                <FileCode className="w-5 h-5 text-emerald-400" />
+          <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 w-full max-w-2xl shadow-2xl space-y-4">
+            <div className="flex justify-between items-center border-b border-slate-300 dark:border-slate-800 pb-3">
+              <h3 className="text-md font-bold text-slate-900 dark:text-slate-200 flex items-center gap-2">
+                <FileCode className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                 <span>Export Static Campaign HTML</span>
               </h3>
               <button 
                 onClick={() => setExportModalOpen(false)}
-                className="text-xs text-slate-500 hover:text-slate-300 font-mono"
+                className="text-xs text-slate-600 dark:text-slate-500 hover:text-slate-300 font-mono"
               >
                 Close
               </button>
             </div>
             
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-700 dark:text-slate-400">
               Deploy this conversion landing page instantly! Copy the complete self-contained responsive HTML/CSS markup to host it on any standard static web provider or landing page builder.
             </p>
 
             <textarea
               readOnly
-              className="w-full bg-[#181b24] border border-slate-700 rounded-lg p-3 text-xs text-slate-300 focus:outline-none font-mono h-80"
+              className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg p-3 text-xs text-slate-800 dark:text-slate-300 focus:outline-none font-mono h-80"
               value={generateHTMLCode()}
             />
 
@@ -647,7 +647,7 @@ export default function WebsiteBuilder({ selectedProjectId }: WebsiteBuilderProp
               </button>
               <button
                 onClick={() => setExportModalOpen(false)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-bold rounded-lg transition"
+                className="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-750 text-slate-800 dark:text-slate-300 text-xs font-bold rounded-lg transition"
               >
                 Cancel
               </button>
@@ -672,12 +672,12 @@ function BlockRenderer({ block }: { block: any }) {
     case "hero":
       return (
         <div className="py-10 px-6 rounded-xl relative overflow-hidden" style={{ background: `linear-gradient(160deg, ${accent}14, transparent)`, border: `1px solid ${accent}33` }}>
-          <h1 className="nx-display text-2xl font-bold text-slate-100 mb-2 leading-tight">{content.heading}</h1>
-          <p className="text-slate-400 text-xs font-sans leading-relaxed max-w-md">{content.sub}</p>
+          <h1 className="nx-display text-2xl font-bold text-slate-950 dark:text-slate-100 mb-2 leading-tight">{content.heading}</h1>
+          <p className="text-slate-700 dark:text-slate-400 text-xs font-sans leading-relaxed max-w-md">{content.sub}</p>
         </div>
       );
     case "text":
-      return <p className="text-slate-300 text-xs font-sans leading-relaxed px-1 whitespace-pre-wrap">{content.body}</p>;
+      return <p className="text-slate-800 dark:text-slate-300 text-xs font-sans leading-relaxed px-1 whitespace-pre-wrap">{content.body}</p>;
     case "image":
       return (
         <div
@@ -688,10 +688,10 @@ function BlockRenderer({ block }: { block: any }) {
             <img 
               src={content.src} 
               alt={content.caption || 'Campaign banner'} 
-              className="max-h-44 w-auto rounded object-cover mb-1 border border-slate-800"
+              className="max-h-44 w-auto rounded object-cover mb-1 border border-slate-300 dark:border-slate-800"
             />
           ) : (
-            <ImageIcon className="w-8 h-8 opacity-30 text-emerald-400" />
+            <ImageIcon className="w-8 h-8 opacity-30 text-emerald-700 dark:text-emerald-400" />
           )}
           <span className="text-[10px] max-w-sm text-center italic">{content.caption}</span>
         </div>
@@ -712,8 +712,8 @@ function BlockRenderer({ block }: { block: any }) {
         <div className="rounded-xl p-5 space-y-3 font-sans" style={{ border: `1px solid ${accent}33`, background: `${accent}0a` }}>
           {content.fields.split(",").map((f: string) => (
             <div key={f} className="space-y-1">
-              <label className="text-[10px] text-slate-400 font-bold block">{f.trim()}</label>
-              <div className="text-xs text-slate-500 bg-[#181b24]/40 px-3 py-2 rounded-lg border border-slate-800">
+              <label className="text-[10px] text-slate-700 dark:text-slate-400 font-bold block">{f.trim()}</label>
+              <div className="text-xs text-slate-600 dark:text-slate-500 bg-slate-100/80 dark:bg-[#181b24]/40 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-800">
                 User input for {f.trim()}...
               </div>
             </div>
@@ -737,16 +737,16 @@ function PropertiesPanel({ block, onChange }: { block: any; onChange: (patch: an
   const { type, content } = block;
   const field = (label: string, key: string, value: string, multiline?: boolean) => (
     <label className="block mb-3.5">
-      <span className="text-[10px] text-slate-400 uppercase tracking-wide font-bold">{label}</span>
+      <span className="text-[10px] text-slate-700 dark:text-slate-400 uppercase tracking-wide font-bold">{label}</span>
       {multiline ? (
         <textarea
-          className="w-full mt-1.5 bg-[#181b24] border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none h-20"
+          className="w-full mt-1.5 bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none h-20"
           value={value}
           onChange={(e) => onChange({ [key]: e.target.value })}
         />
       ) : (
         <input
-          className="w-full mt-1.5 bg-[#181b24] border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          className="w-full mt-1.5 bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-2.5 py-2 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
           value={value}
           onChange={(e) => onChange({ [key]: e.target.value })}
         />
@@ -786,7 +786,7 @@ function PropertiesPanel({ block, onChange }: { block: any; onChange: (patch: an
         </div>
       );
     case "divider":
-      return <p className="text-xs text-slate-500 font-mono italic">Dividers have no adjustable variables.</p>;
+      return <p className="text-xs text-slate-600 dark:text-slate-500 font-mono italic">Dividers have no adjustable variables.</p>;
     default:
       return null;
   }

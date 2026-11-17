@@ -1,14 +1,23 @@
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { executeTool } from '@/lib/ai/router';
-import { checkAndDeductCredits, getUserCredits } from '@/lib/credits/credits-service';
+import { AI_TOOLS_REGISTRY } from '@/lib/ai/schemas';
+import { checkAndDeductCredits, refundQuotaOrCredit } from '@/lib/credits/credits-service';
 import { saveGenerationHistory } from '@/lib/firestore/history-service';
 import { ToolExecutionRequest, ToolExecutionResponse } from '@/types/ai';
 
 export async function POST(req: NextRequest) {
+  let deductedFrom: 'daily_free' | 'paid_credits' | 'none' = 'none';
+  let deductedCost = 0;
+  let resolvedUserId = 'default_user';
+  let resolvedToolId = '';
+
   try {
     const body = (await req.json()) as ToolExecutionRequest;
     const { toolId, userId = 'default_user', parameters, model, tone, language } = body;
+
+    resolvedUserId = typeof userId === 'string' && userId.trim() ? userId.trim() : 'default_user';
+    resolvedToolId = toolId;
 
     if (!toolId) {
       return NextResponse.json(
@@ -24,36 +33,62 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1. Check user credit balance before calling AI
-    const userCredits = await getUserCredits(userId);
-    
+    const tool = AI_TOOLS_REGISTRY[toolId];
+    if (!tool) {
+      return NextResponse.json(
+        { success: false, error: `Invalid tool ID: "${toolId}".` },
+        { status: 400 }
+      );
+    }
+
+    for (const field of tool.fields) {
+      if (field.required && !parameters[field.name]) {
+        return NextResponse.json(
+          { success: false, error: `Field "${field.label}" is required.` },
+          { status: 400 }
+        );
+      }
+    }
+
+    // 1. Atomically check and deduct daily free quota (10/day) or paid credits BEFORE calling AI
+    const deductRes = await checkAndDeductCredits(resolvedUserId, tool.creditCost, toolId);
+
+    if (!deductRes.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          code: deductRes.code || 'LIMIT_REACHED',
+          error: deductRes.error || 'Daily limit reached and insufficient paid credits.',
+          quota: deductRes.quota,
+        },
+        { status: deductRes.code === 'LIMIT_REACHED' ? 429 : 500 }
+      );
+    }
+
+    deductedFrom = deductRes.deductedFrom;
+    deductedCost = deductRes.deductedCost;
+
     // 2. Execute tool through the central router
     const result = await executeTool({
       toolId,
-      userId,
+      userId: resolvedUserId,
       parameters,
       model,
       tone,
       language,
     });
 
-    // 3. Deduct credits
-    const deductRes = await checkAndDeductCredits(userId, result.creditCost, toolId);
-
-    if (!deductRes.success) {
-      return NextResponse.json(
-        { success: false, error: deductRes.error || 'Insufficient credits' },
-        { status: 403 }
-      );
-    }
-
-    // 4. Create generation ID and save history in Firestore
+    // 3. Create generation ID and save history in Firestore
     const generationId = `gen_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    const promptSummary = Object.values(parameters).filter((v) => typeof v === 'string').join(' • ').slice(0, 150) || toolId;
+    const promptSummary =
+      Object.values(parameters)
+        .filter((v) => typeof v === 'string')
+        .join(' • ')
+        .slice(0, 150) || toolId;
 
     await saveGenerationHistory({
       id: generationId,
-      userId,
+      userId: resolvedUserId,
       toolId,
       toolName: result.toolName,
       category: result.category,
@@ -61,7 +96,7 @@ export async function POST(req: NextRequest) {
       parameters,
       output: result.output,
       modelUsed: result.modelUsed,
-      creditsCost: result.creditCost,
+      creditsCost: deductRes.deductedFrom === 'daily_free' ? 0 : deductRes.deductedCost,
       executionTimeMs: result.executionTimeMs,
       isFavorite: false,
       createdAt: new Date().toISOString(),
@@ -73,20 +108,26 @@ export async function POST(req: NextRequest) {
       toolId,
       category: result.category,
       output: result.output,
-      creditsUsed: result.creditCost,
+      creditsUsed: deductRes.deductedFrom === 'daily_free' ? 0 : deductRes.deductedCost,
       remainingCredits: deductRes.remainingCredits,
+      quota: deductRes.quota,
       executionTimeMs: result.executionTimeMs,
       modelUsed: result.modelUsed,
       timestamp: new Date().toISOString(),
     };
 
     return NextResponse.json(responseData);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    if (deductedFrom !== 'none' && deductedCost > 0 && resolvedToolId) {
+      await refundQuotaOrCredit(resolvedUserId, deductedFrom, deductedCost, resolvedToolId);
+    }
     console.error('[API /api/ai/generate Error]:', error);
+    const message =
+      error instanceof Error ? error.message : 'An error occurred during AI generation.';
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'An error occurred during AI generation.',
+        error: message,
       },
       { status: 500 }
     );

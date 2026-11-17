@@ -24,6 +24,7 @@ import { SuperAiToolbox } from './ai/super-ai-toolbox';
 import { PomelliSheetsConverter } from './ai/pomelli-sheets-converter';
 import { AiLinkConverter } from './ai/ai-link-converter';
 import { ChatHistorySidebar } from './ai/chat-history-sidebar';
+import { ThemeSwitcher } from './theme-switcher';
 
 export interface AIToolItem {
   id: string;
@@ -46,8 +47,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Sparkles,
     badge: 'Flagship Suite',
     tabId: 'toolbox',
-    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-950/10',
-    badgeBg: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/10',
+    badgeBg: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-500/30'
   },
   {
     id: 'chat_history',
@@ -57,8 +58,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: MessageSquare,
     badge: 'Firestore Memory',
     tabId: 'chat_history',
-    accentColor: 'border-purple-500/40 hover:border-purple-400 bg-purple-950/10',
-    badgeBg: 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+    accentColor: 'border-purple-500/40 hover:border-purple-400 bg-purple-50 dark:bg-purple-950/10',
+    badgeBg: 'bg-purple-100 dark:bg-purple-500/20 text-purple-900 dark:text-purple-300 border-purple-500/30'
   },
   {
     id: 'ai_link_converter',
@@ -68,8 +69,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Globe,
     badge: 'Search Grounding',
     tabId: 'ai_link_converter',
-    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-950/10',
-    badgeBg: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/10',
+    badgeBg: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-900 dark:text-cyan-300 border-cyan-500/30'
   },
   {
     id: 'pomelli_sheets',
@@ -79,8 +80,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Globe,
     badge: 'Google Sheets & Pomelli',
     tabId: 'pomelli_sheets',
-    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-950/10',
-    badgeBg: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/10',
+    badgeBg: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-900 dark:text-cyan-300 border-cyan-500/30'
   },
   {
     id: 'vibe',
@@ -90,8 +91,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: MessageSquare,
     badge: 'Vibe Responding Engine',
     tabId: 'vibe',
-    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-950/10',
-    badgeBg: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/10',
+    badgeBg: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-500/30'
   },
   {
     id: 'empire',
@@ -101,8 +102,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Database,
     badge: 'Redis Execution Layer',
     tabId: 'empire',
-    accentColor: 'border-rose-500/40 hover:border-rose-400 bg-rose-950/10',
-    badgeBg: 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+    accentColor: 'border-rose-500/40 hover:border-rose-400 bg-rose-50 dark:bg-rose-950/10',
+    badgeBg: 'bg-rose-100 dark:bg-rose-500/20 text-rose-900 dark:text-rose-300 border-rose-500/30'
   },
   {
     id: 'blog',
@@ -113,8 +114,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: BookOpen,
     badge: 'Gemini 3.5 Flash',
     tabId: 'blog',
-    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-950/10',
-    badgeBg: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/10',
+    badgeBg: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-500/30'
   },
   {
     id: 'agents',
@@ -124,8 +125,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Bot,
     badge: 'Custom Personas',
     tabId: 'agents',
-    accentColor: 'border-purple-500/40 hover:border-purple-400 bg-purple-950/10',
-    badgeBg: 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+    accentColor: 'border-purple-500/40 hover:border-purple-400 bg-purple-50 dark:bg-purple-950/10',
+    badgeBg: 'bg-purple-100 dark:bg-purple-500/20 text-purple-900 dark:text-purple-300 border-purple-500/30'
   },
   {
     id: 'ecom',
@@ -135,8 +136,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Sparkles,
     badge: 'Conversion Copy',
     tabId: 'ecom',
-    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-950/10',
-    badgeBg: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/10',
+    badgeBg: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-900 dark:text-cyan-300 border-cyan-500/30'
   },
   {
     id: 'builder',
@@ -146,8 +147,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Globe,
     badge: '20 Gallery Sites',
     tabId: 'builder',
-    accentColor: 'border-sky-500/40 hover:border-sky-400 bg-sky-950/10',
-    badgeBg: 'bg-sky-500/20 text-sky-300 border-sky-500/30'
+    accentColor: 'border-sky-500/40 hover:border-sky-400 bg-sky-50 dark:bg-sky-950/10',
+    badgeBg: 'bg-sky-100 dark:bg-sky-500/20 text-sky-900 dark:text-sky-300 border-sky-500/30'
   },
   {
     id: 'scheduler',
@@ -157,8 +158,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Calendar,
     badge: 'Multi-Channel',
     tabId: 'scheduler',
-    accentColor: 'border-amber-500/40 hover:border-amber-400 bg-amber-950/10',
-    badgeBg: 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+    accentColor: 'border-amber-500/40 hover:border-amber-400 bg-amber-50 dark:bg-amber-950/10',
+    badgeBg: 'bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 border-amber-500/30'
   },
   {
     id: 'memory',
@@ -168,8 +169,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Brain,
     badge: 'RAG Alignment',
     tabId: 'memory',
-    accentColor: 'border-indigo-500/40 hover:border-indigo-400 bg-indigo-950/10',
-    badgeBg: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+    accentColor: 'border-indigo-500/40 hover:border-indigo-400 bg-indigo-50 dark:bg-indigo-950/10',
+    badgeBg: 'bg-indigo-100 dark:bg-indigo-500/20 text-indigo-900 dark:text-indigo-300 border-indigo-500/30'
   },
   {
     id: 'social_templates',
@@ -179,8 +180,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Share2,
     badge: 'Instant Prompts',
     tabId: 'social_templates',
-    accentColor: 'border-pink-500/40 hover:border-pink-400 bg-pink-950/10',
-    badgeBg: 'bg-pink-500/20 text-pink-300 border-pink-500/30'
+    accentColor: 'border-pink-500/40 hover:border-pink-400 bg-pink-50 dark:bg-pink-950/10',
+    badgeBg: 'bg-pink-100 dark:bg-pink-500/20 text-pink-900 dark:text-pink-300 border-pink-500/30'
   },
   {
     id: 'template_gallery',
@@ -190,8 +191,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Layers,
     badge: '20 Full Blueprints',
     tabId: 'template_gallery',
-    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-teal-950/10',
-    badgeBg: 'bg-teal-500/20 text-teal-300 border-teal-500/30'
+    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-teal-50 dark:bg-teal-950/10',
+    badgeBg: 'bg-teal-100 dark:bg-teal-500/20 text-teal-900 dark:text-teal-300 border-teal-500/30'
   },
   {
     id: 'revenue',
@@ -201,8 +202,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Coins,
     badge: 'ROI Analytics',
     tabId: 'revenue',
-    accentColor: 'border-yellow-500/40 hover:border-yellow-400 bg-yellow-950/10',
-    badgeBg: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
+    accentColor: 'border-yellow-500/40 hover:border-yellow-400 bg-amber-50 dark:bg-yellow-950/10',
+    badgeBg: 'bg-amber-100 dark:bg-yellow-500/20 text-amber-900 dark:text-yellow-300 border-yellow-500/30'
   }
 ];
 
@@ -1111,18 +1112,18 @@ export function Dashboard() {
   const currentProject = projects.find(p => p.id === selectedProjectId);
 
   return (
-    <div className="flex flex-col min-h-screen text-slate-100 bg-[#0b0c10]">
+    <div className="flex flex-col min-h-screen text-slate-950 dark:text-slate-100 bg-slate-50 dark:bg-[#0b0c10]">
       {/* Dynamic Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-[#12141c]">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-slate-300 dark:border-slate-800 bg-white dark:bg-[#12141c]">
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-emerald-600 rounded-lg text-white font-black tracking-wider text-xl shadow-md">
             NST
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
+            <h1 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-800 dark:from-emerald-400 to-teal-700 dark:to-teal-300">
               NISAR AI Studio
             </h1>
-            <p className="text-xs text-slate-400 font-mono">Super AI Toolbox</p>
+            <p className="text-xs text-slate-700 dark:text-slate-400 font-mono">Super AI Toolbox</p>
           </div>
         </div>
 
@@ -1131,13 +1132,13 @@ export function Dashboard() {
           <button
             type="button"
             onClick={() => setIsCommandPaletteOpen(true)}
-            className="w-full bg-[#171a24] border border-slate-700 hover:border-emerald-500/50 rounded-xl px-4 py-2 pl-10 pr-12 text-sm text-slate-300 hover:text-slate-100 flex items-center justify-between text-left transition duration-150 group shadow-inner cursor-pointer"
+            className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 hover:border-emerald-500/50 rounded-xl px-4 py-2 pl-10 pr-12 text-sm text-slate-800 dark:text-slate-300 hover:text-slate-950 dark:hover:text-slate-100 flex items-center justify-between text-left transition duration-150 group shadow-inner cursor-pointer"
           >
             <div className="flex items-center space-x-2">
-              <Search className="w-4 h-4 text-slate-400 group-hover:text-emerald-400 transition" />
+              <Search className="w-4 h-4 text-slate-700 dark:text-slate-400 group-hover:text-emerald-400 transition" />
               <span className="text-xs font-sans">Search tools, AI models, commands...</span>
             </div>
-            <div className="flex items-center space-x-1.5 bg-[#1e2230] text-[10px] text-slate-400 group-hover:text-emerald-400 border border-slate-700 group-hover:border-emerald-500/40 px-2.5 py-1 rounded-lg font-mono font-bold select-none transition">
+            <div className="flex items-center space-x-1.5 bg-slate-200 dark:bg-[#1e2230] text-[10px] text-slate-700 dark:text-slate-400 group-hover:text-emerald-400 border border-slate-400 dark:border-slate-700 group-hover:border-emerald-500/40 px-2.5 py-1 rounded-lg font-mono font-bold select-none transition">
               <span className="text-[10px]">Ctrl+K</span>
             </div>
           </button>
@@ -1145,18 +1146,18 @@ export function Dashboard() {
 
         {/* User profile, workspace select & logout */}
         <div className="flex items-center space-x-4">
-          <div className="flex items-center bg-[#1e2230] rounded-lg px-3 py-1.5 border border-slate-700">
-            <span className="text-xs text-slate-400 mr-2 font-semibold font-mono">Workspace:</span>
+          <div className="flex items-center bg-slate-200 dark:bg-[#1e2230] rounded-lg px-3 py-1.5 border border-slate-400 dark:border-slate-700">
+            <span className="text-xs text-slate-700 dark:text-slate-400 mr-2 font-semibold font-mono">Workspace:</span>
             {projectsLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin text-emerald-400" />
+              <Loader2 className="w-4 h-4 animate-spin text-emerald-700 dark:text-emerald-400" />
             ) : (
               <select
-                className="bg-transparent text-sm text-slate-200 font-bold focus:outline-none cursor-pointer"
+                className="bg-transparent text-sm text-slate-900 dark:text-slate-200 font-bold focus:outline-none cursor-pointer"
                 value={selectedProjectId}
                 onChange={(e) => setSelectedProjectId(e.target.value)}
               >
                 {projects.map(p => (
-                  <option key={p.id} value={p.id} className="bg-[#1e2230] text-slate-200">
+                  <option key={p.id} value={p.id} className="bg-white dark:bg-[#1e2230] text-slate-950 dark:text-slate-200">
                     {p.name}
                   </option>
                 ))}
@@ -1175,25 +1176,27 @@ export function Dashboard() {
           </div>
 
           <div className="hidden md:flex flex-col items-end text-xs font-mono">
-            <span className="text-slate-300 font-bold">{user?.displayName || user?.email}</span>
-            <span className="text-emerald-400 text-[10px]">Tier: Premium Enterprise</span>
+            <span className="text-slate-800 dark:text-slate-300 font-bold">{user?.displayName || user?.email}</span>
+            <span className="text-emerald-700 dark:text-emerald-400 text-[10px]">Tier: Premium Enterprise</span>
           </div>
 
           <a
             href="https://nisaraistudiovercel-app.vercel.app/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-1.5 px-3 py-1.5 text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 rounded-lg transition font-semibold shadow-sm"
+            className="flex items-center space-x-1.5 px-3 py-1.5 text-xs bg-emerald-100 text-emerald-900 border border-emerald-700/40 hover:bg-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 dark:hover:bg-emerald-500/30 rounded-lg transition font-semibold shadow-sm"
             title="Open Live NISAR AI Studio Deployment"
           >
-            <Globe className="w-3.5 h-3.5 text-emerald-400" />
+            <Globe className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
             <span className="hidden sm:inline">Live App</span>
             <ExternalLink className="w-3 h-3 opacity-70" />
           </a>
 
+          <ThemeSwitcher />
+
           <button
             onClick={() => auth.signOut()}
-            className="flex items-center space-x-1 px-3 py-1.5 text-xs text-rose-400 border border-rose-950 bg-rose-950/20 hover:bg-rose-950/50 rounded-lg transition"
+            className="flex items-center space-x-1 px-3 py-1.5 text-xs text-rose-800 border border-rose-700/40 bg-rose-100 hover:bg-rose-200 dark:text-rose-400 dark:border-rose-950 dark:bg-rose-950/20 dark:hover:bg-rose-950/50 rounded-lg transition cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Sign Out</span>
@@ -1204,16 +1207,16 @@ export function Dashboard() {
       {/* Main Container */}
       <div className="flex flex-1 overflow-hidden">
         {/* Navigation Sidebar */}
-        <nav className="w-64 bg-[#12141c] border-r border-slate-800 p-4 space-y-1.5 hidden md:block overflow-y-auto custom-scrollbar">
-          <div className="text-[10px] font-mono tracking-wider uppercase text-slate-500 font-bold pl-2 pb-1">
+        <nav className="w-64 bg-white dark:bg-[#12141c] border-r border-slate-300 dark:border-slate-800 p-4 space-y-1.5 hidden md:block overflow-y-auto custom-scrollbar">
+          <div className="text-[10px] font-mono tracking-wider uppercase text-slate-600 dark:text-slate-500 font-bold pl-2 pb-1">
             Navigation
           </div>
           <button
             onClick={() => setActiveTab('overview')}
             className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-semibold transition ${
               activeTab === 'overview' 
-                ? 'bg-[#1e2230] text-emerald-400 border-l-2 border-emerald-500 font-bold' 
-                : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
+                ? 'bg-slate-200 dark:bg-[#1e2230] text-emerald-700 dark:text-emerald-400 border-l-2 border-emerald-500 font-bold' 
+                : 'text-slate-700 dark:text-slate-400 hover:bg-slate-200/80 dark:hover:bg-slate-800/40 hover:text-slate-950 dark:hover:text-slate-200'
             }`}
           >
             <Layers className="w-4 h-4" />
@@ -1224,16 +1227,16 @@ export function Dashboard() {
             onClick={() => setActiveTab('activity_feed')}
             className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-semibold transition ${
               activeTab === 'activity_feed' 
-                ? 'bg-[#1e2230] text-emerald-400 border-l-2 border-emerald-500 font-bold' 
-                : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
+                ? 'bg-slate-200 dark:bg-[#1e2230] text-emerald-700 dark:text-emerald-400 border-l-2 border-emerald-500 font-bold' 
+                : 'text-slate-700 dark:text-slate-400 hover:bg-slate-200/80 dark:hover:bg-slate-800/40 hover:text-slate-950 dark:hover:text-slate-200'
             }`}
           >
             <div className="flex items-center space-x-3">
-              <Activity className="w-4 h-4 text-emerald-400" />
+              <Activity className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
               <span>Activity Feed</span>
             </div>
             {activities.length > 0 && (
-              <span className="bg-emerald-500/20 text-emerald-400 text-[10px] font-mono px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">
+              <span className="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-[10px] font-mono px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">
                 {activities.length}
               </span>
             )}
@@ -1241,10 +1244,10 @@ export function Dashboard() {
 
           {/* ⭐ Pinned Preferred Tools Section */}
           {favoriteToolIds.length > 0 && (
-            <div className="pt-3 pb-1 border-t border-slate-800/80 my-2">
-              <div className="flex items-center justify-between pl-2 pr-1 pb-1.5 text-[10px] font-mono tracking-wider uppercase text-amber-400 font-bold">
+            <div className="pt-3 pb-1 border-t border-slate-300 dark:border-slate-800/80 my-2">
+              <div className="flex items-center justify-between pl-2 pr-1 pb-1.5 text-[10px] font-mono tracking-wider uppercase text-amber-800 dark:text-amber-400 font-bold">
                 <span className="flex items-center space-x-1">
-                  <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                  <Star className="w-3 h-3 fill-amber-400 text-amber-800 dark:text-amber-400" />
                   <span>Pinned Tools ({favoriteToolIds.length})</span>
                 </span>
               </div>
@@ -1257,20 +1260,20 @@ export function Dashboard() {
                       onClick={() => setActiveTab(tool.tabId)}
                       className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold transition group ${
                         activeTab === tool.tabId
-                          ? 'bg-amber-500/15 text-amber-300 border-l-2 border-amber-400 font-bold'
-                          : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                          ? 'bg-amber-100 dark:bg-amber-500/15 text-amber-900 dark:text-amber-300 border-l-2 border-amber-400 font-bold'
+                          : 'text-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800/60 hover:text-slate-950 dark:hover:text-white'
                       }`}
                     >
                       <div className="flex items-center space-x-2 truncate min-w-0 pr-1">
-                        <ToolIcon className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <ToolIcon className="w-3.5 h-3.5 text-amber-800 dark:text-amber-400 shrink-0" />
                         <span className="truncate">{tool.name}</span>
                       </div>
                       <span 
                         onClick={(e) => handleToggleFavorite(tool.id, tool.name, e)}
-                        className="p-1 text-amber-400 hover:text-rose-400 transition"
+                        className="p-1 text-amber-800 dark:text-amber-400 hover:text-rose-400 transition"
                         title="Unpin from preferred suite"
                       >
-                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-800 dark:text-amber-400" />
                       </span>
                     </button>
                   );
@@ -1279,7 +1282,7 @@ export function Dashboard() {
             </div>
           )}
 
-          <div className="pt-3 pb-1 border-t border-slate-800/80 my-2 text-[10px] font-mono tracking-wider uppercase text-slate-500 font-bold pl-2">
+          <div className="pt-3 pb-1 border-t border-slate-300 dark:border-slate-800/80 my-2 text-[10px] font-mono tracking-wider uppercase text-slate-600 dark:text-slate-500 font-bold pl-2">
             All AI Studio Tools
           </div>
 
@@ -1293,8 +1296,8 @@ export function Dashboard() {
                     onClick={() => setActiveTab(tool.tabId)}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition ${
                       activeTab === tool.tabId
-                        ? 'bg-[#1e2230] text-emerald-400 border-l-2 border-emerald-500 font-bold'
-                        : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'
+                        ? 'bg-slate-200 dark:bg-[#1e2230] text-emerald-700 dark:text-emerald-400 border-l-2 border-emerald-500 font-bold'
+                        : 'text-slate-700 dark:text-slate-400 hover:bg-slate-200/80 dark:hover:bg-slate-800/40 hover:text-slate-950 dark:hover:text-slate-200'
                     }`}
                   >
                     <div className="flex items-center space-x-2.5 truncate min-w-0 pr-1">
@@ -1305,12 +1308,12 @@ export function Dashboard() {
                       onClick={(e) => handleToggleFavorite(tool.id, tool.name, e)}
                       className={`p-1 rounded transition ${
                         isFav 
-                          ? 'text-amber-400 opacity-100' 
+                          ? 'text-amber-800 dark:text-amber-400 opacity-100' 
                           : 'text-slate-600 hover:text-amber-400 opacity-0 group-hover:opacity-100'
                       }`}
                       title={isFav ? "Unfavorite tool" : "Favorite tool"}
                     >
-                      <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-amber-400 text-amber-400' : ''}`} />
+                      <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-amber-400 text-amber-800 dark:text-amber-400' : ''}`} />
                     </span>
                   </button>
                 </div>
@@ -1318,27 +1321,27 @@ export function Dashboard() {
             })}
           </div>
 
-          <div className="pt-8 text-[10px] font-mono tracking-wider uppercase text-slate-500 font-bold pl-2 pb-2">
+          <div className="pt-8 text-[10px] font-mono tracking-wider uppercase text-slate-600 dark:text-slate-500 font-bold pl-2 pb-2">
             System Stats
           </div>
-          <div className="p-3 bg-[#171a24] rounded-lg border border-slate-800 font-mono text-[11px] text-slate-400 space-y-2">
+          <div className="p-3 bg-slate-100 dark:bg-[#171a24] rounded-lg border border-slate-300 dark:border-slate-800 font-mono text-[11px] text-slate-700 dark:text-slate-400 space-y-2">
             <div className="flex justify-between">
               <span>DB Connection:</span>
-              <span className="text-emerald-400 font-bold">Online</span>
+              <span className="text-emerald-700 dark:text-emerald-400 font-bold">Online</span>
             </div>
             <div className="flex justify-between">
               <span>Sync Protocol:</span>
-              <span className="text-cyan-400">gRPC Realtime</span>
+              <span className="text-cyan-800 dark:text-cyan-400">gRPC Realtime</span>
             </div>
             <div className="flex justify-between">
               <span>Workspace ID:</span>
-              <span className="text-slate-500 truncate max-w-[80px]">{selectedProjectId || 'None'}</span>
+              <span className="text-slate-600 dark:text-slate-500 truncate max-w-[80px]">{selectedProjectId || 'None'}</span>
             </div>
           </div>
         </nav>
 
         {/* Workspace Display Body */}
-        <main className="flex-1 overflow-y-auto p-6 bg-[#0d0f14]">
+        <main className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-[#0d0f14]">
           {/* Mobile Global Search Spotlight */}
           <div className="block md:hidden mb-4 relative">
             <div className="relative">
@@ -1351,18 +1354,18 @@ export function Dashboard() {
                   setIsSearchFocused(true);
                 }}
                 onFocus={() => setIsSearchFocused(true)}
-                className="w-full bg-[#171a24] border border-slate-700 rounded-lg px-4 py-2.5 pl-10 pr-4 text-xs text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-lg px-4 py-2.5 pl-10 pr-4 text-xs text-slate-950 dark:text-slate-100 placeholder-slate-600 dark:placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3.5" />
+              <Search className="w-3.5 h-3.5 text-slate-700 dark:text-slate-400 absolute left-3 top-3.5" />
             </div>
 
             {isSearchFocused && (globalSearchQuery.trim().length > 0) && (
-              <div className="absolute left-0 right-0 mt-2 bg-[#12141c] border border-slate-800 rounded-xl shadow-2xl z-50 max-h-[350px] overflow-y-auto divide-y divide-slate-800/60 custom-scrollbar">
+              <div className="absolute left-0 right-0 mt-2 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl shadow-2xl z-50 max-h-[350px] overflow-y-auto divide-y divide-slate-300 dark:divide-slate-800/60 custom-scrollbar">
                 
                 {/* Category: Projects */}
                 {searchResults.projects.length > 0 && (
                   <div className="p-2">
-                    <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-2 mb-1">
+                    <div className="text-[9px] font-bold text-slate-600 dark:text-slate-500 uppercase tracking-widest px-2 mb-1">
                       Projects ({searchResults.projects.length})
                     </div>
                     <div className="space-y-0.5">
@@ -1371,11 +1374,11 @@ export function Dashboard() {
                           key={p.id}
                           type="button"
                           onClick={() => handleSelectProjectResult(p.id)}
-                          className="w-full text-left flex items-center justify-between p-1.5 hover:bg-[#1e2230]/80 rounded-md group transition"
+                          className="w-full text-left flex items-center justify-between p-1.5 hover:bg-slate-200 dark:hover:bg-[#1e2230]/80 rounded-md group transition"
                         >
                           <div className="flex items-center space-x-2 min-w-0">
-                            <Database className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-                            <span className="text-xs font-semibold text-slate-200 truncate">{p.name}</span>
+                            <Database className="w-3.5 h-3.5 text-indigo-800 dark:text-indigo-400 shrink-0" />
+                            <span className="text-xs font-semibold text-slate-900 dark:text-slate-200 truncate">{p.name}</span>
                           </div>
                         </button>
                       ))}
@@ -1386,7 +1389,7 @@ export function Dashboard() {
                 {/* Category: Custom Agents */}
                 {searchResults.agents.length > 0 && (
                   <div className="p-2">
-                    <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-2 mb-1">
+                    <div className="text-[9px] font-bold text-slate-600 dark:text-slate-500 uppercase tracking-widest px-2 mb-1">
                       AI Agents ({searchResults.agents.length})
                     </div>
                     <div className="space-y-0.5">
@@ -1395,11 +1398,11 @@ export function Dashboard() {
                           key={a.id}
                           type="button"
                           onClick={() => handleSelectAgentResult(a)}
-                          className="w-full text-left flex items-center justify-between p-1.5 hover:bg-[#1e2230]/80 rounded-md group transition"
+                          className="w-full text-left flex items-center justify-between p-1.5 hover:bg-slate-200 dark:hover:bg-[#1e2230]/80 rounded-md group transition"
                         >
                           <div className="flex items-center space-x-2 min-w-0">
-                            <Bot className="w-3.5 h-3.5 text-violet-400 shrink-0" />
-                            <span className="text-xs font-semibold text-slate-200 truncate">{a.name}</span>
+                            <Bot className="w-3.5 h-3.5 text-violet-800 dark:text-violet-400 shrink-0" />
+                            <span className="text-xs font-semibold text-slate-900 dark:text-slate-200 truncate">{a.name}</span>
                           </div>
                         </button>
                       ))}
@@ -1410,7 +1413,7 @@ export function Dashboard() {
                 {/* Category: AI Templates */}
                 {searchResults.templates.length > 0 && (
                   <div className="p-2">
-                    <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-2 mb-1">
+                    <div className="text-[9px] font-bold text-slate-600 dark:text-slate-500 uppercase tracking-widest px-2 mb-1">
                       AI Templates ({searchResults.templates.length})
                     </div>
                     <div className="space-y-0.5">
@@ -1419,13 +1422,13 @@ export function Dashboard() {
                           key={t.id}
                           type="button"
                           onClick={() => handleSelectTemplateResult(t)}
-                          className="w-full text-left flex items-center justify-between p-1.5 hover:bg-[#1e2230]/80 rounded-md group transition"
+                          className="w-full text-left flex items-center justify-between p-1.5 hover:bg-slate-200 dark:hover:bg-[#1e2230]/80 rounded-md group transition"
                         >
                           <div className="flex items-center space-x-2 min-w-0">
-                            <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <Sparkles className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400 shrink-0" />
                             <div className="min-w-0">
-                              <span className="text-xs font-semibold text-slate-200 truncate block">{t.title}</span>
-                              <span className="text-[10px] text-slate-400 truncate block">{t.subtitle}</span>
+                              <span className="text-xs font-semibold text-slate-900 dark:text-slate-200 truncate block">{t.title}</span>
+                              <span className="text-[10px] text-slate-700 dark:text-slate-400 truncate block">{t.subtitle}</span>
                             </div>
                           </div>
                         </button>
@@ -1437,7 +1440,7 @@ export function Dashboard() {
                 {/* Category: Automation History */}
                 {searchResults.automation.length > 0 && (
                   <div className="p-2">
-                    <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-2 mb-1">
+                    <div className="text-[9px] font-bold text-slate-600 dark:text-slate-500 uppercase tracking-widest px-2 mb-1">
                       Automation ({searchResults.automation.length})
                     </div>
                     <div className="space-y-0.5">
@@ -1446,10 +1449,10 @@ export function Dashboard() {
                           key={item.id}
                           type="button"
                           onClick={() => handleSelectAutomationResult(item)}
-                          className="w-full text-left flex items-center justify-between p-1.5 hover:bg-[#1e2230]/80 rounded-md group transition"
+                          className="w-full text-left flex items-center justify-between p-1.5 hover:bg-slate-200 dark:hover:bg-[#1e2230]/80 rounded-md group transition"
                         >
                           <div className="flex items-center space-x-2 min-w-0">
-                            <span className="text-xs font-semibold text-slate-200 truncate">{item.title}</span>
+                            <span className="text-xs font-semibold text-slate-900 dark:text-slate-200 truncate">{item.title}</span>
                           </div>
                         </button>
                       ))}
@@ -1460,7 +1463,7 @@ export function Dashboard() {
                 {/* Category: Activities */}
                 {searchResults.activities.length > 0 && (
                   <div className="p-2">
-                    <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-2 mb-1">
+                    <div className="text-[9px] font-bold text-slate-600 dark:text-slate-500 uppercase tracking-widest px-2 mb-1">
                       Activities ({searchResults.activities.length})
                     </div>
                     <div className="space-y-0.5">
@@ -1469,10 +1472,10 @@ export function Dashboard() {
                           key={act.id}
                           type="button"
                           onClick={() => handleSelectActivityResult(act)}
-                          className="w-full text-left flex items-center justify-between p-1.5 hover:bg-[#1e2230]/80 rounded-md group transition"
+                          className="w-full text-left flex items-center justify-between p-1.5 hover:bg-slate-200 dark:hover:bg-[#1e2230]/80 rounded-md group transition"
                         >
                           <div className="flex items-center space-x-2 min-w-0">
-                            <span className="text-xs text-slate-300 truncate">{act.description}</span>
+                            <span className="text-xs text-slate-800 dark:text-slate-300 truncate">{act.description}</span>
                           </div>
                         </button>
                       ))}
@@ -1487,7 +1490,7 @@ export function Dashboard() {
                  searchResults.automation.length === 0 &&
                  searchResults.activities.length === 0 && (
                   <div className="p-4 text-center">
-                    <p className="text-xs font-bold text-slate-400">No results found</p>
+                    <p className="text-xs font-bold text-slate-700 dark:text-slate-400">No results found</p>
                   </div>
                 )}
               </div>
@@ -1501,32 +1504,32 @@ export function Dashboard() {
             )}
           </div>
           {/* Mobile Tab Swapper */}
-          <div className="flex md:hidden overflow-x-auto space-x-2 pb-4 mb-4 border-b border-slate-800 font-mono text-xs">
-            <button onClick={() => setActiveTab('overview')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'overview' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'}`}>Overview</button>
-            <button onClick={() => setActiveTab('activity_feed')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'activity_feed' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'}`}>Activity Feed</button>
-            <button onClick={() => setActiveTab('blog')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'blog' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'}`}>Blog</button>
-            <button onClick={() => setActiveTab('ecom')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'ecom' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'}`}>Ecom</button>
-            <button onClick={() => setActiveTab('scheduler')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'scheduler' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'}`}>Social</button>
-            <button onClick={() => setActiveTab('memory')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'memory' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'}`}>Memory</button>
-            <button onClick={() => setActiveTab('revenue')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'revenue' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'}`}>Revenue</button>
-            <button onClick={() => setActiveTab('agents')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'agents' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'}`}>Agents</button>
-            <button onClick={() => setActiveTab('builder')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'builder' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-300'}`}>Builder</button>
+          <div className="flex md:hidden overflow-x-auto space-x-2 pb-4 mb-4 border-b border-slate-300 dark:border-slate-800 font-mono text-xs">
+            <button onClick={() => setActiveTab('overview')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'overview' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Overview</button>
+            <button onClick={() => setActiveTab('activity_feed')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'activity_feed' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Activity Feed</button>
+            <button onClick={() => setActiveTab('blog')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'blog' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Blog</button>
+            <button onClick={() => setActiveTab('ecom')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'ecom' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Ecom</button>
+            <button onClick={() => setActiveTab('scheduler')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'scheduler' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Social</button>
+            <button onClick={() => setActiveTab('memory')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'memory' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Memory</button>
+            <button onClick={() => setActiveTab('revenue')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'revenue' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Revenue</button>
+            <button onClick={() => setActiveTab('agents')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'agents' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Agents</button>
+            <button onClick={() => setActiveTab('builder')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'builder' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Builder</button>
           </div>
 
           {/* Modal / Dialog for creating a project */}
           {isCreatingProject && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-              <div className="bg-[#12141c] border border-slate-800 rounded-xl p-6 w-full max-w-md shadow-2xl">
-                <h3 className="text-lg font-bold text-slate-100 mb-4 flex items-center space-x-2">
-                  <Database className="w-5 h-5 text-emerald-400" />
+              <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 w-full max-w-md shadow-2xl">
+                <h3 className="text-lg font-bold text-slate-950 dark:text-slate-100 mb-4 flex items-center space-x-2">
+                  <Database className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                   <span>Create Workspace Folder</span>
                 </h3>
                 <form onSubmit={handleCreateProject} className="space-y-4">
                   <div>
-                    <label className="block text-xs text-slate-400 font-bold mb-2">Workspace Name</label>
+                    <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-2">Workspace Name</label>
                     <input
                       type="text"
-                      className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                      className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                       placeholder="e.g. Health & Fitness Blog"
                       value={newProjectName}
                       onChange={(e) => setNewProjectName(e.target.value)}
@@ -1538,7 +1541,7 @@ export function Dashboard() {
                     <button
                       type="button"
                       onClick={() => setIsCreatingProject(false)}
-                      className="px-4 py-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-semibold"
+                      className="px-4 py-2 text-xs bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-300 rounded-lg font-semibold"
                     >
                       Cancel
                     </button>
@@ -1575,10 +1578,10 @@ export function Dashboard() {
 
           {/* If there are no workspaces created yet and on workspace-dependent tab */}
           {projects.length === 0 && !projectsLoading && activeTab !== 'toolbox' && activeTab !== 'vibe' && activeTab !== 'empire' && (
-            <div className="flex flex-col items-center justify-center text-center py-20 bg-[#12141c] border border-slate-800 rounded-2xl max-w-2xl mx-auto p-8 shadow-xl">
+            <div className="flex flex-col items-center justify-center text-center py-20 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-2xl max-w-2xl mx-auto p-8 shadow-xl">
               <Database className="w-16 h-16 text-emerald-500/30 mb-4 animate-pulse" />
-              <h2 className="text-2xl font-black mb-2 text-slate-200">Initialize Your First Workspace</h2>
-              <p className="text-sm text-slate-400 max-w-md mb-8">
+              <h2 className="text-2xl font-black mb-2 text-slate-900 dark:text-slate-200">Initialize Your First Workspace</h2>
+              <p className="text-sm text-slate-700 dark:text-slate-400 max-w-md mb-8">
                 Create a project workspace first. This container stores your blog production queues, e-commerce affiliate funnels, memories, and automations.
               </p>
               <button
@@ -1596,15 +1599,15 @@ export function Dashboard() {
             <div className="space-y-6">
               
               {/* Active Project Banner */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between p-5 bg-[#12141c] border border-slate-800 rounded-xl">
+              <div className="flex flex-col md:flex-row md:items-center justify-between p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl">
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="p-1 bg-emerald-600/15 text-emerald-400 rounded text-[10px] uppercase font-bold tracking-wider font-mono">
+                    <span className="p-1 bg-emerald-600/15 text-emerald-700 dark:text-emerald-400 rounded text-[10px] uppercase font-bold tracking-wider font-mono">
                       Active Workspace
                     </span>
-                    <span className="text-xs text-slate-500 font-mono">ID: {currentProject.id}</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-500 font-mono">ID: {currentProject.id}</span>
                   </div>
-                  <h2 className="text-2xl font-black text-slate-100 mt-1">{currentProject.name}</h2>
+                  <h2 className="text-2xl font-black text-slate-950 dark:text-slate-100 mt-1">{currentProject.name}</h2>
                 </div>
                 <div className="flex items-center space-x-3 mt-4 md:mt-0">
                   {/* Active Tool Preferred Pin Quick Action */}
@@ -1618,11 +1621,11 @@ export function Dashboard() {
                           onClick={(e) => handleToggleFavorite(activeTool.id, activeTool.name, e)}
                           className={`flex items-center space-x-1.5 px-3 py-2 text-xs rounded-lg font-bold border transition ${
                             isFav 
-                              ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30' 
-                              : 'bg-slate-800/80 text-slate-300 border-slate-700 hover:text-amber-300 hover:border-amber-500/40'
+                              ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 border-amber-500/40 hover:bg-amber-500/30' 
+                              : 'bg-slate-200 dark:bg-slate-800/80 text-slate-800 dark:text-slate-300 border-slate-400 dark:border-slate-700 hover:text-amber-300 hover:border-amber-500/40'
                           }`}
                         >
-                          <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-amber-400 text-amber-400' : ''}`} />
+                          <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-amber-400 text-amber-800 dark:text-amber-400' : ''}`} />
                           <span>{isFav ? 'Pinned to Favorites' : 'Pin to Preferred Tools'}</span>
                         </button>
                       );
@@ -1630,7 +1633,7 @@ export function Dashboard() {
                   )}
                   <button
                     onClick={() => handleDeleteProject(currentProject.id)}
-                    className="flex items-center space-x-1 px-3 py-2 text-xs bg-rose-950/20 text-rose-400 border border-rose-950 hover:bg-rose-950/40 rounded-lg transition"
+                    className="flex items-center space-x-1 px-3 py-2 text-xs bg-rose-100 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 border border-rose-700/40 dark:border-rose-950 hover:bg-rose-950/40 rounded-lg transition"
                     title="Delete Workspace"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -1643,34 +1646,34 @@ export function Dashboard() {
               {activeTab === 'overview' && (
                 <div className="space-y-6">
                   {/* ⭐ Preferred AI Tools - Stored in Firestore */}
-                  <div className="p-6 bg-gradient-to-r from-[#141824] via-[#12141c] to-[#171424] border border-amber-500/30 rounded-2xl shadow-xl space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+                  <div className="p-6 bg-gradient-to-r from-[#141824] via-white dark:via-[#12141c] to-[#171424] border border-amber-500/30 rounded-2xl shadow-xl space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-300 dark:border-slate-800 pb-4">
                       <div>
                         <div className="flex items-center space-x-2">
-                          <span className="p-1 bg-amber-500/20 text-amber-400 rounded text-[10px] uppercase font-bold tracking-wider font-mono border border-amber-500/30 flex items-center gap-1">
+                          <span className="p-1 bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-400 rounded text-[10px] uppercase font-bold tracking-wider font-mono border border-amber-500/30 flex items-center gap-1">
                             <Star className="w-3 h-3 fill-amber-400" />
                             <span>Personalized Suite</span>
                           </span>
-                          <span className="text-xs text-slate-400 font-mono">Synced with Firestore</span>
+                          <span className="text-xs text-slate-700 dark:text-slate-400 font-mono">Synced with Firestore</span>
                         </div>
-                        <h3 className="text-xl font-black text-slate-100 mt-1 flex items-center space-x-2">
+                        <h3 className="text-xl font-black text-slate-950 dark:text-slate-100 mt-1 flex items-center space-x-2">
                           <span>⭐ Your Preferred AI Tools</span>
-                          <span className="text-xs bg-amber-500/20 text-amber-300 px-2.5 py-0.5 rounded-full font-mono border border-amber-500/30 font-bold">
+                          <span className="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 px-2.5 py-0.5 rounded-full font-mono border border-amber-500/30 font-bold">
                             {favoriteToolIds.length} Pinned
                           </span>
                         </h3>
                       </div>
-                      <p className="text-xs text-slate-400 max-w-sm">
+                      <p className="text-xs text-slate-700 dark:text-slate-400 max-w-sm">
                         Click the star icon on any tool card below or in the sidebar to pin your preferred tools at the top of your workstation interface.
                       </p>
                     </div>
 
                     {/* Preferred Cards Grid */}
                     {favoriteToolIds.length === 0 ? (
-                      <div className="text-center py-8 bg-[#171a24]/50 border border-dashed border-slate-800 rounded-xl p-4">
+                      <div className="text-center py-8 bg-slate-100/80 dark:bg-[#171a24]/50 border border-dashed border-slate-300 dark:border-slate-800 rounded-xl p-4">
                         <Star className="w-8 h-8 text-amber-500/40 mx-auto mb-2 animate-bounce" />
-                        <p className="text-sm font-bold text-slate-300">No tools pinned to your preferred suite yet</p>
-                        <p className="text-xs text-slate-500 mt-1">Star any tool in the directory below or in the navigation sidebar to surface it here.</p>
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-300">No tools pinned to your preferred suite yet</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-500 mt-1">Star any tool in the directory below or in the navigation sidebar to surface it here.</p>
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1684,8 +1687,8 @@ export function Dashboard() {
                             >
                               <div>
                                 <div className="flex items-center justify-between mb-3">
-                                  <div className="p-2.5 bg-[#171a24] rounded-lg border border-slate-700 text-slate-100 group-hover:scale-105 transition">
-                                    <ToolIcon className="w-5 h-5 text-amber-400" />
+                                  <div className="p-2.5 bg-slate-100 dark:bg-[#171a24] rounded-lg border border-slate-400 dark:border-slate-700 text-slate-950 dark:text-slate-100 group-hover:scale-105 transition">
+                                    <ToolIcon className="w-5 h-5 text-amber-800 dark:text-amber-400" />
                                   </div>
                                   <div className="flex items-center space-x-2">
                                     <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border ${tool.badgeBg}`}>
@@ -1693,20 +1696,20 @@ export function Dashboard() {
                                     </span>
                                     <button
                                       onClick={(e) => handleToggleFavorite(tool.id, tool.name, e)}
-                                      className="p-1 text-amber-400 hover:text-rose-400 hover:bg-rose-950/30 rounded transition"
+                                      className="p-1 text-amber-800 dark:text-amber-400 hover:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-950/30 rounded transition"
                                       title="Unpin tool"
                                     >
-                                      <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                                      <Star className="w-4 h-4 fill-amber-400 text-amber-800 dark:text-amber-400" />
                                     </button>
                                   </div>
                                 </div>
-                                <h4 className="text-base font-bold text-slate-100 group-hover:text-amber-300 transition flex items-center space-x-1">
+                                <h4 className="text-base font-bold text-slate-950 dark:text-slate-100 group-hover:text-amber-300 transition flex items-center space-x-1">
                                   <span>{tool.name}</span>
                                 </h4>
-                                <span className="text-[10px] text-slate-400 font-mono block mb-2">{tool.category}</span>
-                                <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">{tool.description}</p>
+                                <span className="text-[10px] text-slate-700 dark:text-slate-400 font-mono block mb-2">{tool.category}</span>
+                                <p className="text-xs text-slate-800 dark:text-slate-300 line-clamp-2 leading-relaxed">{tool.description}</p>
                               </div>
-                              <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
+                              <div className="mt-4 pt-3 border-t border-slate-300 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-800 dark:text-amber-400 group-hover:translate-x-1 transition">
                                 <span>Launch Preferred Tool</span>
                                 <ArrowRight className="w-3.5 h-3.5" />
                               </div>
@@ -1719,70 +1722,70 @@ export function Dashboard() {
 
                   {/* Workspace Analytics Metrics */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl relative overflow-hidden">
-                      <div className="text-slate-500 text-xs font-bold font-mono uppercase">AI Blog Posts</div>
-                      <div className="text-3xl font-black text-slate-100 mt-2">{jobs.length}</div>
-                      <div className="text-xs text-emerald-400 font-mono mt-1 flex items-center space-x-1">
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl relative overflow-hidden">
+                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">AI Blog Posts</div>
+                      <div className="text-3xl font-black text-slate-950 dark:text-slate-100 mt-2">{jobs.length}</div>
+                      <div className="text-xs text-emerald-700 dark:text-emerald-400 font-mono mt-1 flex items-center space-x-1">
                         <CheckCircle className="w-3 h-3" />
                         <span>{jobs.filter(j => j.status === 'Completed').length} Published successfully</span>
                       </div>
                     </div>
 
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl">
-                      <div className="text-slate-500 text-xs font-bold font-mono uppercase">Affiliate Products</div>
-                      <div className="text-3xl font-black text-slate-100 mt-2">{products.length}</div>
-                      <div className="text-xs text-cyan-400 font-mono mt-1">Ecom Money funnels loaded</div>
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl">
+                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">Affiliate Products</div>
+                      <div className="text-3xl font-black text-slate-950 dark:text-slate-100 mt-2">{products.length}</div>
+                      <div className="text-xs text-cyan-800 dark:text-cyan-400 font-mono mt-1">Ecom Money funnels loaded</div>
                     </div>
 
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl">
-                      <div className="text-slate-500 text-xs font-bold font-mono uppercase">Knowledge Nodes</div>
-                      <div className="text-3xl font-black text-slate-100 mt-2">{memories.length}</div>
-                      <div className="text-xs text-indigo-400 font-mono mt-1">SaaS semantic alignment memory</div>
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl">
+                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">Knowledge Nodes</div>
+                      <div className="text-3xl font-black text-slate-950 dark:text-slate-100 mt-2">{memories.length}</div>
+                      <div className="text-xs text-indigo-800 dark:text-indigo-400 font-mono mt-1">SaaS semantic alignment memory</div>
                     </div>
 
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl">
-                      <div className="text-slate-500 text-xs font-bold font-mono uppercase">Schedules Queued</div>
-                      <div className="text-3xl font-black text-slate-100 mt-2">{schedules.length}</div>
-                      <div className="text-xs text-amber-400 font-mono mt-1">Social postings automation</div>
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl">
+                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">Schedules Queued</div>
+                      <div className="text-3xl font-black text-slate-950 dark:text-slate-100 mt-2">{schedules.length}</div>
+                      <div className="text-xs text-amber-800 dark:text-amber-400 font-mono mt-1">Social postings automation</div>
                     </div>
 
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl">
-                      <div className="text-slate-500 text-xs font-bold font-mono uppercase">Custom AI Agents</div>
-                      <div className="text-3xl font-black text-slate-100 mt-2">{agents.length}</div>
-                      <div className="text-xs text-teal-400 font-mono mt-1">Intelligent custom persona agents</div>
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl">
+                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">Custom AI Agents</div>
+                      <div className="text-3xl font-black text-slate-950 dark:text-slate-100 mt-2">{agents.length}</div>
+                      <div className="text-xs text-teal-700 dark:text-teal-400 font-mono mt-1">Intelligent custom persona agents</div>
                     </div>
                   </div>
 
                   {/* Dual Grid */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Recent Jobs pipeline */}
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl space-y-4">
-                      <div className="flex justify-between items-center pb-2 border-b border-slate-800">
-                        <h3 className="font-bold text-slate-200 flex items-center space-x-2">
-                          <BookOpen className="w-4 h-4 text-emerald-400" />
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
+                      <div className="flex justify-between items-center pb-2 border-b border-slate-300 dark:border-slate-800">
+                        <h3 className="font-bold text-slate-900 dark:text-slate-200 flex items-center space-x-2">
+                          <BookOpen className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
                           <span>Blog Production Pipeline</span>
                         </h3>
-                        <button onClick={() => setActiveTab('blog')} className="text-xs text-emerald-400 font-bold hover:underline">
+                        <button onClick={() => setActiveTab('blog')} className="text-xs text-emerald-700 dark:text-emerald-400 font-bold hover:underline">
                           Go to Factory &rarr;
                         </button>
                       </div>
 
                       <div className="space-y-2 max-h-[250px] overflow-y-auto">
-                        {jobsLoading && <Loader2 className="w-6 h-6 animate-spin text-emerald-400 mx-auto" />}
+                        {jobsLoading && <Loader2 className="w-6 h-6 animate-spin text-emerald-700 dark:text-emerald-400 mx-auto" />}
                         {jobs.length === 0 && !jobsLoading && (
-                          <p className="text-slate-500 text-sm py-4 text-center">No blog production tasks initiated yet.</p>
+                          <p className="text-slate-600 dark:text-slate-500 text-sm py-4 text-center">No blog production tasks initiated yet.</p>
                         )}
                         {jobs.map(job => (
-                          <div key={job.id} className="flex justify-between items-center p-3 bg-[#171a24] rounded-lg border border-slate-800">
+                          <div key={job.id} className="flex justify-between items-center p-3 bg-slate-100 dark:bg-[#171a24] rounded-lg border border-slate-300 dark:border-slate-800">
                             <div>
-                              <p className="text-sm font-bold text-slate-200 line-clamp-1">{job.topic}</p>
-                              <span className="text-[10px] font-mono text-slate-500">Created {job.createdAt?.toDate().toLocaleTimeString()}</span>
+                              <p className="text-sm font-bold text-slate-900 dark:text-slate-200 line-clamp-1">{job.topic}</p>
+                              <span className="text-[10px] font-mono text-slate-600 dark:text-slate-500">Created {job.createdAt?.toDate().toLocaleTimeString()}</span>
                             </div>
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono ${
-                              job.status === 'Completed' ? 'bg-emerald-950 text-emerald-400 border border-emerald-900' :
-                              job.status === 'Processing' ? 'bg-amber-950 text-amber-400 border border-amber-900 animate-pulse' :
-                              job.status === 'Failed' ? 'bg-rose-950 text-rose-400 border border-rose-900' :
-                              'bg-slate-800 text-slate-400'
+                              job.status === 'Completed' ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-700/40 dark:border-emerald-900' :
+                              job.status === 'Processing' ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-400 border border-amber-700/40 dark:border-amber-900 animate-pulse' :
+                              job.status === 'Failed' ? 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400 border border-rose-700/40 dark:border-rose-900' :
+                              'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
                             }`}>
                               {job.status}
                             </span>
@@ -1792,27 +1795,27 @@ export function Dashboard() {
                     </div>
 
                     {/* Ecom Affiliates pipeline */}
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl space-y-4">
-                      <div className="flex justify-between items-center pb-2 border-b border-slate-800">
-                        <h3 className="font-bold text-slate-200 flex items-center space-x-2">
-                          <Sparkles className="w-4 h-4 text-emerald-400" />
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
+                      <div className="flex justify-between items-center pb-2 border-b border-slate-300 dark:border-slate-800">
+                        <h3 className="font-bold text-slate-900 dark:text-slate-200 flex items-center space-x-2">
+                          <Sparkles className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
                           <span>Affiliate Landing Copy suites</span>
                         </h3>
-                        <button onClick={() => setActiveTab('ecom')} className="text-xs text-emerald-400 font-bold hover:underline">
+                        <button onClick={() => setActiveTab('ecom')} className="text-xs text-emerald-700 dark:text-emerald-400 font-bold hover:underline">
                           Go to Funnels &rarr;
                         </button>
                       </div>
 
                       <div className="space-y-2 max-h-[250px] overflow-y-auto">
-                        {productsLoading && <Loader2 className="w-6 h-6 animate-spin text-emerald-400 mx-auto" />}
+                        {productsLoading && <Loader2 className="w-6 h-6 animate-spin text-emerald-700 dark:text-emerald-400 mx-auto" />}
                         {products.length === 0 && !productsLoading && (
-                          <p className="text-slate-500 text-sm py-4 text-center">No affiliate marketing links analyzed yet.</p>
+                          <p className="text-slate-600 dark:text-slate-500 text-sm py-4 text-center">No affiliate marketing links analyzed yet.</p>
                         )}
                         {products.map(p => (
-                          <div key={p.id} className="flex justify-between items-center p-3 bg-[#171a24] rounded-lg border border-slate-800">
+                          <div key={p.id} className="flex justify-between items-center p-3 bg-slate-100 dark:bg-[#171a24] rounded-lg border border-slate-300 dark:border-slate-800">
                             <div className="min-w-0 flex-1 pr-4">
-                              <p className="text-sm font-bold text-slate-200 truncate">{p.url}</p>
-                              <span className="text-[10px] font-mono text-slate-500">Brand: {p.brand} | Region: {p.country}</span>
+                              <p className="text-sm font-bold text-slate-900 dark:text-slate-200 truncate">{p.url}</p>
+                              <span className="text-[10px] font-mono text-slate-600 dark:text-slate-500">Brand: {p.brand} | Region: {p.country}</span>
                             </div>
                             <button
                               onClick={() => {
@@ -1830,22 +1833,22 @@ export function Dashboard() {
                   </div>
 
                   {/* Recent Activity Feed */}
-                  <div id="recent-activities-feed" className="p-5 bg-[#12141c] border border-slate-800 rounded-xl space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800 gap-4">
+                  <div id="recent-activities-feed" className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-300 dark:border-slate-800 gap-4">
                       <div className="flex items-center space-x-2">
-                        <Activity className="w-5 h-5 text-emerald-400" />
+                        <Activity className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                         <div>
-                          <h3 className="font-bold text-slate-100 text-base flex items-center space-x-2">
+                          <h3 className="font-bold text-slate-950 dark:text-slate-100 text-base flex items-center space-x-2">
                             <span>Recent Studio Activity</span>
                             <button
                               onClick={() => setActiveTab('activity_feed')}
-                              className="text-[11px] font-mono text-emerald-400 hover:text-emerald-300 font-bold flex items-center space-x-1 pl-2 hover:underline"
+                              className="text-[11px] font-mono text-emerald-700 dark:text-emerald-400 hover:text-emerald-300 font-bold flex items-center space-x-1 pl-2 hover:underline"
                             >
                               <span>Full Activity Feed</span>
                               <ArrowRight className="w-3 h-3" />
                             </button>
                           </h3>
-                          <p className="text-xs text-slate-400">Chronological history of your workspace actions</p>
+                          <p className="text-xs text-slate-700 dark:text-slate-400">Chronological history of your workspace actions</p>
                         </div>
                       </div>
                       
@@ -1856,9 +1859,9 @@ export function Dashboard() {
                           placeholder="Search actions..."
                           value={activitySearch}
                           onChange={(e) => setActivitySearch(e.target.value)}
-                          className="w-full bg-[#171a24] border border-slate-700 rounded-lg px-3 py-1.5 pl-8 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-500"
+                          className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-1.5 pl-8 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-600 dark:placeholder-slate-500"
                         />
-                        <Clock className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
+                        <Clock className="w-3.5 h-3.5 text-slate-600 dark:text-slate-500 absolute left-2.5 top-2.5" />
                       </div>
                     </div>
 
@@ -1878,7 +1881,7 @@ export function Dashboard() {
                           className={`px-3 py-1 rounded-full transition font-semibold ${
                             activityFilter === tab.id
                               ? 'bg-emerald-600 text-white'
-                              : 'bg-[#181b24] text-slate-400 hover:text-slate-200 border border-slate-800'
+                              : 'bg-slate-100 dark:bg-[#181b24] text-slate-700 dark:text-slate-400 hover:text-slate-950 dark:hover:text-slate-200 border border-slate-300 dark:border-slate-800'
                           }`}
                         >
                           {tab.label}
@@ -1890,16 +1893,16 @@ export function Dashboard() {
                     <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
                       {activitiesLoading && (
                         <div className="py-8 text-center">
-                          <Loader2 className="w-6 h-6 animate-spin text-emerald-400 mx-auto" />
-                          <p className="text-xs text-slate-500 mt-2">Loading activity logs...</p>
+                          <Loader2 className="w-6 h-6 animate-spin text-emerald-700 dark:text-emerald-400 mx-auto" />
+                          <p className="text-xs text-slate-600 dark:text-slate-500 mt-2">Loading activity logs...</p>
                         </div>
                       )}
 
                       {!activitiesLoading && activities.length === 0 && (
-                        <div className="py-12 text-center border border-dashed border-slate-800 rounded-lg">
+                        <div className="py-12 text-center border border-dashed border-slate-300 dark:border-slate-800 rounded-lg">
                           <Activity className="w-10 h-10 text-slate-600 mx-auto mb-2 opacity-40" />
-                          <p className="text-slate-400 text-sm font-semibold">Activity log is empty</p>
-                          <p className="text-slate-500 text-xs mt-1">Actions you take in the Studio will show up here automatically.</p>
+                          <p className="text-slate-700 dark:text-slate-400 text-sm font-semibold">Activity log is empty</p>
+                          <p className="text-slate-600 dark:text-slate-500 text-xs mt-1">Actions you take in the Studio will show up here automatically.</p>
                         </div>
                       )}
 
@@ -1921,7 +1924,7 @@ export function Dashboard() {
 
                         if (filtered.length === 0) {
                           return (
-                            <p className="text-slate-500 text-sm py-8 text-center">
+                            <p className="text-slate-600 dark:text-slate-500 text-sm py-8 text-center">
                               No activity logs match your filter criteria or search query.
                             </p>
                           );
@@ -1929,35 +1932,35 @@ export function Dashboard() {
 
                         const getActivityIcon = (type: string) => {
                           switch (type) {
-                            case 'project_create': return <Database className="w-4 h-4 text-indigo-400" />;
-                            case 'project_delete': return <Trash2 className="w-4 h-4 text-rose-400" />;
-                            case 'blog_generate': return <BookOpen className="w-4 h-4 text-emerald-400" />;
-                            case 'ecom_generate': return <Sparkles className="w-4 h-4 text-cyan-400" />;
-                            case 'memory_create': return <Brain className="w-4 h-4 text-purple-400" />;
-                            case 'memory_evolve': return <Zap className="w-4 h-4 text-amber-400" />;
-                            case 'social_schedule': return <Calendar className="w-4 h-4 text-sky-400" />;
-                            case 'agent_create': return <Bot className="w-4 h-4 text-violet-400" />;
-                            case 'page_create': return <Layout className="w-4 h-4 text-pink-400" />;
-                            case 'page_update': return <RefreshCw className="w-4 h-4 text-blue-400" />;
-                            case 'page_delete': return <Trash2 className="w-4 h-4 text-rose-400" />;
-                            default: return <Activity className="w-4 h-4 text-slate-400" />;
+                            case 'project_create': return <Database className="w-4 h-4 text-indigo-800 dark:text-indigo-400" />;
+                            case 'project_delete': return <Trash2 className="w-4 h-4 text-rose-700 dark:text-rose-400" />;
+                            case 'blog_generate': return <BookOpen className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />;
+                            case 'ecom_generate': return <Sparkles className="w-4 h-4 text-cyan-800 dark:text-cyan-400" />;
+                            case 'memory_create': return <Brain className="w-4 h-4 text-purple-800 dark:text-purple-400" />;
+                            case 'memory_evolve': return <Zap className="w-4 h-4 text-amber-800 dark:text-amber-400" />;
+                            case 'social_schedule': return <Calendar className="w-4 h-4 text-sky-800 dark:text-sky-400" />;
+                            case 'agent_create': return <Bot className="w-4 h-4 text-violet-800 dark:text-violet-400" />;
+                            case 'page_create': return <Layout className="w-4 h-4 text-pink-800 dark:text-pink-400" />;
+                            case 'page_update': return <RefreshCw className="w-4 h-4 text-blue-800 dark:text-blue-400" />;
+                            case 'page_delete': return <Trash2 className="w-4 h-4 text-rose-700 dark:text-rose-400" />;
+                            default: return <Activity className="w-4 h-4 text-slate-700 dark:text-slate-400" />;
                           }
                         };
 
                         const getActivityBg = (type: string) => {
                           switch (type) {
-                            case 'project_create': return 'bg-indigo-950/20 border-indigo-900/40';
-                            case 'project_delete': return 'bg-rose-950/20 border-rose-900/40';
-                            case 'blog_generate': return 'bg-emerald-950/20 border-emerald-900/40';
-                            case 'ecom_generate': return 'bg-cyan-950/20 border-cyan-900/40';
-                            case 'memory_create': return 'bg-purple-950/20 border-purple-900/40';
-                            case 'memory_evolve': return 'bg-amber-950/20 border-amber-900/40';
-                            case 'social_schedule': return 'bg-sky-950/20 border-sky-900/40';
-                            case 'agent_create': return 'bg-violet-950/20 border-violet-900/40';
-                            case 'page_create': return 'bg-pink-950/20 border-pink-900/40';
-                            case 'page_update': return 'bg-blue-950/20 border-blue-900/40';
-                            case 'page_delete': return 'bg-rose-950/20 border-rose-900/40';
-                            default: return 'bg-slate-950/20 border-slate-900/40';
+                            case 'project_create': return 'bg-indigo-50 dark:bg-indigo-950/20 border-indigo-300 dark:border-indigo-900/40';
+                            case 'project_delete': return 'bg-rose-950/20 border-rose-300 dark:border-rose-900/40';
+                            case 'blog_generate': return 'bg-emerald-950/20 border-emerald-300 dark:border-emerald-900/40';
+                            case 'ecom_generate': return 'bg-cyan-50 dark:bg-cyan-950/20 border-cyan-300 dark:border-cyan-900/40';
+                            case 'memory_create': return 'bg-purple-50 dark:bg-purple-950/20 border-purple-300 dark:border-purple-900/40';
+                            case 'memory_evolve': return 'bg-amber-50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-900/40';
+                            case 'social_schedule': return 'bg-sky-50 dark:bg-sky-950/20 border-sky-300 dark:border-sky-900/40';
+                            case 'agent_create': return 'bg-violet-50 dark:bg-violet-950/20 border-violet-300 dark:border-violet-900/40';
+                            case 'page_create': return 'bg-pink-50 dark:bg-pink-950/20 border-pink-300 dark:border-pink-900/40';
+                            case 'page_update': return 'bg-blue-50 dark:bg-blue-950/20 border-blue-300 dark:border-blue-900/40';
+                            case 'page_delete': return 'bg-rose-950/20 border-rose-300 dark:border-rose-900/40';
+                            default: return 'bg-slate-100 dark:bg-slate-950/20 border-slate-300 dark:border-slate-900/40';
                           }
                         };
 
@@ -1968,16 +1971,16 @@ export function Dashboard() {
                           return (
                             <div
                               key={act.id}
-                              className="group flex items-center justify-between p-3 bg-[#171a24]/60 hover:bg-[#171a24] rounded-lg border border-slate-800 transition duration-150"
+                              className="group flex items-center justify-between p-3 bg-slate-100 dark:bg-[#171a24]/60 hover:bg-[#171a24] rounded-lg border border-slate-300 dark:border-slate-800 transition duration-150"
                             >
                               <div className="flex items-center space-x-3 min-w-0">
                                 <div className={`p-2 rounded-lg border ${getActivityBg(act.type)} flex items-center justify-center shrink-0`}>
                                   {getActivityIcon(act.type)}
                                 </div>
                                 <div className="min-w-0">
-                                  <p className="text-sm font-semibold text-slate-200 line-clamp-1">{act.description}</p>
-                                  <div className="flex items-center space-x-2 mt-0.5 text-[10px] font-mono text-slate-500">
-                                    <span className="uppercase tracking-wider font-bold text-slate-400">{act.type?.replace('_', ' ')}</span>
+                                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-200 line-clamp-1">{act.description}</p>
+                                  <div className="flex items-center space-x-2 mt-0.5 text-[10px] font-mono text-slate-600 dark:text-slate-500">
+                                    <span className="uppercase tracking-wider font-bold text-slate-700 dark:text-slate-400">{act.type?.replace('_', ' ')}</span>
                                     <span>&bull;</span>
                                     <span className="text-emerald-500 font-bold">{workspaceLabel}</span>
                                     <span>&bull;</span>
@@ -1988,7 +1991,7 @@ export function Dashboard() {
                               
                               <button
                                 onClick={(e) => handleDeleteActivity(act.id, e)}
-                                className="opacity-0 group-hover:opacity-100 p-1.5 bg-rose-950/20 hover:bg-rose-900/40 text-rose-400 border border-transparent hover:border-rose-900 rounded-md transition shrink-0 ml-2"
+                                className="opacity-0 group-hover:opacity-100 p-1.5 bg-rose-100 dark:bg-rose-950/20 hover:bg-rose-900/40 text-rose-700 dark:text-rose-400 border border-transparent hover:border-rose-900 rounded-md transition shrink-0 ml-2"
                                 title="Delete log entry"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -2006,21 +2009,21 @@ export function Dashboard() {
               {activeTab === 'activity_feed' && (
                 <div className="space-y-6">
                   {/* Top Header Card */}
-                  <div className="p-6 bg-[#12141c] border border-slate-800 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg">
+                  <div className="p-6 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg">
                     <div className="space-y-1">
                       <div className="flex items-center space-x-3">
-                        <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
-                          <Activity className="w-6 h-6 text-emerald-400" />
+                        <div className="p-2.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                          <Activity className="w-6 h-6 text-emerald-700 dark:text-emerald-400" />
                         </div>
                         <div>
-                          <h2 className="text-xl font-bold text-slate-100 flex items-center space-x-2">
+                          <h2 className="text-xl font-bold text-slate-950 dark:text-slate-100 flex items-center space-x-2">
                             <span>Gemini API & Activity Feed</span>
-                            <span className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 font-semibold">
+                            <span className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-700/40 dark:border-emerald-800/60 font-semibold">
                               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                               <span>Firestore Live Sync</span>
                             </span>
                           </h2>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-slate-700 dark:text-slate-400">
                             Real-time audit log of all interactions with Google Gemini API, agent sandboxes, and studio workflows stored persistently in Firestore.
                           </p>
                         </div>
@@ -2031,7 +2034,7 @@ export function Dashboard() {
                       <button
                         onClick={handleClearAllActivities}
                         disabled={activities.length === 0}
-                        className="px-3.5 py-2 bg-rose-950/30 hover:bg-rose-900/50 text-rose-400 border border-rose-900/50 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-xs font-bold transition flex items-center space-x-1.5"
+                        className="px-3.5 py-2 bg-rose-100 dark:bg-rose-950/30 hover:bg-rose-200 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 border border-rose-700/40 dark:border-rose-900/50 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-xs font-bold transition flex items-center space-x-1.5"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         <span>Purge Activity Log</span>
@@ -2040,20 +2043,20 @@ export function Dashboard() {
                   </div>
 
                   {/* Quick Gemini API Interactive Logger */}
-                  <div className="p-5 bg-[#12141c] border border-slate-800 rounded-2xl space-y-4 shadow-md">
-                    <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                  <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-2xl space-y-4 shadow-md">
+                    <div className="flex items-center justify-between pb-3 border-b border-slate-300 dark:border-slate-800">
                       <div className="flex items-center space-x-2">
-                        <Sparkles className="w-5 h-5 text-emerald-400" />
-                        <h3 className="font-bold text-slate-200 text-sm">Interactive Gemini API Request Logger</h3>
+                        <Sparkles className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
+                        <h3 className="font-bold text-slate-900 dark:text-slate-200 text-sm">Interactive Gemini API Request Logger</h3>
                       </div>
-                      <span className="text-[10px] font-mono px-2.5 py-0.5 bg-slate-800/80 text-slate-300 rounded-md border border-slate-700">
+                      <span className="text-[10px] font-mono px-2.5 py-0.5 bg-slate-200 dark:bg-slate-800/80 text-slate-800 dark:text-slate-300 rounded-md border border-slate-400 dark:border-slate-700">
                         Model: gemini-3.5-flash
                       </span>
                     </div>
 
                     <form onSubmit={handleQuickGeminiTest} className="space-y-3">
                       <div>
-                        <label className="block text-xs text-slate-400 font-bold mb-1.5">
+                        <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">
                           Execute Gemini Prompt (Logs directly to Firestore activities)
                         </label>
                         <div className="flex gap-2">
@@ -2062,7 +2065,7 @@ export function Dashboard() {
                             placeholder="e.g. Write 3 viral hook titles for a modern AI software product..."
                             value={testGeminiPrompt}
                             onChange={(e) => setTestGeminiPrompt(e.target.value)}
-                            className="flex-1 bg-[#171a24] border border-slate-700 rounded-xl px-4 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                            className="flex-1 bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl px-4 py-2 text-xs text-slate-950 dark:text-slate-100 placeholder-slate-600 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                           />
                           <button
                             type="submit"
@@ -2086,7 +2089,7 @@ export function Dashboard() {
 
                       {/* Prompt Suggestions */}
                       <div className="flex flex-wrap items-center gap-2 pt-1">
-                        <span className="text-[10px] text-slate-500 font-mono">Preset Prompts:</span>
+                        <span className="text-[10px] text-slate-600 dark:text-slate-500 font-mono">Preset Prompts:</span>
                         {[
                           "Summarize 3 growth strategies for e-commerce stores",
                           "Generate 3 catchy blog headlines about AI automation",
@@ -2096,7 +2099,7 @@ export function Dashboard() {
                             key={idx}
                             type="button"
                             onClick={() => setTestGeminiPrompt(suggestion)}
-                            className="text-[10px] bg-[#181b24] hover:bg-[#202534] text-slate-400 hover:text-emerald-400 border border-slate-800 rounded-lg px-2.5 py-1 transition"
+                            className="text-[10px] bg-slate-100 dark:bg-[#181b24] hover:bg-[#202534] text-slate-700 dark:text-slate-400 hover:text-emerald-400 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1 transition"
                           >
                             "{suggestion}"
                           </button>
@@ -2105,20 +2108,20 @@ export function Dashboard() {
                     </form>
 
                     {testGeminiResult && (
-                      <div className="p-3.5 bg-[#171a24] border border-emerald-900/40 rounded-xl space-y-1 text-xs">
-                        <div className="flex items-center justify-between text-[10px] font-mono text-emerald-400 font-bold">
+                      <div className="p-3.5 bg-slate-100 dark:bg-[#171a24] border border-emerald-900/40 rounded-xl space-y-1 text-xs">
+                        <div className="flex items-center justify-between text-[10px] font-mono text-emerald-700 dark:text-emerald-400 font-bold">
                           <span>Gemini API Output Snippet:</span>
-                          <span className="text-slate-500">✅ Saved to Firestore</span>
+                          <span className="text-slate-600 dark:text-slate-500">✅ Saved to Firestore</span>
                         </div>
-                        <p className="text-slate-200 leading-relaxed font-sans">{testGeminiResult}</p>
+                        <p className="text-slate-900 dark:text-slate-200 leading-relaxed font-sans">{testGeminiResult}</p>
                       </div>
                     )}
                   </div>
 
                   {/* Main Activity Feed Container */}
-                  <div className="p-5 bg-[#12141c] border border-slate-800 rounded-2xl space-y-4">
+                  <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-2xl space-y-4">
                     {/* Filter & Search Bar */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-300 dark:border-slate-800">
                       {/* Search Bar */}
                       <div className="relative max-w-sm w-full">
                         <input
@@ -2126,13 +2129,13 @@ export function Dashboard() {
                           placeholder="Search logs by keyword, prompt or model..."
                           value={activitySearch}
                           onChange={(e) => setActivitySearch(e.target.value)}
-                          className="w-full bg-[#171a24] border border-slate-700 rounded-xl px-3.5 py-2 pl-9 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-500"
+                          className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl px-3.5 py-2 pl-9 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-600 dark:placeholder-slate-500"
                         />
-                        <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+                        <Search className="w-4 h-4 text-slate-600 dark:text-slate-500 absolute left-3 top-2.5" />
                       </div>
 
-                      <div className="text-xs text-slate-400 font-mono">
-                        Showing <span className="text-emerald-400 font-bold">{activities.filter(act => {
+                      <div className="text-xs text-slate-700 dark:text-slate-400 font-mono">
+                        Showing <span className="text-emerald-700 dark:text-emerald-400 font-bold">{activities.filter(act => {
                           if (activitySearch.trim() !== '') {
                             const term = activitySearch.toLowerCase();
                             if (!act.description?.toLowerCase().includes(term) && !act.type?.toLowerCase().includes(term)) {
@@ -2147,7 +2150,7 @@ export function Dashboard() {
                           if (activityFilter === 'social_schedule') return act.type === 'social_schedule';
                           if (activityFilter === 'page_create') return act.type === 'page_create' || act.type === 'page_update';
                           return true;
-                        }).length}</span> of <span className="text-slate-300 font-bold">{activities.length}</span> entries
+                        }).length}</span> of <span className="text-slate-800 dark:text-slate-300 font-bold">{activities.length}</span> entries
                       </div>
                     </div>
 
@@ -2169,7 +2172,7 @@ export function Dashboard() {
                           className={`px-3.5 py-1.5 rounded-full transition font-semibold text-xs ${
                             activityFilter === tab.id
                               ? 'bg-emerald-600 text-white shadow-md'
-                              : 'bg-[#181b24] text-slate-400 hover:text-slate-200 border border-slate-800'
+                              : 'bg-slate-100 dark:bg-[#181b24] text-slate-700 dark:text-slate-400 hover:text-slate-950 dark:hover:text-slate-200 border border-slate-300 dark:border-slate-800'
                           }`}
                         >
                           {tab.label}
@@ -2181,16 +2184,16 @@ export function Dashboard() {
                     <div className="space-y-3 min-h-[300px]">
                       {activitiesLoading && (
                         <div className="py-16 text-center">
-                          <Loader2 className="w-8 h-8 animate-spin text-emerald-400 mx-auto" />
-                          <p className="text-xs text-slate-500 mt-3 font-mono">Syncing real-time activity logs from Firestore...</p>
+                          <Loader2 className="w-8 h-8 animate-spin text-emerald-700 dark:text-emerald-400 mx-auto" />
+                          <p className="text-xs text-slate-600 dark:text-slate-500 mt-3 font-mono">Syncing real-time activity logs from Firestore...</p>
                         </div>
                       )}
 
                       {!activitiesLoading && activities.length === 0 && (
-                        <div className="py-16 text-center border border-dashed border-slate-800 rounded-2xl bg-[#171a24]/30">
+                        <div className="py-16 text-center border border-dashed border-slate-300 dark:border-slate-800 rounded-2xl bg-slate-100/70 dark:bg-[#171a24]/30">
                           <Activity className="w-12 h-12 text-slate-600 mx-auto mb-3 opacity-40" />
-                          <p className="text-slate-300 font-bold text-base">No activity logged yet</p>
-                          <p className="text-slate-500 text-xs mt-1 max-w-sm mx-auto">
+                          <p className="text-slate-800 dark:text-slate-300 font-bold text-base">No activity logged yet</p>
+                          <p className="text-slate-600 dark:text-slate-500 text-xs mt-1 max-w-sm mx-auto">
                             Interactions with Gemini API, AI blog generations, agent executions, and studio actions will log here automatically in real time.
                           </p>
                         </div>
@@ -2216,7 +2219,7 @@ export function Dashboard() {
 
                         if (filtered.length === 0) {
                           return (
-                            <div className="py-12 text-center text-slate-500 text-sm">
+                            <div className="py-12 text-center text-slate-600 dark:text-slate-500 text-sm">
                               No activity logs match your filter criteria or search query.
                             </div>
                           );
@@ -2224,33 +2227,33 @@ export function Dashboard() {
 
                         const getActivityIcon = (type: string) => {
                           switch (type) {
-                            case 'gemini_interaction': return <Sparkles className="w-4 h-4 text-emerald-400" />;
-                            case 'project_create': return <Database className="w-4 h-4 text-indigo-400" />;
-                            case 'project_delete': return <Trash2 className="w-4 h-4 text-rose-400" />;
-                            case 'blog_generate': return <BookOpen className="w-4 h-4 text-teal-400" />;
-                            case 'ecom_generate': return <Zap className="w-4 h-4 text-cyan-400" />;
-                            case 'memory_create': return <Brain className="w-4 h-4 text-purple-400" />;
-                            case 'memory_evolve': return <Zap className="w-4 h-4 text-amber-400" />;
-                            case 'social_schedule': return <Calendar className="w-4 h-4 text-sky-400" />;
-                            case 'agent_create': return <Bot className="w-4 h-4 text-violet-400" />;
-                            case 'page_create': return <Globe className="w-4 h-4 text-pink-400" />;
-                            case 'page_update': return <RefreshCw className="w-4 h-4 text-blue-400" />;
-                            default: return <Activity className="w-4 h-4 text-slate-400" />;
+                            case 'gemini_interaction': return <Sparkles className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />;
+                            case 'project_create': return <Database className="w-4 h-4 text-indigo-800 dark:text-indigo-400" />;
+                            case 'project_delete': return <Trash2 className="w-4 h-4 text-rose-700 dark:text-rose-400" />;
+                            case 'blog_generate': return <BookOpen className="w-4 h-4 text-teal-700 dark:text-teal-400" />;
+                            case 'ecom_generate': return <Zap className="w-4 h-4 text-cyan-800 dark:text-cyan-400" />;
+                            case 'memory_create': return <Brain className="w-4 h-4 text-purple-800 dark:text-purple-400" />;
+                            case 'memory_evolve': return <Zap className="w-4 h-4 text-amber-800 dark:text-amber-400" />;
+                            case 'social_schedule': return <Calendar className="w-4 h-4 text-sky-800 dark:text-sky-400" />;
+                            case 'agent_create': return <Bot className="w-4 h-4 text-violet-800 dark:text-violet-400" />;
+                            case 'page_create': return <Globe className="w-4 h-4 text-pink-800 dark:text-pink-400" />;
+                            case 'page_update': return <RefreshCw className="w-4 h-4 text-blue-800 dark:text-blue-400" />;
+                            default: return <Activity className="w-4 h-4 text-slate-700 dark:text-slate-400" />;
                           }
                         };
 
                         const getActivityBadgeClass = (type: string) => {
                           switch (type) {
-                            case 'gemini_interaction': return 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60';
-                            case 'blog_generate': return 'bg-teal-950/60 text-teal-400 border-teal-800/60';
-                            case 'ecom_generate': return 'bg-cyan-950/60 text-cyan-400 border-cyan-800/60';
-                            case 'agent_create': return 'bg-violet-950/60 text-violet-400 border-violet-800/60';
+                            case 'gemini_interaction': return 'bg-emerald-950/60 text-emerald-800 dark:text-emerald-400 border-emerald-700/40 dark:border-emerald-800/60';
+                            case 'blog_generate': return 'bg-teal-100 dark:bg-teal-950/60 text-teal-800 dark:text-teal-400 border-teal-700/40 dark:border-teal-800/60';
+                            case 'ecom_generate': return 'bg-cyan-100 dark:bg-cyan-950/60 text-cyan-800 dark:text-cyan-400 border-cyan-700/40 dark:border-cyan-800/60';
+                            case 'agent_create': return 'bg-violet-100 dark:bg-violet-950/60 text-violet-800 dark:text-violet-400 border-violet-700/40 dark:border-violet-800/60';
                             case 'memory_evolve':
-                            case 'memory_create': return 'bg-purple-950/60 text-purple-400 border-purple-800/60';
-                            case 'social_schedule': return 'bg-sky-950/60 text-sky-400 border-sky-800/60';
+                            case 'memory_create': return 'bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-400 border-purple-700/40 dark:border-purple-800/60';
+                            case 'social_schedule': return 'bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-400 border-sky-700/40 dark:border-sky-800/60';
                             case 'page_create':
-                            case 'page_update': return 'bg-pink-950/60 text-pink-400 border-pink-800/60';
-                            default: return 'bg-slate-900 text-slate-300 border-slate-700';
+                            case 'page_update': return 'bg-pink-100 dark:bg-pink-950/60 text-pink-800 dark:text-pink-400 border-pink-700/40 dark:border-pink-800/60';
+                            default: return 'bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-300 border-slate-400 dark:border-slate-700';
                           }
                         };
 
@@ -2271,7 +2274,7 @@ export function Dashboard() {
                           return (
                             <div
                               key={act.id}
-                              className="group flex items-center justify-between p-4 bg-[#171a24]/80 hover:bg-[#1c202d] rounded-xl border border-slate-800 hover:border-slate-700 transition duration-150 shadow-sm"
+                              className="group flex items-center justify-between p-4 bg-slate-100 dark:bg-[#171a24]/80 hover:bg-[#1c202d] rounded-xl border border-slate-300 dark:border-slate-800 hover:border-slate-500 dark:hover:border-slate-700 transition duration-150 shadow-sm"
                             >
                               <div className="flex items-center space-x-3.5 min-w-0 flex-1">
                                 <div className={`p-2.5 rounded-xl border flex items-center justify-center shrink-0 ${getActivityBadgeClass(act.type)}`}>
@@ -2282,15 +2285,15 @@ export function Dashboard() {
                                     <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded border font-bold ${getActivityBadgeClass(act.type)}`}>
                                       {act.type?.replace('_', ' ')}
                                     </span>
-                                    <span className="text-[11px] font-mono text-slate-500 font-semibold">
+                                    <span className="text-[11px] font-mono text-slate-600 dark:text-slate-500 font-semibold">
                                       {relativeTime}
                                     </span>
                                   </div>
-                                  <p className="text-sm font-semibold text-slate-100 mt-1 line-clamp-2 leading-snug">
+                                  <p className="text-sm font-semibold text-slate-950 dark:text-slate-100 mt-1 line-clamp-2 leading-snug">
                                     {act.description}
                                   </p>
-                                  <div className="flex items-center space-x-2 mt-1.5 text-[10px] font-mono text-slate-500">
-                                    <span className="text-emerald-400 font-bold">{workspaceLabel}</span>
+                                  <div className="flex items-center space-x-2 mt-1.5 text-[10px] font-mono text-slate-600 dark:text-slate-500">
+                                    <span className="text-emerald-700 dark:text-emerald-400 font-bold">{workspaceLabel}</span>
                                     <span>&bull;</span>
                                     <span>{act.createdAtDate.toLocaleTimeString()} ({act.createdAtDate.toLocaleDateString()})</span>
                                     <span>&bull;</span>
@@ -2301,7 +2304,7 @@ export function Dashboard() {
                               
                               <button
                                 onClick={(e) => handleDeleteActivity(act.id, e)}
-                                className="opacity-0 group-hover:opacity-100 p-2 bg-rose-950/20 hover:bg-rose-900/50 text-rose-400 border border-transparent hover:border-rose-800 rounded-lg transition shrink-0 ml-3"
+                                className="opacity-0 group-hover:opacity-100 p-2 bg-rose-100 dark:bg-rose-950/20 hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 border border-transparent hover:border-rose-800 rounded-lg transition shrink-0 ml-3"
                                 title="Delete this log entry"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -2320,20 +2323,20 @@ export function Dashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Left Controls */}
                   <div className="lg:col-span-1 space-y-6">
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl space-y-4">
-                      <h3 className="text-lg font-bold text-slate-200 flex items-center space-x-2">
-                        <BookOpen className="w-5 h-5 text-emerald-400" />
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200 flex items-center space-x-2">
+                        <BookOpen className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                         <span>AI SEO Article Generator</span>
                       </h3>
-                      <p className="text-xs text-slate-400 leading-relaxed">
+                      <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed">
                         Input a topic, title ideas, or general niche keywords. The Gemini-powered Content Suite will draft an SEO-optimized article complete with search meta-tags, structural heading markdown, and keyword density mapping.
                       </p>
 
                       <form onSubmit={handleGenerateBlog} className="space-y-4 pt-2">
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-2">Topic / Niche Phrase</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-2">Topic / Niche Phrase</label>
                           <textarea
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none h-24 resize-none"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none h-24 resize-none"
                             placeholder="e.g. Next.js 15 App Router Best Practices, Healthy keto recipes, Artificial Intelligence trends in 2026"
                             value={blogTopic}
                             onChange={(e) => setBlogTopic(e.target.value)}
@@ -2361,8 +2364,8 @@ export function Dashboard() {
                     </div>
 
                     {/* Jobs List */}
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl space-y-4">
-                      <h3 className="font-bold text-slate-200">Active Production List</h3>
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
+                      <h3 className="font-bold text-slate-900 dark:text-slate-200">Active Production List</h3>
                       <div className="space-y-2 max-h-[350px] overflow-y-auto">
                         {jobs.map(job => (
                           <div
@@ -2370,13 +2373,13 @@ export function Dashboard() {
                             onClick={() => setSelectedJobId(job.id)}
                             className={`p-3 rounded-lg border cursor-pointer transition flex justify-between items-center ${
                               selectedJobId === job.id 
-                                ? 'bg-emerald-950/20 border-emerald-500' 
-                                : 'bg-[#181b24] border-slate-800 hover:border-slate-700'
+                                ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-500' 
+                                : 'bg-slate-100 dark:bg-[#181b24] border-slate-300 dark:border-slate-800 hover:border-slate-500 dark:hover:border-slate-700'
                             }`}
                           >
                             <div className="min-w-0 flex-1 pr-3">
-                              <p className="text-sm font-bold text-slate-200 truncate">{job.topic}</p>
-                              <p className="text-[10px] font-mono text-slate-500">Status: {job.status}</p>
+                              <p className="text-sm font-bold text-slate-900 dark:text-slate-200 truncate">{job.topic}</p>
+                              <p className="text-[10px] font-mono text-slate-600 dark:text-slate-500">Status: {job.status}</p>
                             </div>
                             <button
                               onClick={async (e) => {
@@ -2386,14 +2389,14 @@ export function Dashboard() {
                                   if (selectedJobId === job.id) setSelectedJobId(null);
                                 }
                               }}
-                              className="text-slate-500 hover:text-rose-400 p-1"
+                              className="text-slate-600 dark:text-slate-500 hover:text-rose-400 p-1"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
                         ))}
                         {jobs.length === 0 && (
-                          <p className="text-slate-500 text-xs text-center py-6">No articles created yet.</p>
+                          <p className="text-slate-600 dark:text-slate-500 text-xs text-center py-6">No articles created yet.</p>
                         )}
                       </div>
                     </div>
@@ -2401,32 +2404,32 @@ export function Dashboard() {
 
                   {/* Right Preview Panel */}
                   <div className="lg:col-span-2">
-                    <div className="bg-[#12141c] border border-slate-800 rounded-xl p-6 min-h-[500px] flex flex-col justify-between">
+                    <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 min-h-[500px] flex flex-col justify-between">
                       {selectedJobId ? (
                         (() => {
                           const job = jobs.find(j => j.id === selectedJobId);
-                          if (!job) return <p className="text-slate-500 text-center my-auto">Select a blog post from the sidebar to view details</p>;
+                          if (!job) return <p className="text-slate-600 dark:text-slate-500 text-center my-auto">Select a blog post from the sidebar to view details</p>;
 
                           return (
                             <div className="space-y-6">
-                              <div className="flex justify-between items-start pb-4 border-b border-slate-800">
+                              <div className="flex justify-between items-start pb-4 border-b border-slate-300 dark:border-slate-800">
                                 <div>
                                   <div className="flex items-center space-x-2">
-                                    <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-emerald-950 text-emerald-400 border border-emerald-900">
+                                    <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-700/40 dark:border-emerald-900">
                                       {job.status}
                                     </span>
                                     {job.readTime && (
-                                      <span className="text-xs text-slate-500 font-mono">{job.readTime}</span>
+                                      <span className="text-xs text-slate-600 dark:text-slate-500 font-mono">{job.readTime}</span>
                                     )}
                                   </div>
-                                  <h3 className="text-xl font-extrabold text-slate-100 mt-2">{job.title || job.topic}</h3>
+                                  <h3 className="text-xl font-extrabold text-slate-950 dark:text-slate-100 mt-2">{job.title || job.topic}</h3>
                                 </div>
                                 <button
                                   onClick={() => {
                                     navigator.clipboard.writeText(JSON.stringify(job, null, 2));
                                     alert('Copied full JSON article data to clipboard!');
                                   }}
-                                  className="flex items-center space-x-1 px-3 py-1.5 text-xs bg-[#1e2230] text-slate-200 border border-slate-700 rounded hover:bg-slate-700 transition"
+                                  className="flex items-center space-x-1 px-3 py-1.5 text-xs bg-slate-200 dark:bg-[#1e2230] text-slate-900 dark:text-slate-200 border border-slate-400 dark:border-slate-700 rounded hover:bg-slate-300 dark:hover:bg-slate-700 transition"
                                 >
                                   <Clipboard className="w-3.5 h-3.5" />
                                   <span>Copy JSON</span>
@@ -2435,13 +2438,13 @@ export function Dashboard() {
 
                               {job.status === 'Processing' && (
                                 <div className="flex flex-col items-center justify-center py-20">
-                                  <Loader2 className="w-10 h-10 animate-spin text-emerald-400 mb-4" />
-                                  <p className="text-sm text-slate-400 font-mono">Gemini AI is crafting and optimizing your article...</p>
+                                  <Loader2 className="w-10 h-10 animate-spin text-emerald-700 dark:text-emerald-400 mb-4" />
+                                  <p className="text-sm text-slate-700 dark:text-slate-400 font-mono">Gemini AI is crafting and optimizing your article...</p>
                                 </div>
                               )}
 
                               {job.status === 'Failed' && (
-                                <div className="flex flex-col items-center justify-center py-20 text-rose-400">
+                                <div className="flex flex-col items-center justify-center py-20 text-rose-700 dark:text-rose-400">
                                   <AlertCircle className="w-10 h-10 mb-4" />
                                   <p className="text-sm font-mono text-center max-w-md">{job.content || 'Generation failed due to API limitations.'}</p>
                                 </div>
@@ -2450,16 +2453,16 @@ export function Dashboard() {
                               {job.status === 'Completed' && (
                                 <div className="space-y-6">
                                   {/* Meta & SEO Specs */}
-                                  <div className="p-4 bg-[#181b24] rounded-xl border border-slate-800 space-y-3 font-mono text-xs text-slate-300">
+                                  <div className="p-4 bg-slate-100 dark:bg-[#181b24] rounded-xl border border-slate-300 dark:border-slate-800 space-y-3 font-mono text-xs text-slate-800 dark:text-slate-300">
                                     <div>
-                                      <span className="text-slate-500 font-bold uppercase block text-[10px]">Meta Description</span>
+                                      <span className="text-slate-600 dark:text-slate-500 font-bold uppercase block text-[10px]">Meta Description</span>
                                       <p className="mt-1">{job.metaDescription}</p>
                                     </div>
                                     <div>
-                                      <span className="text-slate-500 font-bold uppercase block text-[10px]">Keywords Layer</span>
+                                      <span className="text-slate-600 dark:text-slate-500 font-bold uppercase block text-[10px]">Keywords Layer</span>
                                       <div className="flex flex-wrap gap-1.5 mt-1.5">
                                         {job.keywords?.map((k: string, i: number) => (
-                                          <span key={i} className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">
+                                          <span key={i} className="bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 px-2 py-0.5 rounded border border-slate-400 dark:border-slate-700">
                                             {k}
                                           </span>
                                         ))}
@@ -2468,9 +2471,9 @@ export function Dashboard() {
                                   </div>
 
                                   {/* Content markdown body */}
-                                  <div className="prose prose-invert max-w-none text-slate-300 space-y-4">
-                                    <span className="text-slate-500 font-bold uppercase block text-[10px] font-mono">Article Content (Markdown)</span>
-                                    <div className="p-4 bg-[#0d0f14] border border-slate-800 rounded-xl max-h-[300px] overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed font-sans">
+                                  <div className="prose prose-invert max-w-none text-slate-800 dark:text-slate-300 space-y-4">
+                                    <span className="text-slate-600 dark:text-slate-500 font-bold uppercase block text-[10px] font-mono">Article Content (Markdown)</span>
+                                    <div className="p-4 bg-slate-50 dark:bg-[#0d0f14] border border-slate-300 dark:border-slate-800 rounded-xl max-h-[300px] overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed font-sans">
                                       {job.content}
                                     </div>
                                   </div>
@@ -2482,8 +2485,8 @@ export function Dashboard() {
                       ) : (
                         <div className="flex flex-col items-center justify-center py-20 text-center my-auto">
                           <Eye className="w-12 h-12 text-slate-600 mb-3" />
-                          <p className="text-slate-400 font-bold text-sm">Select an article task</p>
-                          <p className="text-xs text-slate-500 max-w-xs mt-1">
+                          <p className="text-slate-700 dark:text-slate-400 font-bold text-sm">Select an article task</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-500 max-w-xs mt-1">
                             Choose an existing AI blog post or execute a new production pipeline to inspect formatted output and SEO metadata details.
                           </p>
                         </div>
@@ -2498,21 +2501,21 @@ export function Dashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Left submit product URL */}
                   <div className="lg:col-span-1 space-y-6">
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl space-y-4">
-                      <h3 className="text-lg font-bold text-slate-200 flex items-center space-x-2">
-                        <Sparkles className="w-5 h-5 text-emerald-400" />
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200 flex items-center space-x-2">
+                        <Sparkles className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                         <span>Link Optimizer Suite</span>
                       </h3>
-                      <p className="text-xs text-slate-400 leading-relaxed">
+                      <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed">
                         Input any product link (Amazon, ClickBank, Shopify, Yoovic, etc.) and run our specialized **Super God Prompt** to instantly compile a multi-channel affiliate sales structure.
                       </p>
 
                       <form onSubmit={handleGenerateEcom} className="space-y-4 pt-2">
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Product Link / URL</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Product Link / URL</label>
                           <input
                             type="url"
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                             placeholder="https://amazon.com/dp/B0D12..."
                             value={productUrl}
                             onChange={(e) => setProductUrl(e.target.value)}
@@ -2521,10 +2524,10 @@ export function Dashboard() {
                         </div>
 
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Brand Name (Optional)</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Brand Name (Optional)</label>
                           <input
                             type="text"
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                             placeholder="e.g. FitTrack, UltraClean"
                             value={brandName}
                             onChange={(e) => setBrandName(e.target.value)}
@@ -2532,10 +2535,10 @@ export function Dashboard() {
                         </div>
 
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Target Country</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Target Country</label>
                           <input
                             type="text"
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                             placeholder="e.g. USA, UK, Global"
                             value={targetCountry}
                             onChange={(e) => setTargetCountry(e.target.value)}
@@ -2563,8 +2566,8 @@ export function Dashboard() {
                     </div>
 
                     {/* Historical Links analyzed */}
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl space-y-4">
-                      <h3 className="font-bold text-slate-200">Analyzed Products</h3>
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
+                      <h3 className="font-bold text-slate-900 dark:text-slate-200">Analyzed Products</h3>
                       <div className="space-y-2 max-h-[250px] overflow-y-auto">
                         {products.map(p => (
                           <div
@@ -2572,13 +2575,13 @@ export function Dashboard() {
                             onClick={() => setSelectedProductId(p.id)}
                             className={`p-3 rounded-lg border cursor-pointer transition flex justify-between items-center ${
                               selectedProductId === p.id
-                                ? 'bg-emerald-950/20 border-emerald-500'
-                                : 'bg-[#181b24] border-slate-800 hover:border-slate-700'
+                                ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-500'
+                                : 'bg-slate-100 dark:bg-[#181b24] border-slate-300 dark:border-slate-800 hover:border-slate-500 dark:hover:border-slate-700'
                             }`}
                           >
                             <div className="min-w-0 flex-1 pr-3">
-                              <p className="text-xs font-bold text-slate-200 truncate">{p.url}</p>
-                              <p className="text-[10px] font-mono text-slate-500">Brand: {p.brand}</p>
+                              <p className="text-xs font-bold text-slate-900 dark:text-slate-200 truncate">{p.url}</p>
+                              <p className="text-[10px] font-mono text-slate-600 dark:text-slate-500">Brand: {p.brand}</p>
                             </div>
                             <button
                               onClick={async (e) => {
@@ -2588,14 +2591,14 @@ export function Dashboard() {
                                   if (selectedProductId === p.id) setSelectedProductId(null);
                                 }
                               }}
-                              className="text-slate-500 hover:text-rose-400 p-1"
+                              className="text-slate-600 dark:text-slate-500 hover:text-rose-400 p-1"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
                         ))}
                         {products.length === 0 && (
-                          <p className="text-slate-500 text-xs text-center py-6">No links submitted yet.</p>
+                          <p className="text-slate-600 dark:text-slate-500 text-xs text-center py-6">No links submitted yet.</p>
                         )}
                       </div>
                     </div>
@@ -2603,29 +2606,29 @@ export function Dashboard() {
 
                   {/* Right preview suite info */}
                   <div className="lg:col-span-2">
-                    <div className="bg-[#12141c] border border-slate-800 rounded-xl p-6 min-h-[500px]">
+                    <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 min-h-[500px]">
                       {selectedProductId ? (
                         (() => {
                           const p = products.find(prod => prod.id === selectedProductId);
-                          if (!p) return <p className="text-slate-500 text-center py-20">Select a product suite to view</p>;
+                          if (!p) return <p className="text-slate-600 dark:text-slate-500 text-center py-20">Select a product suite to view</p>;
 
                           const data = p.generatedData || {};
 
                           return (
                             <div className="space-y-6">
-                              <div className="flex justify-between items-center pb-4 border-b border-slate-800">
+                              <div className="flex justify-between items-center pb-4 border-b border-slate-300 dark:border-slate-800">
                                 <div>
-                                  <span className="text-[10px] bg-cyan-950 text-cyan-400 border border-cyan-900 px-2.5 py-0.5 rounded font-mono font-bold uppercase">
+                                  <span className="text-[10px] bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-400 border border-cyan-700/40 dark:border-cyan-900 px-2.5 py-0.5 rounded font-mono font-bold uppercase">
                                     7-Figure Funnel Suite
                                   </span>
-                                  <h3 className="text-lg font-bold text-slate-200 mt-2 line-clamp-1">{p.url}</h3>
+                                  <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200 mt-2 line-clamp-1">{p.url}</h3>
                                 </div>
                                 <button
                                   onClick={() => {
                                     navigator.clipboard.writeText(JSON.stringify(data, null, 2));
                                     alert('Copied 10-Step Ecom Machine JSON to clipboard!');
                                   }}
-                                  className="flex items-center space-x-1 px-3 py-1.5 text-xs bg-[#1e2230] text-slate-200 border border-slate-700 rounded hover:bg-slate-700 transition"
+                                  className="flex items-center space-x-1 px-3 py-1.5 text-xs bg-slate-200 dark:bg-[#1e2230] text-slate-900 dark:text-slate-200 border border-slate-400 dark:border-slate-700 rounded hover:bg-slate-300 dark:hover:bg-slate-700 transition"
                                 >
                                   <Clipboard className="w-3.5 h-3.5" />
                                   <span>Export Copy</span>
@@ -2635,16 +2638,16 @@ export function Dashboard() {
                               {/* Accordion / Tab structure for the 10 steps */}
                               <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
                                 {/* 1. Breakdown */}
-                                <div className="p-4 bg-[#181b24] border border-slate-800 rounded-lg">
-                                  <h4 className="text-emerald-400 font-bold text-sm flex items-center space-x-2">
-                                    <span className="bg-emerald-950 px-1.5 py-0.5 rounded text-xs text-emerald-400 font-mono mr-1">1</span>
+                                <div className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-lg">
+                                  <h4 className="text-emerald-700 dark:text-emerald-400 font-bold text-sm flex items-center space-x-2">
+                                    <span className="bg-emerald-100 dark:bg-emerald-950 px-1.5 py-0.5 rounded text-xs text-emerald-700 dark:text-emerald-400 font-mono mr-1">1</span>
                                     <span>Product Breakdown & Triggers</span>
                                   </h4>
-                                  <div className="mt-3 text-xs text-slate-300 space-y-2">
-                                    <p><strong className="text-slate-400">Analysis:</strong> {data.productBreakdown?.summary}</p>
-                                    <p><strong className="text-slate-400">Niche Audience:</strong> {data.productBreakdown?.audience}</p>
+                                  <div className="mt-3 text-xs text-slate-800 dark:text-slate-300 space-y-2">
+                                    <p><strong className="text-slate-700 dark:text-slate-400">Analysis:</strong> {data.productBreakdown?.summary}</p>
+                                    <p><strong className="text-slate-700 dark:text-slate-400">Niche Audience:</strong> {data.productBreakdown?.audience}</p>
                                     <div>
-                                      <strong className="text-slate-400">Emotional Pain Points:</strong>
+                                      <strong className="text-slate-700 dark:text-slate-400">Emotional Pain Points:</strong>
                                       <ul className="list-disc list-inside pl-1 mt-1 space-y-0.5">
                                         {data.productBreakdown?.painPoints?.map((item: string, i: number) => (
                                           <li key={i}>{item}</li>
@@ -2655,46 +2658,46 @@ export function Dashboard() {
                                 </div>
 
                                 {/* 2. Irresistible offer */}
-                                <div className="p-4 bg-[#181b24] border border-slate-800 rounded-lg">
-                                  <h4 className="text-cyan-400 font-bold text-sm flex items-center space-x-2">
-                                    <span className="bg-cyan-950 px-1.5 py-0.5 rounded text-xs text-cyan-400 font-mono mr-1">2</span>
+                                <div className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-lg">
+                                  <h4 className="text-cyan-800 dark:text-cyan-400 font-bold text-sm flex items-center space-x-2">
+                                    <span className="bg-cyan-100 dark:bg-cyan-950 px-1.5 py-0.5 rounded text-xs text-cyan-800 dark:text-cyan-400 font-mono mr-1">2</span>
                                     <span>Offer & Buying Logic</span>
                                   </h4>
-                                  <div className="mt-3 text-xs text-slate-300 space-y-2">
-                                    <p><strong className="text-slate-400">Bundle Ideas:</strong></p>
+                                  <div className="mt-3 text-xs text-slate-800 dark:text-slate-300 space-y-2">
+                                    <p><strong className="text-slate-700 dark:text-slate-400">Bundle Ideas:</strong></p>
                                     <ul className="list-disc list-inside pl-1 space-y-0.5">
                                       {data.offerCreation?.bundleIdeas?.map((item: string, i: number) => <li key={i}>{item}</li>)}
                                     </ul>
-                                    <p><strong className="text-slate-400">Urgency:</strong> {data.offerCreation?.buyNowLogic}</p>
+                                    <p><strong className="text-slate-700 dark:text-slate-400">Urgency:</strong> {data.offerCreation?.buyNowLogic}</p>
                                   </div>
                                 </div>
 
                                 {/* 3. Product page Copy */}
-                                <div className="p-4 bg-[#181b24] border border-slate-800 rounded-lg">
-                                  <h4 className="text-indigo-400 font-bold text-sm flex items-center space-x-2">
-                                    <span className="bg-indigo-950 px-1.5 py-0.5 rounded text-xs text-indigo-400 font-mono mr-1">3</span>
+                                <div className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-lg">
+                                  <h4 className="text-indigo-800 dark:text-indigo-400 font-bold text-sm flex items-center space-x-2">
+                                    <span className="bg-indigo-100 dark:bg-indigo-950 px-1.5 py-0.5 rounded text-xs text-indigo-800 dark:text-indigo-400 font-mono mr-1">3</span>
                                     <span>Scroll-Stopping Landing Headline</span>
                                   </h4>
-                                  <div className="mt-3 text-xs text-slate-300 space-y-2 font-mono bg-slate-950 p-3 rounded">
-                                    <p className="text-emerald-400 text-sm font-bold">“ {data.productPage?.headline} ”</p>
-                                    <p className="text-slate-400 text-xs mt-1">{data.productPage?.subheadline}</p>
+                                  <div className="mt-3 text-xs text-slate-800 dark:text-slate-300 space-y-2 font-mono bg-slate-50 dark:bg-slate-950 p-3 rounded">
+                                    <p className="text-emerald-700 dark:text-emerald-400 text-sm font-bold">“ {data.productPage?.headline} ”</p>
+                                    <p className="text-slate-700 dark:text-slate-400 text-xs mt-1">{data.productPage?.subheadline}</p>
                                   </div>
                                 </div>
 
                                 {/* 4. Social Media Scripts */}
-                                <div className="p-4 bg-[#181b24] border border-slate-800 rounded-lg">
-                                  <h4 className="text-purple-400 font-bold text-sm flex items-center space-x-2">
-                                    <span className="bg-purple-950 px-1.5 py-0.5 rounded text-xs text-purple-400 font-mono mr-1">4</span>
+                                <div className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-lg">
+                                  <h4 className="text-purple-800 dark:text-purple-400 font-bold text-sm flex items-center space-x-2">
+                                    <span className="bg-purple-100 dark:bg-purple-950 px-1.5 py-0.5 rounded text-xs text-purple-800 dark:text-purple-400 font-mono mr-1">4</span>
                                     <span>Viral TikTok/Reels Copy & Hooks</span>
                                   </h4>
-                                  <div className="mt-3 text-xs text-slate-300 space-y-2">
-                                    <p className="font-bold text-slate-400">Hooks:</p>
+                                  <div className="mt-3 text-xs text-slate-800 dark:text-slate-300 space-y-2">
+                                    <p className="font-bold text-slate-700 dark:text-slate-400">Hooks:</p>
                                     <div className="flex flex-wrap gap-1">
                                       {data.socialMedia?.hooks?.map((h: string, i: number) => (
-                                        <span key={i} className="bg-slate-800 px-2 py-0.5 rounded text-[11px] border border-slate-700">{h}</span>
+                                        <span key={i} className="bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded text-[11px] border border-slate-400 dark:border-slate-700">{h}</span>
                                       ))}
                                     </div>
-                                    <div className="mt-2 bg-slate-950 p-2.5 rounded font-mono text-[11px] leading-relaxed max-h-[150px] overflow-y-auto">
+                                    <div className="mt-2 bg-slate-50 dark:bg-slate-950 p-2.5 rounded font-mono text-[11px] leading-relaxed max-h-[150px] overflow-y-auto">
                                       {data.socialMedia?.scripts?.map((s: string, i: number) => (
                                         <p key={i} className="mb-2 whitespace-pre-wrap">{s}</p>
                                       ))}
@@ -2703,75 +2706,75 @@ export function Dashboard() {
                                 </div>
 
                                 {/* 5. Paid ads */}
-                                <div className="p-4 bg-[#181b24] border border-slate-800 rounded-lg">
-                                  <h4 className="text-amber-400 font-bold text-sm flex items-center space-x-2">
-                                    <span className="bg-amber-950 px-1.5 py-0.5 rounded text-xs text-amber-400 font-mono mr-1">5</span>
+                                <div className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-lg">
+                                  <h4 className="text-amber-800 dark:text-amber-400 font-bold text-sm flex items-center space-x-2">
+                                    <span className="bg-amber-100 dark:bg-amber-950 px-1.5 py-0.5 rounded text-xs text-amber-800 dark:text-amber-400 font-mono mr-1">5</span>
                                     <span>Paid Ad Systems (Meta + Google)</span>
                                   </h4>
-                                  <div className="mt-3 text-xs text-slate-300 space-y-3">
+                                  <div className="mt-3 text-xs text-slate-800 dark:text-slate-300 space-y-3">
                                     <div>
-                                      <p className="font-bold text-slate-400 mb-1">Facebook/Instagram ad copy:</p>
+                                      <p className="font-bold text-slate-700 dark:text-slate-400 mb-1">Facebook/Instagram ad copy:</p>
                                       {data.paidAds?.metaAds?.map((copy: string, i: number) => (
-                                        <div key={i} className="bg-slate-950 p-2 rounded mb-1 border border-slate-800 text-[11px] font-mono">{copy}</div>
+                                        <div key={i} className="bg-slate-50 dark:bg-slate-950 p-2 rounded mb-1 border border-slate-300 dark:border-slate-800 text-[11px] font-mono">{copy}</div>
                                       ))}
                                     </div>
                                   </div>
                                 </div>
 
                                 {/* 6. Automation tool stack */}
-                                <div className="p-4 bg-[#181b24] border border-slate-800 rounded-lg">
-                                  <h4 className="text-teal-400 font-bold text-sm flex items-center space-x-2">
-                                    <span className="bg-teal-950 px-1.5 py-0.5 rounded text-xs text-teal-400 font-mono mr-1">6</span>
+                                <div className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-lg">
+                                  <h4 className="text-teal-700 dark:text-teal-400 font-bold text-sm flex items-center space-x-2">
+                                    <span className="bg-teal-100 dark:bg-teal-950 px-1.5 py-0.5 rounded text-xs text-teal-700 dark:text-teal-400 font-mono mr-1">6</span>
                                     <span>AI Workflow & Automations</span>
                                   </h4>
-                                  <ul className="list-disc list-inside mt-2 text-xs text-slate-300 space-y-1">
+                                  <ul className="list-disc list-inside mt-2 text-xs text-slate-800 dark:text-slate-300 space-y-1">
                                     {data.automations?.map((item: string, i: number) => <li key={i}>{item}</li>)}
                                   </ul>
                                 </div>
 
                                 {/* 7. Comment conversions */}
-                                <div className="p-4 bg-[#181b24] border border-slate-800 rounded-lg">
-                                  <h4 className="text-rose-400 font-bold text-sm flex items-center space-x-2">
-                                    <span className="bg-rose-950 px-1.5 py-0.5 rounded text-xs text-rose-400 font-mono mr-1">7</span>
+                                <div className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-lg">
+                                  <h4 className="text-rose-700 dark:text-rose-400 font-bold text-sm flex items-center space-x-2">
+                                    <span className="bg-rose-100 dark:bg-rose-950 px-1.5 py-0.5 rounded text-xs text-rose-700 dark:text-rose-400 font-mono mr-1">7</span>
                                     <span>Comment/Objection closing script</span>
                                   </h4>
-                                  <ul className="list-disc list-inside mt-2 text-xs text-slate-300 space-y-1 font-mono">
+                                  <ul className="list-disc list-inside mt-2 text-xs text-slate-800 dark:text-slate-300 space-y-1 font-mono">
                                     {data.commentConversion?.map((item: string, i: number) => <li key={i}>{item}</li>)}
                                   </ul>
                                 </div>
 
                                 {/* 8. Traffic plan */}
-                                <div className="p-4 bg-[#181b24] border border-slate-800 rounded-lg">
-                                  <h4 className="text-emerald-400 font-bold text-sm flex items-center space-x-2">
-                                    <span className="bg-emerald-950 px-1.5 py-0.5 rounded text-xs text-emerald-400 font-mono mr-1">8</span>
+                                <div className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-lg">
+                                  <h4 className="text-emerald-700 dark:text-emerald-400 font-bold text-sm flex items-center space-x-2">
+                                    <span className="bg-emerald-100 dark:bg-emerald-950 px-1.5 py-0.5 rounded text-xs text-emerald-700 dark:text-emerald-400 font-mono mr-1">8</span>
                                     <span>Target Traffic Strategy</span>
                                   </h4>
-                                  <ul className="list-disc list-inside mt-2 text-xs text-slate-300 space-y-1">
+                                  <ul className="list-disc list-inside mt-2 text-xs text-slate-800 dark:text-slate-300 space-y-1">
                                     {data.trafficStrategy?.map((item: string, i: number) => <li key={i}>{item}</li>)}
                                   </ul>
                                 </div>
 
                                 {/* 9. Monetization expansion */}
-                                <div className="p-4 bg-[#181b24] border border-slate-800 rounded-lg">
-                                  <h4 className="text-cyan-400 font-bold text-sm flex items-center space-x-2">
-                                    <span className="bg-cyan-950 px-1.5 py-0.5 rounded text-xs text-cyan-400 font-mono mr-1">9</span>
+                                <div className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-lg">
+                                  <h4 className="text-cyan-800 dark:text-cyan-400 font-bold text-sm flex items-center space-x-2">
+                                    <span className="bg-cyan-100 dark:bg-cyan-950 px-1.5 py-0.5 rounded text-xs text-cyan-800 dark:text-cyan-400 font-mono mr-1">9</span>
                                     <span>Upsell / Cross-Sell</span>
                                   </h4>
-                                  <ul className="list-disc list-inside mt-2 text-xs text-slate-300 space-y-1">
+                                  <ul className="list-disc list-inside mt-2 text-xs text-slate-800 dark:text-slate-300 space-y-1">
                                     {data.monetization?.map((item: string, i: number) => <li key={i}>{item}</li>)}
                                   </ul>
                                 </div>
 
                                 {/* 10. Bonus Plan */}
-                                <div className="p-4 bg-gradient-to-r from-emerald-950/20 to-teal-950/20 border border-emerald-800 rounded-lg">
-                                  <h4 className="text-emerald-300 font-bold text-sm flex items-center space-x-2">
-                                    <span className="bg-emerald-900 px-1.5 py-0.5 rounded text-xs text-emerald-300 font-mono mr-1">10</span>
+                                <div className="p-4 bg-gradient-to-r from-emerald-950/20 to-teal-950/20 border border-emerald-700/40 dark:border-emerald-800 rounded-lg">
+                                  <h4 className="text-emerald-900 dark:text-emerald-300 font-bold text-sm flex items-center space-x-2">
+                                    <span className="bg-emerald-100 dark:bg-emerald-900 px-1.5 py-0.5 rounded text-xs text-emerald-900 dark:text-emerald-300 font-mono mr-1">10</span>
                                     <span>Empire Bonus Mode</span>
                                   </h4>
-                                  <div className="mt-3 text-xs text-slate-300 space-y-2">
-                                    <p>🔥 <strong className="text-slate-400">Viral content idea:</strong> {data.bonus?.viralIdea}</p>
-                                    <p>💼 <strong className="text-slate-400">High income skill:</strong> {data.bonus?.highIncomeSkill}</p>
-                                    <p>📅 <strong className="text-slate-400">Daily plan:</strong> {data.bonus?.dailyPlan}</p>
+                                  <div className="mt-3 text-xs text-slate-800 dark:text-slate-300 space-y-2">
+                                    <p>🔥 <strong className="text-slate-700 dark:text-slate-400">Viral content idea:</strong> {data.bonus?.viralIdea}</p>
+                                    <p>💼 <strong className="text-slate-700 dark:text-slate-400">High income skill:</strong> {data.bonus?.highIncomeSkill}</p>
+                                    <p>📅 <strong className="text-slate-700 dark:text-slate-400">Daily plan:</strong> {data.bonus?.dailyPlan}</p>
                                   </div>
                                 </div>
 
@@ -2782,8 +2785,8 @@ export function Dashboard() {
                       ) : (
                         <div className="flex flex-col items-center justify-center py-20 text-center my-auto">
                           <Eye className="w-12 h-12 text-slate-600 mb-3" />
-                          <p className="text-slate-400 font-bold text-sm">Select an analyzed product</p>
-                          <p className="text-xs text-slate-500 max-w-xs mt-1">
+                          <p className="text-slate-700 dark:text-slate-400 font-bold text-sm">Select an analyzed product</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-500 max-w-xs mt-1">
                             Choose an existing compiled link funnel or execute a new Link Optimizer Suite task to inspect complete copy structures.
                           </p>
                         </div>
@@ -2798,20 +2801,20 @@ export function Dashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Left Schedule Controller */}
                   <div className="lg:col-span-1 space-y-6">
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl space-y-4">
-                      <h3 className="text-lg font-bold text-slate-200 flex items-center space-x-2">
-                        <Calendar className="w-5 h-5 text-emerald-400" />
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200 flex items-center space-x-2">
+                        <Calendar className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                         <span>Schedule Posting</span>
                       </h3>
-                      <p className="text-xs text-slate-400 leading-relaxed">
+                      <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed">
                         Queue and synchronize social content directly with multi-platform publishers.
                       </p>
 
                       <form onSubmit={handleCreateSchedule} className="space-y-4 pt-2">
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Social Platform</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Social Platform</label>
                           <select
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-950 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                             value={socialPlatform}
                             onChange={(e) => setSocialPlatform(e.target.value)}
                           >
@@ -2824,9 +2827,9 @@ export function Dashboard() {
                         </div>
 
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Post Content / Captions</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Post Content / Captions</label>
                           <textarea
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none h-24 resize-none"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none h-24 resize-none"
                             placeholder="Type caption and #hashtags..."
                             value={socialContent}
                             onChange={(e) => setSocialContent(e.target.value)}
@@ -2835,10 +2838,10 @@ export function Dashboard() {
                         </div>
 
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Post Date/Time</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Post Date/Time</label>
                           <input
                             type="datetime-local"
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                             value={socialTime}
                             onChange={(e) => setSocialTime(e.target.value)}
                             required
@@ -2857,27 +2860,27 @@ export function Dashboard() {
 
                   {/* Right schedule lists */}
                   <div className="lg:col-span-2">
-                    <div className="bg-[#12141c] border border-slate-800 rounded-xl p-6 min-h-[400px]">
-                      <h3 className="text-lg font-bold text-slate-200 mb-4 flex items-center space-x-2">
-                        <Share2 className="w-5 h-5 text-emerald-400" />
+                    <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 min-h-[400px]">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200 mb-4 flex items-center space-x-2">
+                        <Share2 className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                         <span>Active Multi-Platform Queue</span>
                       </h3>
 
                       <div className="space-y-3">
                         {schedules.map(post => (
-                          <div key={post.id} className="p-4 bg-[#181b24] border border-slate-800 rounded-xl flex items-start justify-between">
+                          <div key={post.id} className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-xl flex items-start justify-between">
                             <div className="space-y-1.5">
                               <div className="flex items-center space-x-2">
-                                <span className="px-2 py-0.5 text-[9px] font-bold uppercase rounded bg-slate-800 text-slate-300 font-mono">
+                                <span className="px-2 py-0.5 text-[9px] font-bold uppercase rounded bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 font-mono">
                                   {post.platform}
                                 </span>
-                                <span className="text-[10px] text-emerald-400 font-mono flex items-center space-x-1">
+                                <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono flex items-center space-x-1">
                                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                                   <span>{post.status}</span>
                                 </span>
                               </div>
-                              <p className="text-xs text-slate-300 leading-relaxed font-sans">{post.content}</p>
-                              <p className="text-[10px] text-slate-500 font-mono">Scheduled: {new Date(post.scheduledTime).toLocaleString()}</p>
+                              <p className="text-xs text-slate-800 dark:text-slate-300 leading-relaxed font-sans">{post.content}</p>
+                              <p className="text-[10px] text-slate-600 dark:text-slate-500 font-mono">Scheduled: {new Date(post.scheduledTime).toLocaleString()}</p>
                             </div>
                             <button
                               onClick={async () => {
@@ -2889,7 +2892,7 @@ export function Dashboard() {
                                   }
                                 }
                               }}
-                              className="text-slate-500 hover:text-rose-400 p-1"
+                              className="text-slate-600 dark:text-slate-500 hover:text-rose-400 p-1"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -2897,7 +2900,7 @@ export function Dashboard() {
                         ))}
 
                         {schedules.length === 0 && (
-                          <div className="text-center py-20 text-slate-500">
+                          <div className="text-center py-20 text-slate-600 dark:text-slate-500">
                             <Calendar className="w-12 h-12 text-slate-700 mx-auto mb-3" />
                             <p className="text-sm font-bold">No social posts scheduled</p>
                             <p className="text-xs max-w-xs mx-auto mt-1">Use the control form to write copy and coordinate automatic publication schedules.</p>
@@ -2914,20 +2917,20 @@ export function Dashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Left node writer */}
                   <div className="lg:col-span-1 space-y-6">
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl space-y-4">
-                      <h3 className="text-lg font-bold text-slate-200 flex items-center space-x-2">
-                        <Brain className="w-5 h-5 text-emerald-400" />
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200 flex items-center space-x-2">
+                        <Brain className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                         <span>Semantic Context</span>
                       </h3>
-                      <p className="text-xs text-slate-400 leading-relaxed">
+                      <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed">
                         Add knowledge notes to real-time vector memories. The Gemini core agent queries these rules to ensure content is brand-aligned.
                       </p>
 
                       <form onSubmit={handleCreateMemory} className="space-y-4 pt-2">
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Context Category</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Context Category</label>
                           <select
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-950 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                             value={memoryCategory}
                             onChange={(e) => setMemoryCategory(e.target.value)}
                           >
@@ -2939,10 +2942,10 @@ export function Dashboard() {
                         </div>
 
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Context Label (Key)</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Context Label (Key)</label>
                           <input
                             type="text"
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                             placeholder="e.g. active_voice_preference"
                             value={memoryKey}
                             onChange={(e) => setMemoryKey(e.target.value)}
@@ -2951,9 +2954,9 @@ export function Dashboard() {
                         </div>
 
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Knowledge Details (Value)</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Knowledge Details (Value)</label>
                           <textarea
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none h-24 resize-none"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none h-24 resize-none"
                             placeholder="e.g. Always write in an engaging active voice, avoiding corporate jargon or fluff words."
                             value={memoryValue}
                             onChange={(e) => setMemoryValue(e.target.value)}
@@ -2971,20 +2974,20 @@ export function Dashboard() {
                     </div>
 
                     {/* Gemini Agent Browser Evolver Block */}
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl space-y-4">
-                      <h3 className="text-lg font-bold text-sky-400 flex items-center space-x-2">
-                        <Globe className="w-5 h-5 text-sky-400 animate-pulse" />
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
+                      <h3 className="text-lg font-bold text-sky-800 dark:text-sky-400 flex items-center space-x-2">
+                        <Globe className="w-5 h-5 text-sky-800 dark:text-sky-400 animate-pulse" />
                         <span>Agent Browser Evolver</span>
                       </h3>
-                      <p className="text-xs text-slate-400 leading-relaxed">
+                      <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed">
                         Input any raw competitor URL, blog link, or raw data feed. Gemini will simulate web crawling, compatibility-match the content, and auto-save structured memories.
                       </p>
 
                       <form onSubmit={handleBrowserEvolve} className="space-y-4 pt-1">
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Source URL / Raw Feed Input</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Source URL / Raw Feed Input</label>
                           <textarea
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:ring-1 focus:ring-sky-500 focus:outline-none h-20 resize-none font-mono"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-sky-500 focus:outline-none h-20 resize-none font-mono"
                             placeholder="https://competitor-blog.com/seo-trends-2026 or raw text..."
                             value={evolverInput}
                             onChange={(e) => setEvolverInput(e.target.value)}
@@ -3015,23 +3018,23 @@ export function Dashboard() {
 
                   {/* Right Nodes view */}
                   <div className="lg:col-span-2">
-                    <div className="bg-[#12141c] border border-slate-800 rounded-xl p-6 min-h-[400px]">
-                      <h3 className="text-lg font-bold text-slate-200 mb-4 flex items-center space-x-2">
-                        <Database className="w-5 h-5 text-emerald-400" />
+                    <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 min-h-[400px]">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200 mb-4 flex items-center space-x-2">
+                        <Database className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                         <span>Active Memory Nodes</span>
                       </h3>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {memories.map(m => (
-                          <div key={m.id} className="p-4 bg-[#181b24] border border-slate-800 rounded-xl space-y-2 flex flex-col justify-between">
+                          <div key={m.id} className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-xl space-y-2 flex flex-col justify-between">
                             <div>
                               <div className="flex justify-between items-center">
-                                <span className="text-[9px] bg-slate-800 text-slate-300 font-bold uppercase font-mono px-2 py-0.5 rounded border border-slate-700">
+                                <span className="text-[9px] bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 font-bold uppercase font-mono px-2 py-0.5 rounded border border-slate-400 dark:border-slate-700">
                                   {m.category?.replace('_', ' ')}
                                 </span>
                               </div>
-                              <h4 className="text-xs font-bold font-mono text-emerald-400 mt-2 truncate">{m.key}</h4>
-                              <p className="text-xs text-slate-300 leading-relaxed mt-1 line-clamp-3">{m.value}</p>
+                              <h4 className="text-xs font-bold font-mono text-emerald-700 dark:text-emerald-400 mt-2 truncate">{m.key}</h4>
+                              <p className="text-xs text-slate-800 dark:text-slate-300 leading-relaxed mt-1 line-clamp-3">{m.value}</p>
                             </div>
                             <div className="flex justify-end pt-2">
                               <button
@@ -3044,7 +3047,7 @@ export function Dashboard() {
                                     }
                                   }
                                 }}
-                                className="text-slate-500 hover:text-rose-400 text-xs font-mono"
+                                className="text-slate-600 dark:text-slate-500 hover:text-rose-400 text-xs font-mono"
                               >
                                 Delete
                               </button>
@@ -3053,7 +3056,7 @@ export function Dashboard() {
                         ))}
 
                         {memories.length === 0 && (
-                          <div className="md:col-span-2 text-center py-20 text-slate-500">
+                          <div className="md:col-span-2 text-center py-20 text-slate-600 dark:text-slate-500">
                             <Brain className="w-12 h-12 text-slate-700 mx-auto mb-3" />
                             <p className="text-sm font-bold">No custom memory synced</p>
                             <p className="text-xs max-w-xs mx-auto mt-1">Add client/brand personas or custom SEO rules to contextually steer AI generations.</p>
@@ -3070,57 +3073,57 @@ export function Dashboard() {
                 <div className="space-y-6">
                   {/* Revenue metrics cards */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="p-5 bg-gradient-to-br from-[#12141c] to-[#1a1e2b] border border-slate-800 rounded-xl">
-                      <div className="text-slate-500 text-xs font-bold font-mono uppercase">Monthly Recurring Revenue (MRR)</div>
-                      <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 mt-2">$14,850.00</div>
-                      <span className="text-[10px] text-slate-400 font-mono mt-2 block">Premium active subscribers</span>
+                    <div className="p-5 bg-gradient-to-br from-[#12141c] to-[#1a1e2b] border border-slate-300 dark:border-slate-800 rounded-xl">
+                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">Monthly Recurring Revenue (MRR)</div>
+                      <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-800 dark:from-emerald-400 to-teal-400 mt-2">$14,850.00</div>
+                      <span className="text-[10px] text-slate-700 dark:text-slate-400 font-mono mt-2 block">Premium active subscribers</span>
                     </div>
 
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl">
-                      <div className="text-slate-500 text-xs font-bold font-mono uppercase">Affiliate Conversion Rate</div>
-                      <div className="text-3xl font-black text-slate-100 mt-2">4.82%</div>
-                      <span className="text-[10px] text-emerald-400 font-mono mt-2 block">&#9650; +0.4% from last week</span>
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl">
+                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">Affiliate Conversion Rate</div>
+                      <div className="text-3xl font-black text-slate-950 dark:text-slate-100 mt-2">4.82%</div>
+                      <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono mt-2 block">&#9650; +0.4% from last week</span>
                     </div>
 
-                    <div className="p-5 bg-[#12141c] border border-slate-800 rounded-xl">
-                      <div className="text-slate-500 text-xs font-bold font-mono uppercase">AI Generation Tokens / Credits</div>
-                      <div className="text-3xl font-black text-slate-100 mt-2">1,540 / 10,000</div>
-                      <div className="w-full bg-slate-800 h-1.5 rounded-full mt-2.5 overflow-hidden">
+                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl">
+                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">AI Generation Tokens / Credits</div>
+                      <div className="text-3xl font-black text-slate-950 dark:text-slate-100 mt-2">1,540 / 10,000</div>
+                      <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full mt-2.5 overflow-hidden">
                         <div className="bg-emerald-500 h-full w-[15.4%]" />
                       </div>
                     </div>
                   </div>
 
                   {/* Funnel simulation analytics */}
-                  <div className="p-6 bg-[#12141c] border border-slate-800 rounded-xl space-y-4">
-                    <h3 className="text-lg font-bold text-slate-200">SaaS Plan & Subscription Limits</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">
+                  <div className="p-6 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200">SaaS Plan & Subscription Limits</h3>
+                    <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed">
                       You are currently subscribed to the **Enterprise Multi-Agent Orchestration Package**. Enjoy unlimited workspaces, full-funnel affiliate templates, and gRPC sync streaming.
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                      <div className="p-4 bg-[#181b24] border border-slate-800 rounded-lg">
-                        <span className="text-[10px] font-mono text-slate-400 block font-bold uppercase">Active Plan</span>
-                        <h4 className="text-sm font-bold text-slate-100 mt-1">NISARA PRO UNLIMITED</h4>
-                        <ul className="list-disc list-inside mt-2 text-xs text-slate-400 space-y-1">
+                      <div className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-lg">
+                        <span className="text-[10px] font-mono text-slate-700 dark:text-slate-400 block font-bold uppercase">Active Plan</span>
+                        <h4 className="text-sm font-bold text-slate-950 dark:text-slate-100 mt-1">NISARA PRO UNLIMITED</h4>
+                        <ul className="list-disc list-inside mt-2 text-xs text-slate-700 dark:text-slate-400 space-y-1">
                           <li>Unlimited AI blog production runs</li>
                           <li>Full "Super God Prompt" ecom pipelines</li>
                           <li>gRPC dynamic database synchronization</li>
                         </ul>
                       </div>
 
-                      <div className="p-4 bg-[#181b24] border border-slate-800 rounded-lg font-mono text-xs space-y-2">
+                      <div className="p-4 bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-lg font-mono text-xs space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-slate-400">Next Renewal Date:</span>
-                          <span className="text-slate-200">July 28, 2026</span>
+                          <span className="text-slate-700 dark:text-slate-400">Next Renewal Date:</span>
+                          <span className="text-slate-900 dark:text-slate-200">July 28, 2026</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">Payment Gateway:</span>
-                          <span className="text-slate-200">Stripe Secure Connect</span>
+                          <span className="text-slate-700 dark:text-slate-400">Payment Gateway:</span>
+                          <span className="text-slate-900 dark:text-slate-200">Stripe Secure Connect</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-400">Subscription Status:</span>
-                          <span className="text-emerald-400 font-bold">Active</span>
+                          <span className="text-slate-700 dark:text-slate-400">Subscription Status:</span>
+                          <span className="text-emerald-700 dark:text-emerald-400 font-bold">Active</span>
                         </div>
                       </div>
                     </div>
@@ -3133,21 +3136,21 @@ export function Dashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                   {/* Left Column: Create Custom Agent Form */}
                   <div className="lg:col-span-5 space-y-6">
-                    <div className="bg-[#12141c] border border-slate-800 rounded-xl p-6 shadow-xl">
-                      <h3 className="text-lg font-bold text-slate-100 mb-2 flex items-center space-x-2">
-                        <Cpu className="w-5 h-5 text-emerald-400" />
+                    <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 shadow-xl">
+                      <h3 className="text-lg font-bold text-slate-950 dark:text-slate-100 mb-2 flex items-center space-x-2">
+                        <Cpu className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                         <span>Define Custom Agent Persona</span>
                       </h3>
-                      <p className="text-xs text-slate-400 mb-6">
+                      <p className="text-xs text-slate-700 dark:text-slate-400 mb-6">
                         Configure a persistent AI specialist with tailored behavioral guidelines, domain-specific background persona, and precise model temperature.
                       </p>
 
                       <form onSubmit={handleCreateAgent} className="space-y-4">
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Agent Name</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Agent Name</label>
                           <input
                             type="text"
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                             placeholder="e.g. Tech Support Specialist"
                             value={agentName}
                             onChange={(e) => setAgentName(e.target.value)}
@@ -3156,9 +3159,9 @@ export function Dashboard() {
                         </div>
 
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Background Persona / Role</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Background Persona / Role</label>
                           <textarea
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none h-20 resize-none"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none h-20 resize-none"
                             placeholder="e.g. You are a highly professional customer support specialist for NISAR. Your tone is warm, polite, and technical..."
                             value={agentPersona}
                             onChange={(e) => setAgentPersona(e.target.value)}
@@ -3167,9 +3170,9 @@ export function Dashboard() {
                         </div>
 
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Specific Instructions & Limits</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Specific Instructions & Limits</label>
                           <textarea
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none h-24 resize-none"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none h-24 resize-none"
                             placeholder="e.g. 1. Always prioritize user safety. 2. Keep answers brief (under 3 sentences). 3. Avoid making claims about delivery dates."
                             value={agentInstructions}
                             onChange={(e) => setAgentInstructions(e.target.value)}
@@ -3179,25 +3182,25 @@ export function Dashboard() {
 
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-xs text-slate-400 font-bold mb-1.5 flex items-center justify-between">
+                            <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5 flex items-center justify-between">
                               <span>Temperature</span>
-                              <span className="text-emerald-400 font-mono font-bold">{agentTemperature}</span>
+                              <span className="text-emerald-700 dark:text-emerald-400 font-mono font-bold">{agentTemperature}</span>
                             </label>
                             <input
                               type="range"
                               min="0"
                               max="1"
                               step="0.1"
-                              className="w-full accent-emerald-500 h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer"
+                              className="w-full accent-emerald-500 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer"
                               value={agentTemperature}
                               onChange={(e) => setAgentTemperature(parseFloat(e.target.value))}
                             />
                           </div>
 
                           <div>
-                            <label className="block text-xs text-slate-400 font-bold mb-1.5">Core Foundation Model</label>
+                            <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Core Foundation Model</label>
                             <select
-                              className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none cursor-pointer"
+                              className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none cursor-pointer"
                               value={agentModel}
                               onChange={(e) => setAgentModel(e.target.value)}
                             >
@@ -3232,9 +3235,9 @@ export function Dashboard() {
                   {/* Right Column: Registered Agents list & Chat Sandbox */}
                   <div className="lg:col-span-7 space-y-6">
                     {/* Active Agents Directory */}
-                    <div className="bg-[#12141c] border border-slate-800 rounded-xl p-6 shadow-xl">
-                      <h3 className="text-lg font-bold text-slate-200 mb-4 flex items-center space-x-2">
-                        <Bot className="w-5 h-5 text-emerald-400" />
+                    <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 shadow-xl">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200 mb-4 flex items-center space-x-2">
+                        <Bot className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                         <span>Registered AI Agent Registry</span>
                       </h3>
 
@@ -3244,28 +3247,28 @@ export function Dashboard() {
                             key={agent.id} 
                             className={`p-4 rounded-xl border transition flex flex-col justify-between space-y-4 ${
                               selectedAgentId === agent.id 
-                                ? 'bg-[#1a2e25]/30 border-emerald-500/50' 
-                                : 'bg-[#181b24] border-slate-800 hover:border-slate-700'
+                                ? 'bg-emerald-50 dark:bg-[#1a2e25]/30 border-emerald-500/50' 
+                                : 'bg-slate-100 dark:bg-[#181b24] border-slate-300 dark:border-slate-800 hover:border-slate-500 dark:hover:border-slate-700'
                             }`}
                           >
                             <div>
                               <div className="flex justify-between items-start">
-                                <h4 className="text-sm font-black text-slate-100 flex items-center space-x-1.5">
-                                  <Cpu className="w-3.5 h-3.5 text-emerald-400" />
+                                <h4 className="text-sm font-black text-slate-950 dark:text-slate-100 flex items-center space-x-1.5">
+                                  <Cpu className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                                   <span>{agent.name}</span>
                                 </h4>
-                                <span className="text-[9px] bg-slate-800 text-slate-300 font-bold uppercase font-mono px-2 py-0.5 rounded border border-slate-700 text-center truncate max-w-[120px]">
+                                <span className="text-[9px] bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300 font-bold uppercase font-mono px-2 py-0.5 rounded border border-slate-400 dark:border-slate-700 text-center truncate max-w-[120px]">
                                   {agent.model}
                                 </span>
                               </div>
-                              <p className="text-xs text-slate-400 mt-2 font-mono line-clamp-2">
-                                <span className="text-slate-500 font-semibold">Persona:</span> {agent.persona}
+                              <p className="text-xs text-slate-700 dark:text-slate-400 mt-2 font-mono line-clamp-2">
+                                <span className="text-slate-600 dark:text-slate-500 font-semibold">Persona:</span> {agent.persona}
                               </p>
-                              <p className="text-xs text-slate-400 mt-1 font-mono line-clamp-2">
-                                <span className="text-slate-500 font-semibold">Instructions:</span> {agent.instructions}
+                              <p className="text-xs text-slate-700 dark:text-slate-400 mt-1 font-mono line-clamp-2">
+                                <span className="text-slate-600 dark:text-slate-500 font-semibold">Instructions:</span> {agent.instructions}
                               </p>
-                              <div className="flex items-center space-x-1 mt-3 font-mono text-[10px] text-slate-500">
-                                <Sliders className="w-3 h-3 text-emerald-400" />
+                              <div className="flex items-center space-x-1 mt-3 font-mono text-[10px] text-slate-600 dark:text-slate-500">
+                                <Sliders className="w-3 h-3 text-emerald-700 dark:text-emerald-400" />
                                 <span>Temp: {agent.temperature}</span>
                               </div>
                             </div>
@@ -3285,7 +3288,7 @@ export function Dashboard() {
                                     }
                                   }
                                 }}
-                                className="text-slate-500 hover:text-rose-400 text-xs font-mono transition"
+                                className="text-slate-600 dark:text-slate-500 hover:text-rose-400 text-xs font-mono transition"
                               >
                                 Delete
                               </button>
@@ -3297,7 +3300,7 @@ export function Dashboard() {
                                 }}
                                 className={`px-3 py-1 rounded-lg text-xs font-bold font-mono transition ${
                                   selectedAgentId === agent.id
-                                    ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30'
+                                    ? 'bg-emerald-100 dark:bg-emerald-600/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
                                     : 'bg-emerald-600 text-white hover:bg-emerald-500'
                                 }`}
                               >
@@ -3308,7 +3311,7 @@ export function Dashboard() {
                         ))}
 
                         {agents.length === 0 && (
-                          <div className="md:col-span-2 text-center py-12 text-slate-500">
+                          <div className="md:col-span-2 text-center py-12 text-slate-600 dark:text-slate-500">
                             <Bot className="w-12 h-12 text-slate-700 mx-auto mb-3" />
                             <p className="text-sm font-bold">No custom agent personas created yet</p>
                             <p className="text-xs max-w-xs mx-auto mt-1">Configure your first custom specialist using the form on the left.</p>
@@ -3319,40 +3322,40 @@ export function Dashboard() {
 
                     {/* Chat Sandbox Testing Arena */}
                     {selectedAgentId && (
-                      <div className="bg-[#12141c] border border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
-                        <div className="flex justify-between items-center pb-3 border-b border-slate-800">
+                      <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
+                        <div className="flex justify-between items-center pb-3 border-b border-slate-300 dark:border-slate-800">
                           <div>
-                            <h4 className="font-bold text-slate-100 flex items-center space-x-2">
-                              <Sparkles className="w-4 h-4 text-emerald-400 animate-pulse" />
+                            <h4 className="font-bold text-slate-950 dark:text-slate-100 flex items-center space-x-2">
+                              <Sparkles className="w-4 h-4 text-emerald-700 dark:text-emerald-400 animate-pulse" />
                               <span>Live Agent Sandbox Chat</span>
                             </h4>
-                            <p className="text-[10px] text-slate-500 font-mono">
+                            <p className="text-[10px] text-slate-600 dark:text-slate-500 font-mono">
                               Active Agent: {agents.find(a => a.id === selectedAgentId)?.name || 'Custom Persona'}
                             </p>
                           </div>
                           <button
                             onClick={() => setSandboxMessages([])}
-                            className="text-xs text-slate-500 hover:text-slate-300 font-mono border border-slate-800 bg-[#181b24] px-2.5 py-1 rounded-lg transition"
+                            className="text-xs text-slate-600 dark:text-slate-500 hover:text-slate-300 font-mono border border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-[#181b24] px-2.5 py-1 rounded-lg transition"
                           >
                             Clear Conversation
                           </button>
                         </div>
 
                         {/* Message log */}
-                        <div className="h-[280px] overflow-y-auto bg-[#181b24] border border-slate-800 rounded-xl p-4 space-y-4 font-sans text-xs">
+                        <div className="h-[280px] overflow-y-auto bg-slate-100 dark:bg-[#181b24] border border-slate-300 dark:border-slate-800 rounded-xl p-4 space-y-4 font-sans text-xs">
                           {sandboxMessages.map((msg, i) => (
                             <div 
                               key={i} 
                               className={`flex flex-col space-y-1 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
                             >
-                              <span className="text-[10px] font-mono text-slate-500">
+                              <span className="text-[10px] font-mono text-slate-600 dark:text-slate-500">
                                 {msg.role === 'user' ? 'You' : 'Agent'}
                               </span>
                               <div 
                                 className={`p-3 rounded-xl max-w-[85%] leading-relaxed whitespace-pre-wrap ${
                                   msg.role === 'user' 
                                     ? 'bg-emerald-600 text-white rounded-tr-none' 
-                                    : 'bg-[#12141c] text-slate-200 border border-slate-800 rounded-tl-none'
+                                    : 'bg-white dark:bg-[#12141c] text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-slate-800 rounded-tl-none'
                                 }`}
                               >
                                 {msg.text}
@@ -3361,7 +3364,7 @@ export function Dashboard() {
                           ))}
 
                           {sandboxMessages.length === 0 && (
-                            <div className="h-full flex flex-col items-center justify-center text-center text-slate-500 py-10">
+                            <div className="h-full flex flex-col items-center justify-center text-center text-slate-600 dark:text-slate-500 py-10">
                               <Bot className="w-10 h-10 text-slate-700 mb-2" />
                               <p className="text-xs font-bold">Sandbox Testing Arena Ready</p>
                               <p className="text-[10px] max-w-xs mt-1">Send a message to start communicating with your agent persona using their specialized rules.</p>
@@ -3370,9 +3373,9 @@ export function Dashboard() {
 
                           {sandboxLoading && (
                             <div className="flex flex-col space-y-1 items-start">
-                              <span className="text-[10px] font-mono text-slate-500">Agent</span>
-                              <div className="p-3 rounded-xl bg-[#12141c] text-slate-400 border border-slate-800 rounded-tl-none flex items-center space-x-2">
-                                <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-400" />
+                              <span className="text-[10px] font-mono text-slate-600 dark:text-slate-500">Agent</span>
+                              <div className="p-3 rounded-xl bg-white dark:bg-[#12141c] text-slate-700 dark:text-slate-400 border border-slate-300 dark:border-slate-800 rounded-tl-none flex items-center space-x-2">
+                                <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-700 dark:text-emerald-400" />
                                 <span className="italic font-mono text-[10px]">Thinking...</span>
                               </div>
                             </div>
@@ -3383,7 +3386,7 @@ export function Dashboard() {
                         <form onSubmit={handleAgentChat} className="flex space-x-2">
                           <input
                             type="text"
-                            className="flex-1 bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                            className="flex-1 bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                             placeholder="Type a message to test your custom agent..."
                             value={agentSandboxInput}
                             onChange={(e) => setAgentSandboxInput(e.target.value)}
@@ -3411,21 +3414,21 @@ export function Dashboard() {
                   {/* Left Column: AI Generator & Templates Library */}
                   <div className="lg:col-span-5 space-y-6">
                     {/* AI Template Creator */}
-                    <div className="bg-[#12141c] border border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
-                      <h3 className="text-base font-bold text-slate-100 flex items-center space-x-2">
-                        <Sparkles className="w-5 h-5 text-emerald-400" />
+                    <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
+                      <h3 className="text-base font-bold text-slate-950 dark:text-slate-100 flex items-center space-x-2">
+                        <Sparkles className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                         <span>AI Create Template</span>
                       </h3>
-                      <p className="text-xs text-slate-400 leading-relaxed">
+                      <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed">
                         {`Prompt Gemini to instantly generate viral social media templates with dynamic curly-bracket variables ({{brand}}, {{product}}, {{discount}}, {{cta}}, {{link}}).`}
                       </p>
 
                       <form onSubmit={handleGenerateSocialTemplate} className="space-y-4 pt-2">
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Template Topic / Prompt</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Template Topic / Prompt</label>
                           <input
                             type="text"
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2.5 text-xs text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2.5 text-xs text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
                             placeholder="e.g. AI SaaS launch with 50% early bird discount"
                             value={templateTopic}
                             onChange={(e) => setTemplateTopic(e.target.value)}
@@ -3434,9 +3437,9 @@ export function Dashboard() {
                         </div>
 
                         <div>
-                          <label className="block text-xs text-slate-400 font-bold mb-1.5">Target Platform</label>
+                          <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-1.5">Target Platform</label>
                           <select
-                            className="w-full bg-[#181b24] border border-slate-700 rounded-lg px-3 py-2.5 text-xs text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none cursor-pointer"
+                            className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2.5 text-xs text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none cursor-pointer"
                             value={templatePlatform}
                             onChange={(e) => setTemplatePlatform(e.target.value)}
                           >
@@ -3469,10 +3472,10 @@ export function Dashboard() {
                     </div>
 
                     {/* Templates Library List */}
-                    <div className="bg-[#12141c] border border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
-                      <div className="flex justify-between items-center pb-3 border-b border-slate-800">
-                        <h3 className="text-sm font-bold text-slate-200 flex items-center space-x-2">
-                          <Share2 className="w-4 h-4 text-emerald-400" />
+                    <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
+                      <div className="flex justify-between items-center pb-3 border-b border-slate-300 dark:border-slate-800">
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-slate-200 flex items-center space-x-2">
+                          <Share2 className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
                           <span>Template Library ({allAvailableTemplates.length})</span>
                         </h3>
                       </div>
@@ -3492,17 +3495,17 @@ export function Dashboard() {
                             }}
                             className={`p-3.5 rounded-xl border transition cursor-pointer ${
                               selectedTemplate?.id === t.id
-                                ? 'bg-[#1a2e25]/30 border-emerald-500/50'
-                                : 'bg-[#181b24] border-slate-800 hover:border-slate-700'
+                                ? 'bg-emerald-50 dark:bg-[#1a2e25]/30 border-emerald-500/50'
+                                : 'bg-slate-100 dark:bg-[#181b24] border-slate-300 dark:border-slate-800 hover:border-slate-500 dark:hover:border-slate-700'
                             }`}
                           >
                             <div className="flex justify-between items-start">
-                              <h4 className="text-xs font-bold text-slate-100">{t.title}</h4>
-                              <span className="text-[9px] font-mono bg-slate-800 text-emerald-400 px-2 py-0.5 rounded border border-slate-700">
+                              <h4 className="text-xs font-bold text-slate-950 dark:text-slate-100">{t.title}</h4>
+                              <span className="text-[9px] font-mono bg-slate-200 dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded border border-slate-400 dark:border-slate-700">
                                 {t.platform || 'Cross-Platform'}
                               </span>
                             </div>
-                            <p className="text-[11px] text-slate-400 mt-2 font-mono line-clamp-2">
+                            <p className="text-[11px] text-slate-700 dark:text-slate-400 mt-2 font-mono line-clamp-2">
                               {t.template}
                             </p>
                           </div>
@@ -3513,19 +3516,19 @@ export function Dashboard() {
 
                   {/* Right Column: Live Auto-Replacement Studio */}
                   <div className="lg:col-span-7 space-y-6">
-                    <div className="bg-[#12141c] border border-slate-800 rounded-xl p-6 shadow-xl space-y-6">
-                      <div className="flex justify-between items-center pb-4 border-b border-slate-800">
+                    <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 shadow-xl space-y-6">
+                      <div className="flex justify-between items-center pb-4 border-b border-slate-300 dark:border-slate-800">
                         <div>
-                          <h3 className="text-lg font-bold text-slate-100 flex items-center space-x-2">
-                            <Zap className="w-5 h-5 text-emerald-400" />
+                          <h3 className="text-lg font-bold text-slate-950 dark:text-slate-100 flex items-center space-x-2">
+                            <Zap className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
                             <span>Live Auto-Replacement Studio</span>
                           </h3>
-                          <p className="text-xs text-slate-400 mt-0.5">
+                          <p className="text-xs text-slate-700 dark:text-slate-400 mt-0.5">
                             Edit live variables below to instantly auto-replace template placeholders in real-time
                           </p>
                         </div>
                         {selectedTemplate && (
-                          <span className="text-xs font-mono bg-emerald-950 text-emerald-400 px-2.5 py-1 rounded border border-emerald-900">
+                          <span className="text-xs font-mono bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded border border-emerald-700/40 dark:border-emerald-900">
                             Active: {selectedTemplate.title}
                           </span>
                         )}
@@ -3534,19 +3537,19 @@ export function Dashboard() {
                       {selectedTemplate ? (
                         <div className="space-y-6">
                           {/* Variable Inputs */}
-                          <div className="p-4 bg-[#181b24] rounded-xl border border-slate-800 space-y-4">
-                            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest font-mono">
+                          <div className="p-4 bg-slate-100 dark:bg-[#181b24] rounded-xl border border-slate-300 dark:border-slate-800 space-y-4">
+                            <h4 className="text-xs font-bold text-slate-800 dark:text-slate-300 uppercase tracking-widest font-mono">
                               Dynamic Variables Editor
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               {['brand', 'product', 'discount', 'headline', 'cta', 'link', 'date'].map((varKey) => (
                                 <div key={varKey}>
-                                  <label className="block text-[10px] font-mono text-slate-400 uppercase font-bold mb-1">
+                                  <label className="block text-[10px] font-mono text-slate-700 dark:text-slate-400 uppercase font-bold mb-1">
                                     {'{{' + varKey + '}}'}
                                   </label>
                                   <input
                                     type="text"
-                                    className="w-full bg-[#12141c] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none font-mono"
+                                    className="w-full bg-white dark:bg-[#12141c] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none font-mono"
                                     value={liveVariables[varKey] !== undefined ? liveVariables[varKey] : ''}
                                     onChange={(e) => setLiveVariables({ ...liveVariables, [varKey]: e.target.value })}
                                     placeholder={`Value for {{${varKey}}}`}
@@ -3558,10 +3561,10 @@ export function Dashboard() {
 
                           {/* Raw Template Editor */}
                           <div className="space-y-2">
-                            <label className="block text-xs font-bold text-slate-300">Raw Template Source (with {'{{variables}}'})</label>
+                            <label className="block text-xs font-bold text-slate-800 dark:text-slate-300">Raw Template Source (with {'{{variables}}'})</label>
                             <textarea
                               rows={5}
-                              className="w-full bg-[#181b24] border border-slate-700 rounded-xl p-3 text-xs text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none font-mono leading-relaxed"
+                              className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none font-mono leading-relaxed"
                               value={selectedTemplate.template}
                               onChange={(e) => setSelectedTemplate({ ...selectedTemplate, template: e.target.value })}
                             />
@@ -3570,16 +3573,16 @@ export function Dashboard() {
                           {/* Live Replaced Preview Box */}
                           <div className="space-y-2">
                             <div className="flex justify-between items-center">
-                              <label className="block text-xs font-bold text-emerald-400 flex items-center space-x-1.5">
+                              <label className="block text-xs font-bold text-emerald-700 dark:text-emerald-400 flex items-center space-x-1.5">
                                 <Sparkles className="w-3.5 h-3.5" />
                                 <span>Live Auto-Replaced Output Preview</span>
                               </label>
-                              <span className="text-[10px] font-mono text-slate-500">
+                              <span className="text-[10px] font-mono text-slate-600 dark:text-slate-500">
                                 {renderLiveReplacedText(selectedTemplate.template).length} chars
                               </span>
                             </div>
 
-                            <div className="p-4 bg-[#0d0f14] border border-emerald-500/40 rounded-xl text-slate-100 font-sans text-sm whitespace-pre-wrap leading-relaxed shadow-inner min-h-[140px]">
+                            <div className="p-4 bg-slate-50 dark:bg-[#0d0f14] border border-emerald-500/40 rounded-xl text-slate-950 dark:text-slate-100 font-sans text-sm whitespace-pre-wrap leading-relaxed shadow-inner min-h-[140px]">
                               {renderLiveReplacedText(selectedTemplate.template)}
                             </div>
                           </div>
@@ -3624,9 +3627,9 @@ export function Dashboard() {
                                   alert('Failed to dispatch: ' + err.message);
                                 }
                               }}
-                              className="flex items-center space-x-2 bg-[#1e2230] hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2.5 rounded-lg text-xs font-bold font-mono transition cursor-pointer"
+                              className="flex items-center space-x-2 bg-slate-200 dark:bg-[#1e2230] hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-200 border border-slate-400 dark:border-slate-700 px-4 py-2.5 rounded-lg text-xs font-bold font-mono transition cursor-pointer"
                             >
-                              <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                              <Calendar className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                               <span>Dispatch to Social Automation</span>
                             </button>
                           </div>
@@ -3634,8 +3637,8 @@ export function Dashboard() {
                       ) : (
                         <div className="flex flex-col items-center justify-center py-24 text-center">
                           <Share2 className="w-12 h-12 text-slate-600 mb-3" />
-                          <p className="text-slate-300 font-bold text-sm">Select a template from the library</p>
-                          <p className="text-xs text-slate-500 max-w-sm mt-1">
+                          <p className="text-slate-800 dark:text-slate-300 font-bold text-sm">Select a template from the library</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-500 max-w-sm mt-1">
                             Choose an existing preset or generate a new AI template using the prompt builder on the left to experience live auto-replacement.
                           </p>
                         </div>
@@ -3720,8 +3723,8 @@ export function Dashboard() {
 
       {/* Floating Preference Toast Notification */}
       {favoriteNotification && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3 bg-[#1e2230] border border-amber-500/50 text-slate-100 px-4 py-3 rounded-xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-200">
-          <Star className="w-5 h-5 text-amber-400 fill-amber-400 shrink-0" />
+        <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3 bg-slate-200 dark:bg-[#1e2230] border border-amber-500/50 text-slate-950 dark:text-slate-100 px-4 py-3 rounded-xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-200">
+          <Star className="w-5 h-5 text-amber-800 dark:text-amber-400 fill-amber-400 shrink-0" />
           <span className="text-xs font-bold font-sans">{favoriteNotification}</span>
         </div>
       )}

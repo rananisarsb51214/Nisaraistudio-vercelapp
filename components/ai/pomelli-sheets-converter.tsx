@@ -251,20 +251,20 @@ export function PomelliSheetsConverter() {
   };
 
   return (
-    <div className="space-y-8 p-6 max-w-6xl mx-auto text-slate-100">
+    <div className="space-y-8 p-6 max-w-6xl mx-auto text-slate-950 dark:text-slate-100">
       {/* Header Banner */}
-      <div className="p-8 bg-gradient-to-r from-emerald-950/60 via-teal-950/40 to-slate-900 border border-emerald-500/30 rounded-3xl shadow-2xl relative overflow-hidden">
-        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="p-8 bg-gradient-to-r from-emerald-100 dark:from-emerald-950/60 via-teal-50 dark:via-teal-950/40 to-white dark:to-slate-900 border border-emerald-500/30 rounded-3xl shadow-2xl relative overflow-hidden">
+        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-50 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-mono font-bold uppercase tracking-wider">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-mono font-bold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Pomelli Website & Google Sheets Integration</span>
             </div>
-            <h1 className="text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
+            <h1 className="text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-800 dark:from-emerald-400 via-teal-700 dark:via-teal-300 to-cyan-800 dark:to-cyan-400">
               Pomelli Website & Google Sheets Gemini Converter
             </h1>
-            <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
+            <p className="text-sm text-slate-800 dark:text-slate-300 max-w-2xl leading-relaxed">
               Convert and embed your Pomelli website campaigns and deploy the official Google Sheets Apps Script Gemini Chat with persistent spreadsheet memory in NISAR AI Studio.
             </p>
           </div>
@@ -281,34 +281,34 @@ export function PomelliSheetsConverter() {
       </div>
 
       {/* Pomelli Website Link Card */}
-      <div className="p-6 bg-slate-950/80 border border-slate-800 rounded-2xl shadow-xl space-y-4">
+      <div className="p-6 bg-white dark:bg-slate-950/80 border border-slate-300 dark:border-slate-800 rounded-2xl shadow-xl space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 bg-emerald-500/20 text-emerald-400 rounded-xl border border-emerald-500/30">
+            <div className="p-2.5 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-xl border border-emerald-500/30">
               <Globe className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-100">Linked Pomelli Website Campaign</h3>
-              <p className="text-xs text-slate-400">Labs Google Pomelli Website Instance</p>
+              <h3 className="text-lg font-bold text-slate-950 dark:text-slate-100">Linked Pomelli Website Campaign</h3>
+              <p className="text-xs text-slate-700 dark:text-slate-400">Labs Google Pomelli Website Instance</p>
             </div>
           </div>
           <a
             href="https://labs.google.com/u/0/pomelli/website/9ov4uKkvJNxaHuCztahkUN"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center space-x-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-700 rounded-lg text-xs font-mono font-bold transition"
+            className="inline-flex items-center space-x-1.5 px-4 py-2 bg-white dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800 text-emerald-700 dark:text-emerald-400 border border-slate-400 dark:border-slate-700 rounded-lg text-xs font-mono font-bold transition"
           >
             <span>Visit labs.google.com/...</span>
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
         </div>
-        <div className="p-4 bg-slate-900/60 border border-slate-800 rounded-xl flex items-center justify-between font-mono text-xs text-slate-300 overflow-x-auto">
-          <span className="text-emerald-400">https://labs.google.com/u/0/pomelli/website/9ov4uKkvJNxaHuCztahkUN</span>
+        <div className="p-4 bg-slate-100 dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800 rounded-xl flex items-center justify-between font-mono text-xs text-slate-800 dark:text-slate-300 overflow-x-auto">
+          <span className="text-emerald-700 dark:text-emerald-400">https://labs.google.com/u/0/pomelli/website/9ov4uKkvJNxaHuCztahkUN</span>
           <button
             onClick={() => handleCopy('https://labs.google.com/u/0/pomelli/website/9ov4uKkvJNxaHuCztahkUN', 'pomelli_link')}
-            className="px-3 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded border border-emerald-500/30 flex items-center space-x-1"
+            className="px-3 py-1 bg-emerald-100 dark:bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-900 dark:text-emerald-300 rounded border border-emerald-500/30 flex items-center space-x-1"
           >
-            {copiedCode === 'pomelli_link' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            {copiedCode === 'pomelli_link' ? <Check className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copiedCode === 'pomelli_link' ? 'Copied!' : 'Copy Link'}</span>
           </button>
         </div>
@@ -317,82 +317,82 @@ export function PomelliSheetsConverter() {
       {/* Google Sheets Apps Script Gemini Chat Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Code.gs */}
-        <div className="p-6 bg-slate-950/80 border border-slate-800 rounded-2xl shadow-xl flex flex-col justify-between space-y-4">
+        <div className="p-6 bg-white dark:bg-slate-950/80 border border-slate-300 dark:border-slate-800 rounded-2xl shadow-xl flex flex-col justify-between space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 bg-cyan-500/20 text-cyan-400 rounded-xl border border-cyan-500/30">
+              <div className="p-2.5 bg-cyan-100 dark:bg-cyan-500/20 text-cyan-800 dark:text-cyan-400 rounded-xl border border-cyan-500/30">
                 <FileSpreadsheet className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-slate-100">Google Apps Script: Code.gs</h3>
-                <p className="text-xs text-slate-400">Backend script handling Gemini API & spreadsheet memory</p>
+                <h3 className="text-lg font-bold text-slate-950 dark:text-slate-100">Google Apps Script: Code.gs</h3>
+                <p className="text-xs text-slate-700 dark:text-slate-400">Backend script handling Gemini API & spreadsheet memory</p>
               </div>
             </div>
             <button
               onClick={() => handleCopy(APPS_SCRIPT_CODE, 'codegs')}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 rounded-lg border border-cyan-500/30 text-xs font-mono font-bold transition"
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-cyan-100 dark:bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-900 dark:text-cyan-300 rounded-lg border border-cyan-500/30 text-xs font-mono font-bold transition"
             >
-              {copiedCode === 'codegs' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copiedCode === 'codegs' ? <Check className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copiedCode === 'codegs' ? 'Copied Code.gs!' : 'Copy Code.gs'}</span>
             </button>
           </div>
-          <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-4 font-mono text-[11px] text-slate-300 h-80 overflow-y-auto">
+          <div className="relative bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl p-4 font-mono text-[11px] text-slate-800 dark:text-slate-300 h-80 overflow-y-auto">
             <pre>{APPS_SCRIPT_CODE}</pre>
           </div>
         </div>
 
         {/* Sidebar.html */}
-        <div className="p-6 bg-slate-950/80 border border-slate-800 rounded-2xl shadow-xl flex flex-col justify-between space-y-4">
+        <div className="p-6 bg-white dark:bg-slate-950/80 border border-slate-300 dark:border-slate-800 rounded-2xl shadow-xl flex flex-col justify-between space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 bg-purple-500/20 text-purple-400 rounded-xl border border-purple-500/30">
+              <div className="p-2.5 bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-400 rounded-xl border border-purple-500/30">
                 <Code className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-slate-100">Google Apps Script: Sidebar.html</h3>
-                <p className="text-xs text-slate-400">Interactive chat sidebar UI inside Google Sheets</p>
+                <h3 className="text-lg font-bold text-slate-950 dark:text-slate-100">Google Apps Script: Sidebar.html</h3>
+                <p className="text-xs text-slate-700 dark:text-slate-400">Interactive chat sidebar UI inside Google Sheets</p>
               </div>
             </div>
             <button
               onClick={() => handleCopy(SIDEBAR_HTML_CODE, 'sidebarhtml')}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded-lg border border-purple-500/30 text-xs font-mono font-bold transition"
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-purple-100 dark:bg-purple-500/20 hover:bg-purple-500/30 text-purple-900 dark:text-purple-300 rounded-lg border border-purple-500/30 text-xs font-mono font-bold transition"
             >
-              {copiedCode === 'sidebarhtml' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copiedCode === 'sidebarhtml' ? <Check className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copiedCode === 'sidebarhtml' ? 'Copied Sidebar.html!' : 'Copy Sidebar.html'}</span>
             </button>
           </div>
-          <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-4 font-mono text-[11px] text-slate-300 h-80 overflow-y-auto">
+          <div className="relative bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl p-4 font-mono text-[11px] text-slate-800 dark:text-slate-300 h-80 overflow-y-auto">
             <pre>{SIDEBAR_HTML_CODE}</pre>
           </div>
         </div>
       </div>
 
       {/* Setup Instructions */}
-      <div className="p-6 bg-slate-950/80 border border-slate-800 rounded-2xl shadow-xl space-y-4">
-        <h3 className="text-lg font-bold text-slate-100 flex items-center space-x-2">
-          <Terminal className="w-5 h-5 text-emerald-400" />
+      <div className="p-6 bg-white dark:bg-slate-950/80 border border-slate-300 dark:border-slate-800 rounded-2xl shadow-xl space-y-4">
+        <h3 className="text-lg font-bold text-slate-950 dark:text-slate-100 flex items-center space-x-2">
+          <Terminal className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
           <span>Quick Setup Guide for Google Sheets Gemini Chat Memory</span>
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-          <div className="p-4 bg-slate-900/60 border border-slate-800 rounded-xl space-y-2">
-            <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">1</div>
-            <h4 className="font-bold text-slate-200">Create Sheet & Headers</h4>
-            <p className="text-slate-400 leading-relaxed">Create a new Google Sheet. Name the first tab <code className="text-emerald-400">Chat Memory</code> with headers in A1:C1: Timestamp, Role, Message.</p>
+          <div className="p-4 bg-slate-100 dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800 rounded-xl space-y-2">
+            <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold">1</div>
+            <h4 className="font-bold text-slate-900 dark:text-slate-200">Create Sheet & Headers</h4>
+            <p className="text-slate-700 dark:text-slate-400 leading-relaxed">Create a new Google Sheet. Name the first tab <code className="text-emerald-700 dark:text-emerald-400">Chat Memory</code> with headers in A1:C1: Timestamp, Role, Message.</p>
           </div>
-          <div className="p-4 bg-slate-900/60 border border-slate-800 rounded-xl space-y-2">
-            <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">2</div>
-            <h4 className="font-bold text-slate-200">Open Apps Script</h4>
-            <p className="text-slate-400 leading-relaxed">Go to <code className="text-emerald-400">Extensions &gt; Apps Script</code> in your Google Sheet and paste <code className="text-cyan-400">Code.gs</code>.</p>
+          <div className="p-4 bg-slate-100 dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800 rounded-xl space-y-2">
+            <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold">2</div>
+            <h4 className="font-bold text-slate-900 dark:text-slate-200">Open Apps Script</h4>
+            <p className="text-slate-700 dark:text-slate-400 leading-relaxed">Go to <code className="text-emerald-700 dark:text-emerald-400">Extensions &gt; Apps Script</code> in your Google Sheet and paste <code className="text-cyan-800 dark:text-cyan-400">Code.gs</code>.</p>
           </div>
-          <div className="p-4 bg-slate-900/60 border border-slate-800 rounded-xl space-y-2">
-            <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">3</div>
-            <h4 className="font-bold text-slate-200">Add Sidebar HTML</h4>
-            <p className="text-slate-400 leading-relaxed">Create a new HTML file named <code className="text-purple-400">Sidebar</code> in Apps Script and paste <code className="text-purple-400">Sidebar.html</code>.</p>
+          <div className="p-4 bg-slate-100 dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800 rounded-xl space-y-2">
+            <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold">3</div>
+            <h4 className="font-bold text-slate-900 dark:text-slate-200">Add Sidebar HTML</h4>
+            <p className="text-slate-700 dark:text-slate-400 leading-relaxed">Create a new HTML file named <code className="text-purple-800 dark:text-purple-400">Sidebar</code> in Apps Script and paste <code className="text-purple-800 dark:text-purple-400">Sidebar.html</code>.</p>
           </div>
-          <div className="p-4 bg-slate-900/60 border border-slate-800 rounded-xl space-y-2">
-            <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">4</div>
-            <h4 className="font-bold text-slate-200">Add API Key & Run</h4>
-            <p className="text-slate-400 leading-relaxed">Insert your Gemini API key in <code className="text-emerald-400">Code.gs</code>, save, refresh sheet, and open <code className="text-emerald-400">🤖 Gemini Chat</code> menu!</p>
+          <div className="p-4 bg-slate-100 dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800 rounded-xl space-y-2">
+            <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold">4</div>
+            <h4 className="font-bold text-slate-900 dark:text-slate-200">Add API Key & Run</h4>
+            <p className="text-slate-700 dark:text-slate-400 leading-relaxed">Insert your Gemini API key in <code className="text-emerald-700 dark:text-emerald-400">Code.gs</code>, save, refresh sheet, and open <code className="text-emerald-700 dark:text-emerald-400">🤖 Gemini Chat</code> menu!</p>
           </div>
         </div>
       </div>

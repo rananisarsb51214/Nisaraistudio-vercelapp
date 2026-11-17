@@ -1,68 +1,63 @@
-import { doc, getDoc, setDoc, updateDoc, collection, addDoc, Timestamp } from 'firebase/firestore';
-import { db } from '../firebase';
-import { UserCredits, CreditTransaction, TIER_CREDIT_LIMITS } from '@/types/credits';
-
-const DEFAULT_INITIAL_BALANCE = 50;
+import { doc, collection, addDoc, runTransaction } from 'firebase/firestore';
+import { db, OperationType, handleFirestoreError } from '../firebase';
+import {
+  DAILY_FREE_LIMIT,
+  UserCredits,
+  CreditDeductionResult,
+  getUtcDateString,
+  normalizeUserCredits,
+} from '@/types/credits';
 
 export async function getUserCredits(userId: string): Promise<UserCredits> {
-  if (!userId) {
-    userId = 'anonymous_user';
-  }
+  const safeUserId = userId?.trim() || 'default_user';
+  const docPath = `user_credits/${safeUserId}`;
+  const ref = doc(db, 'user_credits', safeUserId);
 
   try {
-    const ref = doc(db, 'user_credits', userId);
-    const snap = await getDoc(ref);
+    const result = await runTransaction(db, async (transaction) => {
+      const snap = await transaction.get(ref);
+      const todayStr = getUtcDateString();
+      const nowIso = new Date().toISOString();
 
-    if (!snap.exists()) {
-      const now = new Date().toISOString();
-      const initialCredits: UserCredits = {
-        userId,
-        balance: DEFAULT_INITIAL_BALANCE,
-        totalEarned: DEFAULT_INITIAL_BALANCE,
-        totalSpent: 0,
-        tier: 'free',
-        lastRefillAt: now,
-        updatedAt: now,
-      };
-      await setDoc(ref, initialCredits);
-      return initialCredits;
-    }
+      if (!snap.exists()) {
+        const initialCredits = normalizeUserCredits(safeUserId, null);
+        transaction.set(ref, initialCredits);
+        return initialCredits;
+      }
 
-    const data = snap.data() as UserCredits;
+      const raw = snap.data() as Partial<UserCredits>;
+      const normalized = normalizeUserCredits(safeUserId, raw);
 
-    // Check for daily free credits refill
-    const lastRefill = new Date(data.lastRefillAt || 0);
-    const now = new Date();
-    const isDifferentDay = lastRefill.toDateString() !== now.toDateString();
+      const needsSync =
+        raw.lastResetDate !== todayStr ||
+        typeof raw.paidCredits !== 'number' ||
+        typeof raw.dailyUsed !== 'number' ||
+        typeof raw.dailyLimit !== 'number' ||
+        raw.balance !== normalized.paidCredits;
 
-    if (isDifferentDay) {
-      const tierConfig = TIER_CREDIT_LIMITS[data.tier || 'free'];
-      const refillAmount = tierConfig.dailyRefill;
-      const newBalance = Math.min(data.balance + refillAmount, tierConfig.maxBalance);
-      
-      const updated: Partial<UserCredits> = {
-        balance: newBalance,
-        totalEarned: data.totalEarned + refillAmount,
-        lastRefillAt: now.toISOString(),
-        updatedAt: now.toISOString(),
-      };
+      if (needsSync) {
+        transaction.set(
+          ref,
+          {
+            ...normalized,
+            updatedAt: nowIso,
+          },
+          { merge: true }
+        );
+      }
 
-      await updateDoc(ref, updated);
-      return { ...data, ...updated };
-    }
+      return normalized;
+    });
 
-    return data;
+    return result;
   } catch (error) {
-    console.warn('[CreditsService] Firestore error in getUserCredits, using fallback in-memory balance:', error);
-    return {
-      userId,
-      balance: 100,
-      totalEarned: 100,
-      totalSpent: 0,
-      tier: 'pro',
-      lastRefillAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    console.error('[CreditsService] getUserCredits transaction error:', error);
+    try {
+      handleFirestoreError(error, OperationType.GET, docPath);
+    } catch {
+      // Surface clean error context without crashing read endpoint unexpectedly if offline
+    }
+    throw error;
   }
 }
 
@@ -71,55 +66,212 @@ export async function checkAndDeductCredits(
   cost: number,
   toolId: string,
   generationId?: string
-): Promise<{ success: boolean; remainingCredits: number; error?: string }> {
-  try {
-    const credits = await getUserCredits(userId);
+): Promise<CreditDeductionResult> {
+  const safeUserId = userId?.trim() || 'default_user';
+  const effectiveCost = Math.max(1, Number.isFinite(cost) ? Math.round(cost) : 1);
+  const docPath = `user_credits/${safeUserId}`;
+  const ref = doc(db, 'user_credits', safeUserId);
 
-    if (credits.balance < cost) {
+  try {
+    const txResult = await runTransaction(db, async (transaction) => {
+      const snap = await transaction.get(ref);
+      const nowIso = new Date().toISOString();
+      const todayStr = getUtcDateString();
+
+      const current = normalizeUserCredits(
+        safeUserId,
+        snap.exists() ? (snap.data() as Partial<UserCredits>) : null
+      );
+
+      if (current.dailyUsed < current.dailyLimit) {
+        const nextDailyUsed = current.dailyUsed + 1;
+        const remainingFree = Math.max(0, current.dailyLimit - nextDailyUsed);
+
+        const nextDoc: UserCredits = {
+          ...current,
+          dailyUsed: nextDailyUsed,
+          lastResetDate: todayStr,
+          updatedAt: nowIso,
+        };
+
+        transaction.set(ref, nextDoc, { merge: true });
+
+        return {
+          success: true,
+          remainingCredits: nextDoc.paidCredits,
+          deductedCost: 1,
+          deductedFrom: 'daily_free' as const,
+          quota: {
+            dailyUsed: nextDailyUsed,
+            dailyLimit: nextDoc.dailyLimit,
+            remainingFree,
+            paidCredits: nextDoc.paidCredits,
+            lastResetDate: todayStr,
+            deductedFrom: 'daily_free' as const,
+          },
+        };
+      }
+
+      if (current.paidCredits >= effectiveCost) {
+        const nextPaidCredits = current.paidCredits - effectiveCost;
+        const nextTotalSpent = (current.totalSpent || 0) + effectiveCost;
+
+        const nextDoc: UserCredits = {
+          ...current,
+          paidCredits: nextPaidCredits,
+          balance: nextPaidCredits,
+          totalSpent: nextTotalSpent,
+          lastResetDate: todayStr,
+          updatedAt: nowIso,
+        };
+
+        transaction.set(ref, nextDoc, { merge: true });
+
+        return {
+          success: true,
+          remainingCredits: nextPaidCredits,
+          deductedCost: effectiveCost,
+          deductedFrom: 'paid_credits' as const,
+          quota: {
+            dailyUsed: nextDoc.dailyUsed,
+            dailyLimit: nextDoc.dailyLimit,
+            remainingFree: 0,
+            paidCredits: nextPaidCredits,
+            lastResetDate: todayStr,
+            deductedFrom: 'paid_credits' as const,
+          },
+        };
+      }
+
+      // Neither free daily quota nor paid credits are sufficient
+      if (!snap.exists() || snap.data()?.lastResetDate !== todayStr) {
+        transaction.set(ref, current, { merge: true });
+      }
+
       return {
         success: false,
-        remainingCredits: credits.balance,
-        error: `Insufficient AI credits. This tool requires ${cost} credits, but your current balance is ${credits.balance}.`,
+        code: 'LIMIT_REACHED' as const,
+        remainingCredits: current.paidCredits,
+        deductedCost: 0,
+        deductedFrom: 'none' as const,
+        quota: {
+          dailyUsed: current.dailyUsed,
+          dailyLimit: current.dailyLimit,
+          remainingFree: 0,
+          paidCredits: current.paidCredits,
+          lastResetDate: todayStr,
+          deductedFrom: 'none' as const,
+        },
+        error: `Daily free limit (${current.dailyLimit}/${current.dailyLimit}) reached and paid credits (${current.paidCredits}) are insufficient for ${effectiveCost} credits.`,
       };
-    }
-
-    const ref = doc(db, 'user_credits', userId);
-    const newBalance = credits.balance - cost;
-    const newTotalSpent = (credits.totalSpent || 0) + cost;
-    const now = new Date().toISOString();
-
-    await updateDoc(ref, {
-      balance: newBalance,
-      totalSpent: newTotalSpent,
-      updatedAt: now,
     });
 
-    // Record transaction
-    try {
-      const txRef = collection(db, 'user_credits', userId, 'transactions');
-      await addDoc(txRef, {
-        userId,
-        amount: -cost,
-        type: 'generation',
-        toolId,
-        generationId: generationId || '',
-        description: `AI Generation: ${toolId}`,
-        timestamp: now,
-      });
-    } catch (txErr) {
-      console.warn('[CreditsService] Could not write tx log:', txErr);
+    if (txResult.success) {
+      try {
+        const txRef = collection(db, 'user_credits', safeUserId, 'transactions');
+        await addDoc(txRef, {
+          userId: safeUserId,
+          amount: txResult.deductedFrom === 'daily_free' ? 0 : -txResult.deductedCost,
+          type: 'generation',
+          toolId,
+          generationId: generationId || '',
+          description:
+            txResult.deductedFrom === 'daily_free'
+              ? `Daily Free Quota (${txResult.quota.dailyUsed}/${txResult.quota.dailyLimit}): ${toolId}`
+              : `AI Generation (${txResult.deductedCost} paid credits): ${toolId}`,
+          timestamp: new Date().toISOString(),
+        });
+      } catch (txErr) {
+        console.warn('[CreditsService] Could not write tx log:', txErr);
+      }
     }
 
+    return txResult;
+  } catch (err) {
+    console.error('[CreditsService] Atomic quota/credit deduction failed:', err);
+    try {
+      handleFirestoreError(err, OperationType.WRITE, docPath);
+    } catch {
+      // Return structured failure rather than faking success
+    }
     return {
-      success: true,
-      remainingCredits: newBalance,
+      success: false,
+      code: 'TRANSACTION_FAILED',
+      remainingCredits: 0,
+      deductedCost: 0,
+      deductedFrom: 'none',
+      quota: {
+        dailyUsed: DAILY_FREE_LIMIT,
+        dailyLimit: DAILY_FREE_LIMIT,
+        remainingFree: 0,
+        paidCredits: 0,
+        lastResetDate: getUtcDateString(),
+        deductedFrom: 'none',
+      },
+      error: err instanceof Error ? err.message : 'Unable to verify quota due to database error.',
     };
-  } catch (err: any) {
-    console.error('[CreditsService] Error deducting credits:', err);
-    return {
-      success: true,
-      remainingCredits: 99,
-    };
+  }
+}
+
+export async function refundQuotaOrCredit(
+  userId: string,
+  deductedFrom: 'daily_free' | 'paid_credits' | 'none',
+  amount: number,
+  toolId: string
+): Promise<void> {
+  if (deductedFrom === 'none' || amount <= 0) return;
+
+  const safeUserId = userId?.trim() || 'default_user';
+  const ref = doc(db, 'user_credits', safeUserId);
+
+  try {
+    await runTransaction(db, async (transaction) => {
+      const snap = await transaction.get(ref);
+      if (!snap.exists()) return;
+
+      const todayStr = getUtcDateString();
+      const current = normalizeUserCredits(safeUserId, snap.data() as Partial<UserCredits>);
+      const nowIso = new Date().toISOString();
+
+      if (deductedFrom === 'daily_free' && current.lastResetDate === todayStr) {
+        transaction.set(
+          ref,
+          {
+            dailyUsed: Math.max(0, current.dailyUsed - 1),
+            updatedAt: nowIso,
+          },
+          { merge: true }
+        );
+      } else if (deductedFrom === 'paid_credits') {
+        const nextPaid = current.paidCredits + amount;
+        transaction.set(
+          ref,
+          {
+            paidCredits: nextPaid,
+            balance: nextPaid,
+            totalSpent: Math.max(0, current.totalSpent - amount),
+            updatedAt: nowIso,
+          },
+          { merge: true }
+        );
+      }
+    });
+
+    try {
+      const txRef = collection(db, 'user_credits', safeUserId, 'transactions');
+      await addDoc(txRef, {
+        userId: safeUserId,
+        amount: deductedFrom === 'paid_credits' ? amount : 0,
+        type: 'refund',
+        toolId,
+        description: `Automatic rollback after generation failure: ${toolId}`,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (txErr) {
+      console.warn('[CreditsService] Refund tx log skipped:', txErr);
+    }
+  } catch (err) {
+    console.warn('[CreditsService] Refund failed:', err);
   }
 }
 
@@ -127,37 +279,52 @@ export async function topUpUserCredits(
   userId: string,
   amount: number,
   type: 'purchase' | 'bonus' | 'daily_refill' = 'bonus',
-  description = 'Credits Top-Up'
+  description = 'Paid Credits Top-Up'
 ): Promise<UserCredits> {
-  const current = await getUserCredits(userId);
-  const newBalance = current.balance + amount;
-  const newEarned = current.totalEarned + amount;
-  const now = new Date().toISOString();
-
-  const ref = doc(db, 'user_credits', userId);
-  await updateDoc(ref, {
-    balance: newBalance,
-    totalEarned: newEarned,
-    updatedAt: now,
-  });
+  const safeUserId = userId?.trim() || 'default_user';
+  const validAmount = Math.max(1, Math.round(Number(amount) || 0));
+  const docPath = `user_credits/${safeUserId}`;
+  const ref = doc(db, 'user_credits', safeUserId);
 
   try {
-    const txRef = collection(db, 'user_credits', userId, 'transactions');
-    await addDoc(txRef, {
-      userId,
-      amount,
-      type,
-      description,
-      timestamp: now,
-    });
-  } catch (e) {
-    console.warn('[CreditsService] Top-up tx log skipped:', e);
-  }
+    const updated = await runTransaction(db, async (transaction) => {
+      const snap = await transaction.get(ref);
+      const current = normalizeUserCredits(
+        safeUserId,
+        snap.exists() ? (snap.data() as Partial<UserCredits>) : null
+      );
+      const nowIso = new Date().toISOString();
+      const nextPaid = current.paidCredits + validAmount;
+      const nextEarned = current.totalEarned + validAmount;
 
-  return {
-    ...current,
-    balance: newBalance,
-    totalEarned: newEarned,
-    updatedAt: now,
-  };
+      const nextDoc: UserCredits = {
+        ...current,
+        paidCredits: nextPaid,
+        balance: nextPaid,
+        totalEarned: nextEarned,
+        lastRefillAt: nowIso,
+        updatedAt: nowIso,
+      };
+
+      transaction.set(ref, nextDoc, { merge: true });
+      return nextDoc;
+    });
+
+    try {
+      const txRef = collection(db, 'user_credits', safeUserId, 'transactions');
+      await addDoc(txRef, {
+        userId: safeUserId,
+        amount: validAmount,
+        type,
+        description,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (e) {
+      console.warn('[CreditsService] Top-up tx log skipped:', e);
+    }
+
+    return updated;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, docPath);
+  }
 }

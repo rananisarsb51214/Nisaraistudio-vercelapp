@@ -17,9 +17,17 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { userId = 'default_user', amount = 50, type = 'bonus', description } = body;
+    const { userId = 'default_user', amount = 50, type = 'bonus', description } = body || {};
+    const numericAmount = Number(amount);
 
-    const updatedCredits = await topUpUserCredits(userId, Number(amount), type, description);
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0 || numericAmount > 100000) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid credit top-up amount.' },
+        { status: 400 }
+      );
+    }
+
+    const updatedCredits = await topUpUserCredits(userId, numericAmount, type, description);
     return NextResponse.json({ success: true, credits: updatedCredits });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

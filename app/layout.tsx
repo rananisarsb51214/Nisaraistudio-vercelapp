@@ -13,10 +13,31 @@ export const metadata: Metadata = {
   },
 };
 
+const themeInitScript = `
+(function() {
+  try {
+    var t = window.localStorage.getItem('nisar-studio-theme');
+    var root = document.documentElement;
+    if (t === 'light') {
+      root.classList.remove('dark');
+      root.classList.add('light-high-contrast');
+      root.dataset.theme = 'light';
+      root.style.colorScheme = 'light';
+    } else {
+      root.classList.add('dark');
+      root.classList.remove('light-high-contrast');
+      root.dataset.theme = 'dark';
+      root.style.colorScheme = 'dark';
+    }
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className="bg-slate-50 text-slate-950 dark:bg-[#0d0f12] dark:text-slate-100 antialiased transition-colors duration-150">
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <Providers>
           {children}
         </Providers>

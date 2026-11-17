@@ -356,7 +356,7 @@ export function VibeResponding() {
   return (
     <div className="space-y-6">
       {/* Top Navigation Tabs */}
-      <div className="flex items-center space-x-1 overflow-x-auto custom-scrollbar p-1.5 bg-[#12141c] border border-slate-800/80 rounded-2xl shadow-lg text-xs font-mono">
+      <div className="flex items-center space-x-1 overflow-x-auto custom-scrollbar p-1.5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800/80 rounded-2xl shadow-lg text-xs font-mono">
         {SUB_NAV_TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -367,7 +367,7 @@ export function VibeResponding() {
               className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl transition font-bold shrink-0 ${
                 isActive
                   ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  : 'text-slate-700 dark:text-slate-400 hover:text-slate-950 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800/60'
               }`}
             >
               <Icon className="w-4 h-4" />

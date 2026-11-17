@@ -1,3 +1,5 @@
+import type { QuotaStatus } from './credits';
+
 export type ToolCategory = 'content' | 'video' | 'marketing' | 'business' | 'productivity';
 
 export interface ToolFieldDefinition {
@@ -46,8 +48,10 @@ export interface ToolExecutionResponse {
   structuredOutput?: Record<string, any>;
   creditsUsed: number;
   remainingCredits: number;
+  quota?: QuotaStatus;
   executionTimeMs: number;
   modelUsed: string;
   timestamp: string;
   error?: string;
 }
+

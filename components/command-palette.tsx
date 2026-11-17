@@ -89,7 +89,7 @@ export default function CommandPalette({
       label: 'Super AI Toolbox (30+ Tools)',
       description: 'Open modular AI suite for Content, Video, Marketing, Business & Productivity',
       category: 'AI Tools',
-      icon: <Sparkles className="w-4 h-4 text-emerald-400" />,
+      icon: <Sparkles className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />,
       action: () => {
         setActiveTab('toolbox');
         onClose();
@@ -101,7 +101,7 @@ export default function CommandPalette({
       label: 'Quick Gemini AI Assistant',
       description: 'Ask Google Gemini AI anything directly from the command bar',
       category: 'AI Tools',
-      icon: <Sparkles className="w-4 h-4 text-emerald-400" />,
+      icon: <Sparkles className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />,
       action: () => {
         setIsAiMode(true);
         if (query.trim()) setQuickAiPrompt(query);
@@ -113,7 +113,7 @@ export default function CommandPalette({
       label: 'SEO Blog Article Factory',
       description: 'Generate high-ranking AI articles with keywords & metadata',
       category: 'AI Tools',
-      icon: <BookOpen className="w-4 h-4 text-teal-400" />,
+      icon: <BookOpen className="w-4 h-4 text-teal-700 dark:text-teal-400" />,
       action: () => {
         setActiveTab('blog');
         onClose();
@@ -125,7 +125,7 @@ export default function CommandPalette({
       label: 'Ecom AI Sales Funnels',
       description: 'Build 5-page conversion funnels for affiliate or direct products',
       category: 'AI Tools',
-      icon: <Zap className="w-4 h-4 text-cyan-400" />,
+      icon: <Zap className="w-4 h-4 text-cyan-800 dark:text-cyan-400" />,
       action: () => {
         setActiveTab('ecom');
         onClose();
@@ -137,7 +137,7 @@ export default function CommandPalette({
       label: 'Autonomous AI Agents',
       description: 'Configure and test specialized AI agents with custom personas',
       category: 'AI Tools',
-      icon: <Bot className="w-4 h-4 text-violet-400" />,
+      icon: <Bot className="w-4 h-4 text-violet-800 dark:text-violet-400" />,
       action: () => {
         setActiveTab('agents');
         onClose();
@@ -149,7 +149,7 @@ export default function CommandPalette({
       label: 'AI Memory Matrix',
       description: 'Persistent contextual knowledge graph for your workspace',
       category: 'AI Tools',
-      icon: <Brain className="w-4 h-4 text-purple-400" />,
+      icon: <Brain className="w-4 h-4 text-purple-800 dark:text-purple-400" />,
       action: () => {
         setActiveTab('memory');
         onClose();
@@ -160,7 +160,7 @@ export default function CommandPalette({
       label: 'AI Website & Page Builder',
       description: 'Create responsive landing pages with live HTML/Tailwind preview',
       category: 'AI Tools',
-      icon: <Globe className="w-4 h-4 text-pink-400" />,
+      icon: <Globe className="w-4 h-4 text-pink-800 dark:text-pink-400" />,
       action: () => {
         setActiveTab('builder');
         onClose();
@@ -171,7 +171,7 @@ export default function CommandPalette({
       label: 'Social Media Auto-Scheduler',
       description: 'Schedule multi-platform social media posts in real-time',
       category: 'AI Tools',
-      icon: <Calendar className="w-4 h-4 text-sky-400" />,
+      icon: <Calendar className="w-4 h-4 text-sky-800 dark:text-sky-400" />,
       action: () => {
         setActiveTab('scheduler');
         onClose();
@@ -182,7 +182,7 @@ export default function CommandPalette({
       label: 'AI Prompt & Live Demo Gallery',
       description: 'Explore viral social templates and live executable prompt blueprints',
       category: 'AI Tools',
-      icon: <Layers className="w-4 h-4 text-amber-400" />,
+      icon: <Layers className="w-4 h-4 text-amber-800 dark:text-amber-400" />,
       action: () => {
         setActiveTab('template_gallery');
         onClose();
@@ -195,7 +195,7 @@ export default function CommandPalette({
       label: 'Overview Dashboard',
       description: 'Main metrics, quick actions, and project selector',
       category: 'Navigation',
-      icon: <Layout className="w-4 h-4 text-slate-300" />,
+      icon: <Layout className="w-4 h-4 text-slate-800 dark:text-slate-300" />,
       action: () => {
         setActiveTab('overview');
         onClose();
@@ -207,7 +207,7 @@ export default function CommandPalette({
       label: 'Gemini API & Activity Feed',
       description: 'Live Firestore audit logs of all AI interactions and studio events',
       category: 'Navigation',
-      icon: <Activity className="w-4 h-4 text-emerald-400" />,
+      icon: <Activity className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />,
       action: () => {
         setActiveTab('activity_feed');
         onClose();
@@ -218,7 +218,7 @@ export default function CommandPalette({
       label: 'Social Post Blueprints',
       description: 'Quick viral templates for TikTok, Instagram, Twitter & LinkedIn',
       category: 'Navigation',
-      icon: <Terminal className="w-4 h-4 text-indigo-400" />,
+      icon: <Terminal className="w-4 h-4 text-indigo-800 dark:text-indigo-400" />,
       action: () => {
         setActiveTab('social_templates');
         onClose();
@@ -231,7 +231,7 @@ export default function CommandPalette({
       label: 'Create New Workspace / Project',
       description: 'Add a new project container to organize your AI assets',
       category: 'Quick Actions',
-      icon: <Plus className="w-4 h-4 text-emerald-400" />,
+      icon: <Plus className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />,
       action: () => {
         setIsCreatingProject(true);
         onClose();
@@ -246,7 +246,7 @@ export default function CommandPalette({
       label: `Switch to Workspace: ${proj.name}`,
       description: `Active project ID: ${proj.id}`,
       category: 'Workspaces',
-      icon: <ShieldCheck className="w-4 h-4 text-indigo-400" />,
+      icon: <ShieldCheck className="w-4 h-4 text-indigo-800 dark:text-indigo-400" />,
       action: () => {
         setSelectedProjectId(proj.id);
         onClose();
@@ -340,12 +340,12 @@ export default function CommandPalette({
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-start justify-center pt-16 md:pt-24 px-4 animate-in fade-in duration-200">
       <div 
-        className="bg-[#12141c] border border-slate-700/80 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[80vh] relative"
+        className="bg-white dark:bg-[#12141c] border border-slate-400 dark:border-slate-700/80 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[80vh] relative"
         onKeyDown={handleKeyDown}
       >
         {/* Top Search Input Bar */}
-        <div className="p-4 border-b border-slate-800 bg-[#171a24] flex items-center space-x-3 relative">
-          <Search className="w-5 h-5 text-emerald-400 shrink-0" />
+        <div className="p-4 border-b border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-[#171a24] flex items-center space-x-3 relative">
+          <Search className="w-5 h-5 text-emerald-700 dark:text-emerald-400 shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -362,11 +362,11 @@ export default function CommandPalette({
                 ? "Ask Gemini AI anything (e.g. 'Write 3 viral headlines for AI software')..." 
                 : "Type a command or search tools, navigation, workspaces (Ctrl+K)..."
             }
-            className="w-full bg-transparent text-sm text-slate-100 placeholder-slate-400 focus:outline-none font-sans"
+            className="w-full bg-transparent text-sm text-slate-950 dark:text-slate-100 placeholder-slate-600 dark:placeholder-slate-400 focus:outline-none font-sans"
           />
 
           {isAiMode && (
-            <span className="text-[10px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold shrink-0">
+            <span className="text-[10px] font-mono bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-700/40 dark:border-emerald-800 px-2 py-0.5 rounded font-bold shrink-0">
               Gemini AI Mode
             </span>
           )}
@@ -376,7 +376,7 @@ export default function CommandPalette({
               if (isAiMode) setIsAiMode(false);
               else onClose();
             }}
-            className="p-1 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition"
+            className="p-1 text-slate-700 dark:text-slate-400 hover:text-slate-950 dark:hover:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-800 rounded-lg transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -385,14 +385,14 @@ export default function CommandPalette({
         {/* AI Mode Execution View */}
         {isAiMode ? (
           <div className="p-5 space-y-4 overflow-y-auto custom-scrollbar">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-300 dark:border-slate-800">
               <div className="flex items-center space-x-2">
-                <Sparkles className="w-4 h-4 text-emerald-400 animate-pulse" />
-                <span className="text-xs font-bold text-slate-200">Quick Gemini AI Assistant</span>
+                <Sparkles className="w-4 h-4 text-emerald-700 dark:text-emerald-400 animate-pulse" />
+                <span className="text-xs font-bold text-slate-900 dark:text-slate-200">Quick Gemini AI Assistant</span>
               </div>
               <button
                 onClick={() => setIsAiMode(false)}
-                className="text-[11px] font-mono text-slate-400 hover:text-emerald-400 underline"
+                className="text-[11px] font-mono text-slate-700 dark:text-slate-400 hover:text-emerald-400 underline"
               >
                 Return to Commands
               </button>
@@ -419,12 +419,12 @@ export default function CommandPalette({
             </div>
 
             {quickAiResult && (
-              <div className="p-4 bg-[#181b24] border border-emerald-500/30 rounded-xl space-y-2 text-xs">
-                <div className="flex items-center justify-between font-mono text-[10px] text-emerald-400 font-bold">
+              <div className="p-4 bg-slate-100 dark:bg-[#181b24] border border-emerald-500/30 rounded-xl space-y-2 text-xs">
+                <div className="flex items-center justify-between font-mono text-[10px] text-emerald-700 dark:text-emerald-400 font-bold">
                   <span>Gemini AI Response:</span>
                   <span>gemini-3.5-flash</span>
                 </div>
-                <p className="text-slate-100 leading-relaxed font-sans whitespace-pre-wrap">
+                <p className="text-slate-950 dark:text-slate-100 leading-relaxed font-sans whitespace-pre-wrap">
                   {quickAiResult}
                 </p>
               </div>
@@ -434,10 +434,10 @@ export default function CommandPalette({
           /* Command List View */
           <div ref={listRef} className="flex-1 overflow-y-auto p-2 space-y-4 custom-scrollbar">
             {filteredCommands.length === 0 ? (
-              <div className="py-12 text-center text-slate-500 text-xs">
+              <div className="py-12 text-center text-slate-600 dark:text-slate-500 text-xs">
                 <Command className="w-8 h-8 text-slate-600 mx-auto mb-2 opacity-50" />
-                <p className="font-bold text-slate-400">No matching commands or tools found</p>
-                <p className="text-[11px] mt-1 text-slate-500">Try searching "Blog", "Funnel", "Agent", or "Workspace"</p>
+                <p className="font-bold text-slate-700 dark:text-slate-400">No matching commands or tools found</p>
+                <p className="text-[11px] mt-1 text-slate-600 dark:text-slate-500">Try searching "Blog", "Funnel", "Agent", or "Workspace"</p>
               </div>
             ) : (
               groupedCategories.map((category) => {
@@ -446,7 +446,7 @@ export default function CommandPalette({
 
                 return (
                   <div key={category} className="space-y-1">
-                    <div className="px-3 py-1 text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">
+                    <div className="px-3 py-1 text-[10px] font-mono uppercase tracking-wider text-slate-600 dark:text-slate-500 font-bold">
                       {category}
                     </div>
                     {categoryItems.map((item) => {
@@ -460,23 +460,23 @@ export default function CommandPalette({
                           onMouseEnter={() => setSelectedIndex(globalItemIndex)}
                           className={`w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between group cursor-pointer ${
                             isSelected 
-                              ? 'bg-emerald-600/20 text-slate-100 border border-emerald-500/40 shadow-sm' 
-                              : 'text-slate-300 hover:bg-[#181b24] border border-transparent'
+                              ? 'bg-emerald-100 dark:bg-emerald-600/20 text-slate-950 dark:text-slate-100 border border-emerald-500/40 shadow-sm' 
+                              : 'text-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#181b24] border border-transparent'
                           }`}
                         >
                           <div className="flex items-center space-x-3 min-w-0">
                             <div className={`p-2 rounded-lg border ${
                               isSelected 
-                                ? 'bg-emerald-500/20 border-emerald-500/50' 
-                                : 'bg-[#181b24] border-slate-800'
+                                ? 'bg-emerald-100 dark:bg-emerald-500/20 border-emerald-500/50' 
+                                : 'bg-slate-100 dark:bg-[#181b24] border-slate-300 dark:border-slate-800'
                             }`}>
                               {item.icon}
                             </div>
                             <div className="min-w-0">
-                              <div className="text-xs font-bold text-slate-100 flex items-center space-x-2">
+                              <div className="text-xs font-bold text-slate-950 dark:text-slate-100 flex items-center space-x-2">
                                 <span>{item.label}</span>
                               </div>
-                              <p className="text-[11px] text-slate-400 truncate">
+                              <p className="text-[11px] text-slate-700 dark:text-slate-400 truncate">
                                 {item.description}
                               </p>
                             </div>
@@ -484,12 +484,12 @@ export default function CommandPalette({
 
                           <div className="flex items-center space-x-2 shrink-0 ml-3">
                             {item.shortcut && (
-                              <span className="text-[10px] font-mono px-2 py-0.5 bg-[#1e2230] text-slate-400 rounded border border-slate-700">
+                              <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-200 dark:bg-[#1e2230] text-slate-700 dark:text-slate-400 rounded border border-slate-400 dark:border-slate-700">
                                 {item.shortcut}
                               </span>
                             )}
                             {isSelected && (
-                              <CornerDownLeft className="w-3.5 h-3.5 text-emerald-400" />
+                              <CornerDownLeft className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                             )}
                           </div>
                         </button>
@@ -503,26 +503,26 @@ export default function CommandPalette({
         )}
 
         {/* Footer Navigation Hints */}
-        <div className="p-3 bg-[#171a24] border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400">
+        <div className="p-3 bg-slate-100 dark:bg-[#171a24] border-t border-slate-300 dark:border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-700 dark:text-slate-400">
           <div className="flex items-center space-x-3">
             <span className="flex items-center space-x-1">
-              <span className="px-1.5 py-0.5 bg-[#12141c] border border-slate-700 rounded text-[10px] text-slate-300 font-bold">↑</span>
-              <span className="px-1.5 py-0.5 bg-[#12141c] border border-slate-700 rounded text-[10px] text-slate-300 font-bold">↓</span>
-              <span className="text-slate-500">Navigate</span>
+              <span className="px-1.5 py-0.5 bg-white dark:bg-[#12141c] border border-slate-400 dark:border-slate-700 rounded text-[10px] text-slate-800 dark:text-slate-300 font-bold">↑</span>
+              <span className="px-1.5 py-0.5 bg-white dark:bg-[#12141c] border border-slate-400 dark:border-slate-700 rounded text-[10px] text-slate-800 dark:text-slate-300 font-bold">↓</span>
+              <span className="text-slate-600 dark:text-slate-500">Navigate</span>
             </span>
             <span className="flex items-center space-x-1">
-              <span className="px-1.5 py-0.5 bg-[#12141c] border border-slate-700 rounded text-[10px] text-slate-300 font-bold">↵</span>
-              <span className="text-slate-500">Select</span>
+              <span className="px-1.5 py-0.5 bg-white dark:bg-[#12141c] border border-slate-400 dark:border-slate-700 rounded text-[10px] text-slate-800 dark:text-slate-300 font-bold">↵</span>
+              <span className="text-slate-600 dark:text-slate-500">Select</span>
             </span>
             <span className="flex items-center space-x-1">
-              <span className="px-1.5 py-0.5 bg-[#12141c] border border-slate-700 rounded text-[10px] text-slate-300 font-bold">Esc</span>
-              <span className="text-slate-500">Close</span>
+              <span className="px-1.5 py-0.5 bg-white dark:bg-[#12141c] border border-slate-400 dark:border-slate-700 rounded text-[10px] text-slate-800 dark:text-slate-300 font-bold">Esc</span>
+              <span className="text-slate-600 dark:text-slate-500">Close</span>
             </span>
           </div>
 
-          <div className="flex items-center space-x-1 text-slate-400 font-bold">
-            <Command className="w-3 h-3 text-emerald-400" />
-            <span className="text-emerald-400">Ctrl+K / ⌘K</span>
+          <div className="flex items-center space-x-1 text-slate-700 dark:text-slate-400 font-bold">
+            <Command className="w-3 h-3 text-emerald-700 dark:text-emerald-400" />
+            <span className="text-emerald-700 dark:text-emerald-400">Ctrl+K / ⌘K</span>
           </div>
         </div>
       </div>

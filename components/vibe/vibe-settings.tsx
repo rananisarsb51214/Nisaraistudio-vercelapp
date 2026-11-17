@@ -25,35 +25,35 @@ export function VibeSettingsView({ settings, onSaveSettings, loading }: VibeSett
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <div className="p-6 bg-[#12141c] border border-slate-800/80 rounded-2xl shadow-xl space-y-2">
-        <div className="flex items-center space-x-2 text-emerald-400 text-xs font-mono font-bold">
+      <div className="p-6 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800/80 rounded-2xl shadow-xl space-y-2">
+        <div className="flex items-center space-x-2 text-emerald-700 dark:text-emerald-400 text-xs font-mono font-bold">
           <Sliders className="w-4 h-4" />
           <span>System & Global Automation Threshold Configuration</span>
         </div>
-        <h2 className="text-xl font-black text-white">Vibe Responding Global Settings</h2>
-        <p className="text-xs text-slate-400 leading-relaxed">
+        <h2 className="text-xl font-black text-slate-950 dark:text-white">Vibe Responding Global Settings</h2>
+        <p className="text-xs text-slate-700 dark:text-slate-400 leading-relaxed">
           Configure default automation modes, confidence thresholds, rate limits, escalation rules, and admin notification dispatch.
         </p>
       </div>
 
       {savedSuccess && (
-        <div className="p-4 bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs font-mono rounded-xl flex items-center space-x-2">
+        <div className="p-4 bg-emerald-950/80 border border-emerald-700/40 dark:border-emerald-800 text-emerald-900 dark:text-emerald-300 text-xs font-mono rounded-xl flex items-center space-x-2">
           <CheckCircle2 className="w-4 h-4" />
           <span>Settings saved successfully!</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="p-6 bg-[#12141c] border border-slate-800/80 rounded-2xl space-y-6 shadow-xl text-xs">
+      <form onSubmit={handleSubmit} className="p-6 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800/80 rounded-2xl space-y-6 shadow-xl text-xs">
         <div className="space-y-4">
-          <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-2">Automation Mode & Status</h3>
+          <h3 className="text-sm font-bold text-slate-950 dark:text-white border-b border-slate-300 dark:border-slate-800 pb-2">Automation Mode & Status</h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-slate-300 font-mono font-bold">Automation Status</label>
+              <label className="text-slate-800 dark:text-slate-300 font-mono font-bold">Automation Status</label>
               <select
                 value={formData.automationStatus}
                 onChange={(e) => setFormData({ ...formData, automationStatus: e.target.value as any })}
-                className="w-full bg-[#171a24] border border-slate-700 rounded-xl p-3 text-white mt-1.5 font-mono"
+                className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-slate-950 dark:text-white mt-1.5 font-mono"
               >
                 <option value="ONLINE">ONLINE (Active Engine)</option>
                 <option value="PAUSED">PAUSED (Manual Only)</option>
@@ -61,11 +61,11 @@ export function VibeSettingsView({ settings, onSaveSettings, loading }: VibeSett
             </div>
 
             <div>
-              <label className="text-slate-300 font-mono font-bold">Execution Mode</label>
+              <label className="text-slate-800 dark:text-slate-300 font-mono font-bold">Execution Mode</label>
               <select
                 value={formData.mode}
                 onChange={(e) => setFormData({ ...formData, mode: e.target.value as any })}
-                className="w-full bg-[#171a24] border border-slate-700 rounded-xl p-3 text-white mt-1.5 font-mono"
+                className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-slate-950 dark:text-white mt-1.5 font-mono"
               >
                 <option value="AUTO">AUTO (Fully Automated)</option>
                 <option value="APPROVAL">APPROVAL (Human Approves All)</option>
@@ -75,7 +75,7 @@ export function VibeSettingsView({ settings, onSaveSettings, loading }: VibeSett
           </div>
 
           <div>
-            <div className="flex justify-between text-slate-300 font-mono font-bold">
+            <div className="flex justify-between text-slate-800 dark:text-slate-300 font-mono font-bold">
               <span>Confidence Threshold ({Math.round(formData.confidenceThreshold * 100)}%)</span>
             </div>
             <input
@@ -89,53 +89,53 @@ export function VibeSettingsView({ settings, onSaveSettings, loading }: VibeSett
           </div>
 
           <div>
-            <label className="text-slate-300 font-mono font-bold">Max Replies Per Day</label>
+            <label className="text-slate-800 dark:text-slate-300 font-mono font-bold">Max Replies Per Day</label>
             <input
               type="number"
               value={formData.maxRepliesPerDay}
               onChange={(e) => setFormData({ ...formData, maxRepliesPerDay: Number(e.target.value) })}
-              className="w-full bg-[#171a24] border border-slate-700 rounded-xl p-3 text-white mt-1.5 font-mono"
+              className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-xl p-3 text-slate-950 dark:text-white mt-1.5 font-mono"
             />
           </div>
         </div>
 
-        <div className="space-y-4 pt-4 border-t border-slate-800">
-          <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-2">Safety & Notifications</h3>
+        <div className="space-y-4 pt-4 border-t border-slate-300 dark:border-slate-800">
+          <h3 className="text-sm font-bold text-slate-950 dark:text-white border-b border-slate-300 dark:border-slate-800 pb-2">Safety & Notifications</h3>
 
           <div className="space-y-3">
-            <label className="flex items-center space-x-3 cursor-pointer text-slate-200">
+            <label className="flex items-center space-x-3 cursor-pointer text-slate-900 dark:text-slate-200">
               <input
                 type="checkbox"
                 checked={formData.autoEscalateNegative}
                 onChange={(e) => setFormData({ ...formData, autoEscalateNegative: e.target.checked })}
-                className="rounded border-slate-700 text-emerald-500 focus:ring-emerald-500 w-4 h-4"
+                className="rounded border-slate-400 dark:border-slate-700 text-emerald-500 focus:ring-emerald-500 w-4 h-4"
               />
               <span>Automatically escalate negative sentiment or payment disputes</span>
             </label>
 
-            <label className="flex items-center space-x-3 cursor-pointer text-slate-200">
+            <label className="flex items-center space-x-3 cursor-pointer text-slate-900 dark:text-slate-200">
               <input
                 type="checkbox"
                 checked={formData.notifyOnEscalation}
                 onChange={(e) => setFormData({ ...formData, notifyOnEscalation: e.target.checked })}
-                className="rounded border-slate-700 text-emerald-500 focus:ring-emerald-500 w-4 h-4"
+                className="rounded border-slate-400 dark:border-slate-700 text-emerald-500 focus:ring-emerald-500 w-4 h-4"
               />
               <span>Send in-dashboard notifications on human escalation triggers</span>
             </label>
 
-            <label className="flex items-center space-x-3 cursor-pointer text-slate-200">
+            <label className="flex items-center space-x-3 cursor-pointer text-slate-900 dark:text-slate-200">
               <input
                 type="checkbox"
                 checked={formData.notifyOnFailure}
                 onChange={(e) => setFormData({ ...formData, notifyOnFailure: e.target.checked })}
-                className="rounded border-slate-700 text-emerald-500 focus:ring-emerald-500 w-4 h-4"
+                className="rounded border-slate-400 dark:border-slate-700 text-emerald-500 focus:ring-emerald-500 w-4 h-4"
               />
               <span>Notify when social API access tokens expire or fail</span>
             </label>
           </div>
         </div>
 
-        <div className="pt-4 border-t border-slate-800 flex justify-end">
+        <div className="pt-4 border-t border-slate-300 dark:border-slate-800 flex justify-end">
           <button
             type="submit"
             disabled={loading}

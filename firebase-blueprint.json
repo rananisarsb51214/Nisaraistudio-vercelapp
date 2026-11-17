@@ -120,14 +120,19 @@
     },
     "UserPreference": {
       "title": "UserPreference",
-      "description": "User preference settings including favorited AI tools.",
+      "description": "User preference settings including favorited AI tools and active UI theme.",
       "type": "object",
       "properties": {
         "favoriteTools": { "type": "array" },
+        "theme": {
+          "type": "string",
+          "enum": ["dark", "light"],
+          "description": "Active UI theme mode (dark or high-contrast light)."
+        },
         "tenantId": { "type": "string" },
         "updatedAt": { "type": "object" }
       },
-      "required": ["favoriteTools", "tenantId"]
+      "required": ["tenantId"]
     },
     "VibeAccount": {
       "title": "VibeAccount",
@@ -218,14 +223,22 @@
     },
     "UserCredits": {
       "title": "UserCredits",
-      "description": "User credits balance and tier details for Super AI Toolbox.",
+      "description": "User credits balance, daily free quota (10/day), and tier details for Super AI Toolbox.",
       "type": "object",
       "properties": {
         "userId": { "type": "string" },
         "balance": { "type": "number" },
-        "tier": { "type": "string" }
+        "paidCredits": { "type": "number" },
+        "dailyUsed": { "type": "number" },
+        "dailyLimit": { "type": "number" },
+        "lastResetDate": { "type": "string" },
+        "totalEarned": { "type": "number" },
+        "totalSpent": { "type": "number" },
+        "tier": { "type": "string" },
+        "lastRefillAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
       },
-      "required": ["userId", "balance"]
+      "required": ["userId", "balance", "paidCredits", "dailyUsed", "lastResetDate"]
     },
     "AiHistoryItem": {
       "title": "AiHistoryItem",

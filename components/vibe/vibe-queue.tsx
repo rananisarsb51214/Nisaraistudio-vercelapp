@@ -27,23 +27,23 @@ export function VibeQueue({ jobs, onRefreshJobs, onReprocessJob, onCancelJob }: 
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="p-6 bg-[#12141c] border border-slate-800/80 rounded-2xl shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-6 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800/80 rounded-2xl shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
-          <div className="flex items-center space-x-2 text-emerald-400 text-xs font-mono font-bold">
+          <div className="flex items-center space-x-2 text-emerald-700 dark:text-emerald-400 text-xs font-mono font-bold">
             <Database className="w-4 h-4" />
             <span>Redis Content Queue Layer (nisar:vibe:*)</span>
           </div>
-          <h2 className="text-xl font-black text-white">Social Media Job Queue & State Worker</h2>
-          <p className="text-xs text-slate-400 max-w-xl">
+          <h2 className="text-xl font-black text-slate-950 dark:text-white">Social Media Job Queue & State Worker</h2>
+          <p className="text-xs text-slate-700 dark:text-slate-400 max-w-xl">
             Distributed asynchronous job queue using Redis for rate limiting, retry backoff, idempotency locks, and social reply publishing.
           </p>
         </div>
 
         <button
           onClick={onRefreshJobs}
-          className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl transition flex items-center space-x-2 self-start md:self-auto"
+          className="px-4 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-200 font-bold text-xs rounded-xl transition flex items-center space-x-2 self-start md:self-auto"
         >
-          <RefreshCw className="w-4 h-4 text-emerald-400" />
+          <RefreshCw className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
           <span>Refresh Queue</span>
         </button>
       </div>
@@ -55,7 +55,7 @@ export function VibeQueue({ jobs, onRefreshJobs, onReprocessJob, onCancelJob }: 
             key={f}
             onClick={() => setFilter(f)}
             className={`px-3 py-1.5 rounded-xl font-bold transition ${
-              filter === f ? 'bg-emerald-600 text-white shadow-md' : 'bg-[#12141c] text-slate-400 hover:bg-slate-800'
+              filter === f ? 'bg-emerald-600 text-white shadow-md' : 'bg-white dark:bg-[#12141c] text-slate-700 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-800'
             }`}
           >
             {f}
@@ -64,10 +64,10 @@ export function VibeQueue({ jobs, onRefreshJobs, onReprocessJob, onCancelJob }: 
       </div>
 
       {/* Queue Table */}
-      <div className="bg-[#12141c] border border-slate-800/80 rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800/80 rounded-2xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#171a24] text-slate-400 font-mono uppercase text-[10px] border-b border-slate-800">
+            <thead className="bg-slate-100 dark:bg-[#171a24] text-slate-700 dark:text-slate-400 font-mono uppercase text-[10px] border-b border-slate-300 dark:border-slate-800">
               <tr>
                 <th className="p-4">Job ID</th>
                 <th className="p-4">Platform</th>
@@ -78,29 +78,29 @@ export function VibeQueue({ jobs, onRefreshJobs, onReprocessJob, onCancelJob }: 
                 <th className="p-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-mono text-slate-300">
+            <tbody className="divide-y divide-slate-300 dark:divide-slate-800/60 font-mono text-slate-800 dark:text-slate-300">
               {filtered.map((job) => (
-                <tr key={job.id} className="hover:bg-[#171a24]/50 transition">
-                  <td className="p-4 font-bold text-emerald-400">{job.id}</td>
-                  <td className="p-4 uppercase text-slate-200 font-bold">{job.platform}</td>
-                  <td className="p-4 text-slate-300 font-sans line-clamp-1 max-w-xs">{job.replyText}</td>
+                <tr key={job.id} className="hover:bg-slate-200/80 dark:hover:bg-[#171a24]/50 transition">
+                  <td className="p-4 font-bold text-emerald-700 dark:text-emerald-400">{job.id}</td>
+                  <td className="p-4 uppercase text-slate-900 dark:text-slate-200 font-bold">{job.platform}</td>
+                  <td className="p-4 text-slate-800 dark:text-slate-300 font-sans line-clamp-1 max-w-xs">{job.replyText}</td>
                   <td className="p-4">
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                      job.status === 'COMPLETED' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
-                      job.status === 'PROCESSING' ? 'bg-amber-950 text-amber-400 border border-amber-800' :
-                      job.status === 'FAILED' ? 'bg-rose-950 text-rose-400 border border-rose-800' :
-                      'bg-slate-800 text-slate-400'
+                      job.status === 'COMPLETED' ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-700/40 dark:border-emerald-800' :
+                      job.status === 'PROCESSING' ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-400 border border-amber-700/40 dark:border-amber-800' :
+                      job.status === 'FAILED' ? 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400 border border-rose-700/40 dark:border-rose-800' :
+                      'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
                     }`}>
                       {job.status}
                     </span>
                   </td>
-                  <td className="p-4 text-slate-400">{job.attempts} / {job.maxAttempts}</td>
-                  <td className="p-4 text-slate-500 text-[11px]">{new Date(job.createdAt).toLocaleTimeString()}</td>
+                  <td className="p-4 text-slate-700 dark:text-slate-400">{job.attempts} / {job.maxAttempts}</td>
+                  <td className="p-4 text-slate-600 dark:text-slate-500 text-[11px]">{new Date(job.createdAt).toLocaleTimeString()}</td>
                   <td className="p-4 text-right space-x-2">
                     {job.status === 'FAILED' && (
                       <button
                         onClick={() => onReprocessJob(job.id)}
-                        className="px-2.5 py-1 bg-amber-950/80 text-amber-300 hover:bg-amber-900 border border-amber-800 text-[10px] rounded transition font-bold"
+                        className="px-2.5 py-1 bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-900 border border-amber-700/40 dark:border-amber-800 text-[10px] rounded transition font-bold"
                       >
                         Re-Process
                       </button>
@@ -108,7 +108,7 @@ export function VibeQueue({ jobs, onRefreshJobs, onReprocessJob, onCancelJob }: 
                     {job.status === 'QUEUED' && (
                       <button
                         onClick={() => onCancelJob(job.id)}
-                        className="px-2.5 py-1 bg-rose-950/80 text-rose-300 hover:bg-rose-900 border border-rose-800 text-[10px] rounded transition font-bold"
+                        className="px-2.5 py-1 bg-rose-100 dark:bg-rose-950/80 text-rose-900 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-900 border border-rose-700/40 dark:border-rose-800 text-[10px] rounded transition font-bold"
                       >
                         Cancel
                       </button>
@@ -119,7 +119,7 @@ export function VibeQueue({ jobs, onRefreshJobs, onReprocessJob, onCancelJob }: 
 
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-slate-500 text-xs font-mono">
+                  <td colSpan={7} className="p-8 text-center text-slate-600 dark:text-slate-500 text-xs font-mono">
                     No jobs found in queue matching the selected status.
                   </td>
                 </tr>
