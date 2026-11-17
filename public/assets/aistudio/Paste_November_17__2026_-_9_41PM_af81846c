@@ -1,0 +1,610 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Chatbot Basics — Rule-Based vs. Language Model</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+    /* Subtle custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Top Header & Mode Switcher -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur px-4 py-3">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-300 font-bold text-sm">
+          AI
+        </div>
+        <div>
+          <h1 class="text-sm sm:text-base font-semibold text-white leading-tight">Chatbot Basics Lab</h1>
+          <p class="text-xs text-slate-400">Compare keyword rules vs. a language model</p>
+        </div>
+      </div>
+
+      <!-- Mode Toggle -->
+      <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800" role="group" aria-label="Chatbot mode">
+        <button id="btn-mode-rule" type="button"
+          class="px-3 py-1.5 rounded-md text-xs font-medium transition bg-cyan-500 text-slate-950">
+          1. Rule-Based
+        </button>
+        <button id="btn-mode-llm" type="button"
+          class="px-3 py-1.5 rounded-md text-xs font-medium transition text-slate-300 hover:text-white">
+          2. Language Model (Simulated)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-3 sm:p-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+    <!-- Left Column: Interactive Chat -->
+    <section class="lg:col-span-7 flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden h-[560px] lg:h-[640px]">
+      <!-- Chat Status Bar -->
+      <div class="px-4 py-2.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+        <div class="flex items-center gap-2">
+          <span id="mode-dot" class="w-2 h-2 rounded-full bg-cyan-400"></span>
+          <span id="mode-label" class="text-xs font-medium text-slate-200">Rule-Based Mode (Keyword Matching)</span>
+        </div>
+        <button id="btn-clear-chat" type="button"
+          class="text-xs text-slate-400 hover:text-white px-2 py-1 rounded hover:bg-slate-800 transition">
+          Reset Chat
+        </button>
+      </div>
+
+      <!-- Messages Area -->
+      <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Quick Test Prompts -->
+      <div class="px-4 py-2 border-t border-slate-800/80 bg-slate-900/50 flex flex-wrap items-center gap-1.5">
+        <span class="text-[11px] text-slate-400 mr-1">Try:</span>
+        <button type="button" class="quick-prompt text-xs px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 transition" data-prompt="Hello!">Hello!</button>
+        <button type="button" class="quick-prompt text-xs px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 transition" data-prompt="What are your hours?">Hours?</button>
+        <button type="button" class="quick-prompt text-xs px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 transition" data-prompt="How do tokens work?">How do tokens work?</button>
+        <button type="button" class="quick-prompt text-xs px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 transition" data-prompt="What did I just ask you?">What did I just ask?</button>
+      </div>
+
+      <!-- Input Form -->
+      <form id="chat-form" class="p-3 border-t border-slate-800 bg-slate-950/60 flex gap-2">
+        <input id="chat-input" type="text" autocomplete="off"
+          placeholder="Type a message..."
+          class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400" />
+        <button type="submit"
+          class="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm transition">
+          Send
+        </button>
+      </form>
+    </section>
+
+    <!-- Right Column: Under the Hood (Inspector + Commented Code) -->
+    <section class="lg:col-span-5 flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden h-[560px] lg:h-[640px]">
+      <!-- Inspector Tabs -->
+      <div class="flex border-b border-slate-800 bg-slate-900/60">
+        <button id="tab-btn-inspector" type="button"
+          class="flex-1 py-2.5 text-xs font-medium border-b-2 border-cyan-400 text-cyan-300">
+          Live Inspector
+        </button>
+        <button id="tab-btn-code" type="button"
+          class="flex-1 py-2.5 text-xs font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200">
+          Commented Code
+        </button>
+        <button id="tab-btn-studio" type="button"
+          class="flex-1 py-2.5 text-xs font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200">
+          Studio Config
+        </button>
+      </div>
+
+      <!-- Tab 1: Live Inspector -->
+      <div id="tab-inspector" class="flex-1 overflow-y-auto p-4 space-y-4">
+        <!-- Rule-Based Inspector Box -->
+        <div id="inspector-rule" class="space-y-3">
+          <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
+            <div class="text-xs font-semibold text-cyan-300 mb-1">Last Match Result</div>
+            <p id="rule-match-status" class="text-xs text-slate-300">Send a message to see which keyword rule triggers.</p>
+          </div>
+          <div>
+            <div class="text-xs font-semibold text-slate-300 mb-2">Active Keyword Rules</div>
+            <div id="rules-list" class="space-y-1.5 text-xs"></div>
+          </div>
+        </div>
+
+        <!-- LLM Inspector Box -->
+        <div id="inspector-llm" class="hidden space-y-4">
+          <!-- System Instruction -->
+          <div>
+            <label for="system-prompt-input" class="block text-xs font-semibold text-indigo-300 mb-1">
+              System Instruction (sets behavior &amp; rules)
+            </label>
+            <textarea id="system-prompt-input" rows="3"
+              class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-400">You are a friendly, concise tutor helping a beginner learn AI basics. Always explain concepts in plain English.</textarea>
+          </div>
+
+          <!-- Token Counter -->
+          <div class="grid grid-cols-2 gap-2">
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <div class="text-[11px] text-slate-400">Turns in Memory</div>
+              <div id="stat-turns" class="text-base font-semibold text-white">0</div>
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <div class="text-[11px] text-slate-400">Est. Context Tokens</div>
+              <div id="stat-tokens" class="text-base font-semibold text-indigo-300">0</div>
+            </div>
+          </div>
+
+          <!-- Context Payload Preview -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-semibold text-slate-300">Payload Sent to Model (JSON)</span>
+              <span class="text-[11px] text-slate-500">Sent fresh every turn</span>
+            </div>
+            <pre id="payload-preview" class="bg-slate-950 border border-slate-800 rounded-lg p-3 text-[11px] text-emerald-300 overflow-x-auto max-h-56 leading-relaxed"></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Commented Code -->
+      <div id="tab-code" class="hidden flex-1 overflow-y-auto p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-300 font-medium">How the same app switches engines:</span>
+          <button id="btn-copy-code" type="button"
+            class="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+            Copy Code
+          </button>
+        </div>
+        <pre id="code-snippet" class="bg-slate-950 border border-slate-800 rounded-lg p-3 text-[11px] text-slate-200 overflow-x-auto leading-relaxed"></pre>
+      </div>
+
+      <!-- Tab 3: Nisar AI Studio Config & Links -->
+      <div id="tab-studio" class="hidden flex-1 overflow-y-auto p-4 space-y-4">
+        <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-cyan-300">Nisar AI Studio • Super AI Toolbox</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Gemini 2.5 Flash</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Extracted from your Firebase, AI Studio, and Vercel screenshots. Replace masked/cut-off keys before deploying.</p>
+          <div class="flex flex-wrap gap-2 pt-1">
+            <a href="https://console.firebase.google.com/project/gen-lang-client-0727141331" target="_blank" rel="noopener noreferrer"
+              class="text-[11px] px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300 transition">Firebase Console ↗</a>
+            <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer"
+              class="text-[11px] px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-indigo-300 transition">Google AI Studio ↗</a>
+            <a href="https://vercel.com/" target="_blank" rel="noopener noreferrer"
+              class="text-[11px] px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition">Vercel Dashboard ↗</a>
+          </div>
+        </div>
+
+        <!-- Firebase Config -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-semibold text-slate-300">Firebase Web Config</span>
+            <button id="btn-copy-firebase" type="button"
+              class="text-[11px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition">Copy</button>
+          </div>
+          <pre id="firebase-config-snippet" class="bg-slate-950 border border-slate-800 rounded-lg p-3 text-[11px] text-amber-200 overflow-x-auto leading-relaxed"></pre>
+        </div>
+
+        <!-- Vercel .env.local -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-semibold text-slate-300">Vercel / .env.local Variables</span>
+            <button id="btn-copy-env" type="button"
+              class="text-[11px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition">Copy</button>
+          </div>
+          <pre id="env-snippet" class="bg-slate-950 border border-slate-800 rounded-lg p-3 text-[11px] text-emerald-300 overflow-x-auto leading-relaxed"></pre>
+        </div>
+
+        <!-- API Routes Summary -->
+        <div class="p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5 text-[11px] text-slate-300">
+          <div class="text-xs font-semibold text-indigo-300 mb-1">API Routes &amp; Firestore Quota</div>
+          <div><code class="text-cyan-300">POST /api/generate</code> — Validates prompt (&le;10,000 chars), checks quota, runs Gemini 2.5 Flash.</div>
+          <div><code class="text-cyan-300">POST /api/ai/generate</code> — Deducts daily free (10/day) or paid credits before execution (HTTP 429 if exhausted).</div>
+          <div><code class="text-cyan-300">POST /api/ai/credits</code> — Updates/reads live <code class="text-slate-200">UserCredits</code> via Firestore <code class="text-slate-200">onSnapshot</code>.</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // =========================================================================
+    // 1. STATE: What the app remembers while you chat
+    // =========================================================================
+    let currentMode = "rule"; // "rule" or "llm"
+    let conversationHistory = []; // Stores { role: "user" | "assistant", content: "..." }
+
+    // =========================================================================
+    // 2. RULE-BASED ENGINE: Simple keyword matching (no AI)
+    // =========================================================================
+    const KEYWORD_RULES = [
+      {
+        keywords: ["hello", "hi", "hey", "salam"],
+        reply: "Hi there! I'm the rule-based bot. I only understand exact keywords like 'hours', 'price', or 'help'."
+      },
+      {
+        keywords: ["hour", "hours", "open", "time"],
+        reply: "We are open Monday to Friday, 9:00 AM – 5:00 PM."
+      },
+      {
+        keywords: ["price", "cost", "pricing", "plan"],
+        reply: "Our starter plan is free, and the pro plan is $10/month."
+      },
+      {
+        keywords: ["help", "support"],
+        reply: "Try asking about 'hours', 'price', or switch to Language Model mode above to see the difference!"
+      }
+    ];
+
+    function getRuleBasedReply(userText) {
+      const lower = userText.toLowerCase();
+
+      for (const rule of KEYWORD_RULES) {
+        const matched = rule.keywords.find((kw) => lower.includes(kw));
+        if (matched) {
+          return {
+            reply: rule.reply,
+            matchedKeyword: matched
+          };
+        }
+      }
+
+      // If no keyword matches, a rule-based bot gets stuck on a fallback.
+      return {
+        reply: "I didn't recognize any keywords in that message. (Rule-based bots can't improvise!)",
+        matchedKeyword: null
+      };
+    }
+
+    // =========================================================================
+    // 3. LANGUAGE MODEL ENGINE (Simulated here; real API shown in Code tab)
+    // =========================================================================
+    // Rough token estimator: ~1 token per 4 characters in English.
+    function estimateTokens(text) {
+      return Math.max(1, Math.ceil(text.length / 4));
+    }
+
+    function getSimulatedLLMReply(history, systemPrompt) {
+      const lastUserMsg = history[history.length - 1]?.content || "";
+      const lower = lastUserMsg.toLowerCase();
+
+      // Show how the model uses conversationHistory to answer follow-ups
+      if (lower.includes("just ask") || lower.includes("previous") || lower.includes("remember")) {
+        const userTurns = history.filter((m) => m.role === "user");
+        if (userTurns.length >= 2) {
+          const prev = userTurns[userTurns.length - 2].content;
+          return `You previously asked: "${prev}". I know that because the app resent our full conversation history in the messages array!`;
+        }
+        return "This is your first message in this session, so there's no earlier question in the context yet.";
+      }
+
+      if (lower.includes("token")) {
+        const tokens = estimateTokens(lastUserMsg);
+        return `Tokens are small chunks of text (roughly 3–4 characters each). Your message "${lastUserMsg}" is about ${tokens} tokens. Models read and limit context by total tokens.`;
+      }
+
+      if (lower.includes("hello") || lower.includes("hi") || lower.includes("hey")) {
+        return `Hello! Right now I'm guided by your System Instruction ("${systemPrompt.slice(0, 60)}..."). Ask me anything, or edit the System Instruction on the right!`;
+      }
+
+      if (lower.includes("hour") || lower.includes("open")) {
+        return "I'm an AI model, not a store—unless you give me your business hours in my System Instruction or a knowledge base, I don't know them (and if forced to guess, I might make them up!).";
+      }
+
+      // Generic contextual response showing awareness of system prompt & turn count
+      const turnCount = history.length;
+      return `I read your message ("${lastUserMsg}") along with ${turnCount - 1} earlier message(s) and your System Instruction. Unlike the rule-based bot, a real LLM predicts the best next words from patterns—even when no exact keyword matches.`;
+    }
+
+    // =========================================================================
+    // 4. DISPLAYED CODE SNIPPET (For the "Commented Code" tab)
+    // =========================================================================
+    const EDUCATIONAL_CODE = `// 1. RULE-BASED BOT: Matches exact keywords
+function getRuleBasedReply(userText) {
+  const lower = userText.toLowerCase();
+  if (lower.includes("hello")) return "Hi there!";
+  if (lower.includes("hours")) return "Open 9am - 5pm.";
+  return "Sorry, I didn't understand."; // Rigid fallback
+}
+
+// 2. LANGUAGE MODEL BOT: Same chat UI, smarter engine
+const history = []; // Stores the conversation across turns
+
+async function getLLMReply(userText, systemPrompt) {
+  // Add the new user message to conversation history
+  history.push({ role: "user", content: userText });
+
+  try {
+    // Send system rules + full history to the model API
+    const response = await fetch("https://api.example.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_API_KEY" // Keep secret on a server!
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini", // Or gemini-2.5-flash
+        temperature: 0.7,     // Higher = more creative (and more risk of making things up)
+        messages: [
+          { role: "system", content: systemPrompt }, // Sets persona & rules
+          ...history                                 // Carries context across turns
+        ]
+      })
+    });
+
+    const data = await response.json();
+    const reply = data.choices[0].message.content;
+
+    // Save the AI's reply so the NEXT turn remembers it
+    history.push({ role: "assistant", content: reply });
+    return reply;
+  } catch (err) {
+    return "Could not reach the model API: " + err.message;
+  }
+}`;
+
+    // =========================================================================
+    // 5. UI RENDERING & EVENT HANDLERS
+    // =========================================================================
+    const chatMessagesEl = document.getElementById("chat-messages");
+    const chatForm = document.getElementById("chat-form");
+    const chatInput = document.getElementById("chat-input");
+    const btnRule = document.getElementById("btn-mode-rule");
+    const btnLlm = document.getElementById("btn-mode-llm");
+    const modeDot = document.getElementById("mode-dot");
+    const modeLabel = document.getElementById("mode-label");
+    const inspectorRule = document.getElementById("inspector-rule");
+    const inspectorLlm = document.getElementById("inspector-llm");
+    const ruleMatchStatus = document.getElementById("rule-match-status");
+    const rulesListEl = document.getElementById("rules-list");
+    const systemPromptInput = document.getElementById("system-prompt-input");
+    const statTurns = document.getElementById("stat-turns");
+    const statTokens = document.getElementById("stat-tokens");
+    const payloadPreview = document.getElementById("payload-preview");
+    const codeSnippetEl = document.getElementById("code-snippet");
+    const tabBtnInspector = document.getElementById("tab-btn-inspector");
+    const tabBtnCode = document.getElementById("tab-btn-code");
+    const tabBtnStudio = document.getElementById("tab-btn-studio");
+    const tabInspector = document.getElementById("tab-inspector");
+    const tabCode = document.getElementById("tab-code");
+    const tabStudio = document.getElementById("tab-studio");
+
+    const FIREBASE_CONFIG_TEXT = `// Super AI Toolbox • Nisaraistudio (Project #978292032659)
+const firebaseConfig = {
+  apiKey: "AIzaSyAPNtVhWWsN8tVSkMsJ7Ls6eH...", // Paste full key from Firebase Console
+  authDomain: "gen-lang-client-0727141331.firebaseapp.com",
+  projectId: "gen-lang-client-0727141331",
+  storageBucket: "gen-lang-client-0727141331.firebasestorage.app",
+  messagingSenderId: "978292032659",
+  appId: "1:978292032659:web:8e98c2123fa055bd6cf966",
+  measurementId: "G-K7CCNRZ8E4"
+};`;
+
+    const ENV_TEXT = `NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyAPNtVhWWsN8tVSkMsJ7Ls6eH...
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=gen-lang-client-0727141331
+NEXT_PUBLIC_FIREBASE_APP_ID=1:978292032659:web:8e98c2123fa055bd6cf966
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=G-K7CCNRZ8E4
+GEMINI_API_KEY=your_gemini_api_key
+FIREBASE_CLIENT_EMAIL=your_service_account_email
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"`;
+
+    function renderRulesList() {
+      rulesListEl.innerHTML = KEYWORD_RULES.map((r) => `
+        <div class="p-2 rounded bg-slate-950 border border-slate-800">
+          <span class="text-cyan-300 font-mono">[${r.keywords.join(", ")}]</span>
+          <span class="text-slate-400"> → ${r.reply}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderMessages() {
+      if (conversationHistory.length === 0) {
+        chatMessagesEl.innerHTML = `
+          <div class="text-center py-10 px-4">
+            <p class="text-sm text-slate-300 font-medium mb-1">Start a conversation</p>
+            <p class="text-xs text-slate-500">Type a message below or click a quick prompt to see how ${currentMode === "rule" ? "keyword matching" : "a language model"} responds.</p>
+          </div>
+        `;
+        return;
+      }
+
+      chatMessagesEl.innerHTML = conversationHistory.map((msg) => {
+        const isUser = msg.role === "user";
+        return `
+          <div class="flex ${isUser ? "justify-end" : "justify-start"}">
+            <div class="max-w-[85%] rounded-xl px-3.5 py-2.5 text-sm leading-relaxed ${
+              isUser
+                ? "bg-cyan-500 text-slate-950 font-medium"
+                : "bg-slate-800 text-slate-100 border border-slate-700"
+            }">
+              <div class="text-[10px] uppercase tracking-wider mb-0.5 ${isUser ? "text-slate-800" : "text-slate-400"}">
+                ${isUser ? "You" : (currentMode === "rule" ? "Rule Bot" : "LLM (Simulated)")}
+              </div>
+              <div>${escapeHtml(msg.content)}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    }
+
+    function updateLLMInspector() {
+      const sysPrompt = systemPromptInput.value.trim();
+      const payload = {
+        model: "gemini-2.5-flash",
+        messages: [
+          { role: "system", content: sysPrompt },
+          ...conversationHistory
+        ]
+      };
+      const jsonStr = JSON.stringify(payload, null, 2);
+      payloadPreview.textContent = jsonStr;
+      statTurns.textContent = conversationHistory.length;
+      statTokens.textContent = estimateTokens(jsonStr);
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      if (mode === "rule") {
+        btnRule.className = "px-3 py-1.5 rounded-md text-xs font-medium transition bg-cyan-500 text-slate-950";
+        btnLlm.className = "px-3 py-1.5 rounded-md text-xs font-medium transition text-slate-300 hover:text-white";
+        modeDot.className = "w-2 h-2 rounded-full bg-cyan-400";
+        modeLabel.textContent = "Rule-Based Mode (Keyword Matching)";
+        inspectorRule.classList.remove("hidden");
+        inspectorLlm.classList.add("hidden");
+      } else {
+        btnLlm.className = "px-3 py-1.5 rounded-md text-xs font-medium transition bg-indigo-500 text-white";
+        btnRule.className = "px-3 py-1.5 rounded-md text-xs font-medium transition text-slate-300 hover:text-white";
+        modeDot.className = "w-2 h-2 rounded-full bg-indigo-400";
+        modeLabel.textContent = "Language Model Mode (Context + System Prompt)";
+        inspectorRule.classList.add("hidden");
+        inspectorLlm.classList.remove("hidden");
+        updateLLMInspector();
+      }
+      renderMessages();
+    }
+
+    function handleUserMessage(text) {
+      const trimmed = text.trim();
+      if (!trimmed) return;
+
+      // 1. Add user message to history
+      conversationHistory.push({ role: "user", content: trimmed });
+
+      // 2. Pick the active engine
+      let replyText = "";
+      if (currentMode === "rule") {
+        const result = getRuleBasedReply(trimmed);
+        replyText = result.reply;
+        ruleMatchStatus.innerHTML = result.matchedKeyword
+          ? `Matched keyword: <span class="text-cyan-300 font-mono">"${escapeHtml(result.matchedKeyword)}"</span>`
+          : `<span class="text-amber-300">No keyword matched</span> → used fallback reply.`;
+      } else {
+        const sysPrompt = systemPromptInput.value.trim();
+        replyText = getSimulatedLLMReply(conversationHistory, sysPrompt);
+      }
+
+      // 3. Add bot reply to history
+      conversationHistory.push({ role: "assistant", content: replyText });
+
+      // 4. Re-render UI
+      renderMessages();
+      updateLLMInspector();
+    }
+
+    // Event Listeners
+    btnRule.addEventListener("click", () => setMode("rule"));
+    btnLlm.addEventListener("click", () => setMode("llm"));
+
+    document.getElementById("btn-clear-chat").addEventListener("click", () => {
+      conversationHistory = [];
+      ruleMatchStatus.textContent = "Send a message to see which keyword rule triggers.";
+      renderMessages();
+      updateLLMInspector();
+    });
+
+    chatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      handleUserMessage(chatInput.value);
+      chatInput.value = "";
+    });
+
+    document.querySelectorAll(".quick-prompt").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        handleUserMessage(btn.dataset.prompt);
+      });
+    });
+
+    systemPromptInput.addEventListener("input", updateLLMInspector);
+
+    function switchRightTab(active) {
+      const tabs = [
+        { key: "inspector", btn: tabBtnInspector, panel: tabInspector },
+        { key: "code", btn: tabBtnCode, panel: tabCode },
+        { key: "studio", btn: tabBtnStudio, panel: tabStudio }
+      ];
+      tabs.forEach((t) => {
+        if (t.key === active) {
+          t.panel.classList.remove("hidden");
+          t.btn.className = "flex-1 py-2.5 text-xs font-medium border-b-2 border-cyan-400 text-cyan-300";
+        } else {
+          t.panel.classList.add("hidden");
+          t.btn.className = "flex-1 py-2.5 text-xs font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200";
+        }
+      });
+    }
+
+    tabBtnInspector.addEventListener("click", () => switchRightTab("inspector"));
+    tabBtnCode.addEventListener("click", () => switchRightTab("code"));
+    tabBtnStudio.addEventListener("click", () => switchRightTab("studio"));
+
+    function wireCopyButton(btnId, getText) {
+      const btn = document.getElementById(btnId);
+      btn.addEventListener("click", () => {
+        const text = getText();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+        } else {
+          fallbackCopy(text);
+        }
+        const orig = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      });
+    }
+
+    wireCopyButton("btn-copy-firebase", () => FIREBASE_CONFIG_TEXT);
+    wireCopyButton("btn-copy-env", () => ENV_TEXT);
+
+    document.getElementById("btn-copy-code").addEventListener("click", () => {
+      const btn = document.getElementById("btn-copy-code");
+      const text = EDUCATIONAL_CODE;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
+      btn.textContent = "Copied!";
+      setTimeout(() => { btn.textContent = "Copy Code"; }, 1500);
+    });
+
+    function fallbackCopy(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+
+    // Initial render
+    codeSnippetEl.textContent = EDUCATIONAL_CODE;
+    document.getElementById("firebase-config-snippet").textContent = FIREBASE_CONFIG_TEXT;
+    document.getElementById("env-snippet").textContent = ENV_TEXT;
+    renderRulesList();
+    renderMessages();
+    updateLLMInspector();
+  </script>
+</body>
+</html>
+```

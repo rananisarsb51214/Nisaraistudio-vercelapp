@@ -97,6 +97,18 @@ export default function CommandPalette({
       shortcut: 'Tab 1'
     },
     {
+      id: 'cmd_chatbot_lab',
+      label: 'Chatbot Basics Lab (Rule vs LLM)',
+      description: 'Compare keyword rules vs. simulated or live Gemini 2.5 Flash models with live token & JSON inspector',
+      category: 'AI Tools',
+      icon: <Bot className="w-4 h-4 text-cyan-700 dark:text-cyan-400" />,
+      action: () => {
+        setActiveTab('chatbot_lab');
+        onClose();
+      },
+      shortcut: 'Lab'
+    },
+    {
       id: 'cmd_quick_gemini',
       label: 'Quick Gemini AI Assistant',
       description: 'Ask Google Gemini AI anything directly from the command bar',

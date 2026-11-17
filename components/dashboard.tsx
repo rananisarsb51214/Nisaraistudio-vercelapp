@@ -24,6 +24,7 @@ import { SuperAiToolbox } from './ai/super-ai-toolbox';
 import { PomelliSheetsConverter } from './ai/pomelli-sheets-converter';
 import { AiLinkConverter } from './ai/ai-link-converter';
 import { ChatHistorySidebar } from './ai/chat-history-sidebar';
+import { ChatbotBasicsLab } from './ai/chatbot-basics-lab';
 import { ThemeSwitcher } from './theme-switcher';
 
 export interface AIToolItem {
@@ -33,7 +34,7 @@ export interface AIToolItem {
   description: string;
   icon: React.ElementType;
   badge: string;
-  tabId: 'toolbox' | 'overview' | 'blog' | 'ecom' | 'scheduler' | 'memory' | 'revenue' | 'agents' | 'builder' | 'social_templates' | 'template_gallery' | 'activity_feed' | 'empire' | 'vibe' | 'pomelli_sheets' | 'ai_link_converter' | 'chat_history';
+  tabId: 'toolbox' | 'chatbot_lab' | 'overview' | 'blog' | 'ecom' | 'scheduler' | 'memory' | 'revenue' | 'agents' | 'builder' | 'social_templates' | 'template_gallery' | 'activity_feed' | 'empire' | 'vibe' | 'pomelli_sheets' | 'ai_link_converter' | 'chat_history';
   accentColor: string;
   badgeBg: string;
 }
@@ -49,6 +50,17 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     tabId: 'toolbox',
     accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/10',
     badgeBg: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-500/30'
+  },
+  {
+    id: 'chatbot_lab',
+    name: 'Chatbot Basics Lab (Rule vs LLM)',
+    category: 'Interactive Sandbox & Inspector',
+    description: 'Compare keyword rule-matching vs. simulated & live Gemini 2.5 Flash language models with live JSON payload & token inspection.',
+    icon: Bot,
+    badge: 'Rule vs LLM Lab',
+    tabId: 'chatbot_lab',
+    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/10',
+    badgeBg: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-900 dark:text-cyan-300 border-cyan-500/30'
   },
   {
     id: 'chat_history',
@@ -212,7 +224,7 @@ export function Dashboard() {
   
   // State for project selection and navigation
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'toolbox' | 'overview' | 'blog' | 'ecom' | 'scheduler' | 'memory' | 'revenue' | 'agents' | 'builder' | 'social_templates' | 'template_gallery' | 'activity_feed' | 'empire' | 'vibe' | 'pomelli_sheets' | 'ai_link_converter' | 'chat_history'>('toolbox');
+  const [activeTab, setActiveTab] = useState<'toolbox' | 'chatbot_lab' | 'overview' | 'blog' | 'ecom' | 'scheduler' | 'memory' | 'revenue' | 'agents' | 'builder' | 'social_templates' | 'template_gallery' | 'activity_feed' | 'empire' | 'vibe' | 'pomelli_sheets' | 'ai_link_converter' | 'chat_history'>('toolbox');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isCreatingProject, setIsCreatingProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
@@ -1505,15 +1517,17 @@ export function Dashboard() {
           </div>
           {/* Mobile Tab Swapper */}
           <div className="flex md:hidden overflow-x-auto space-x-2 pb-4 mb-4 border-b border-slate-300 dark:border-slate-800 font-mono text-xs">
-            <button onClick={() => setActiveTab('overview')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'overview' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Overview</button>
-            <button onClick={() => setActiveTab('activity_feed')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'activity_feed' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Activity Feed</button>
-            <button onClick={() => setActiveTab('blog')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'blog' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Blog</button>
-            <button onClick={() => setActiveTab('ecom')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'ecom' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Ecom</button>
-            <button onClick={() => setActiveTab('scheduler')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'scheduler' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Social</button>
-            <button onClick={() => setActiveTab('memory')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'memory' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Memory</button>
-            <button onClick={() => setActiveTab('revenue')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'revenue' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Revenue</button>
-            <button onClick={() => setActiveTab('agents')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'agents' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Agents</button>
-            <button onClick={() => setActiveTab('builder')} className={`px-3 py-1.5 rounded-lg ${activeTab === 'builder' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Builder</button>
+            <button onClick={() => setActiveTab('toolbox')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'toolbox' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Toolbox</button>
+            <button onClick={() => setActiveTab('chatbot_lab')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'chatbot_lab' ? 'bg-cyan-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Chatbot Lab</button>
+            <button onClick={() => setActiveTab('overview')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'overview' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Overview</button>
+            <button onClick={() => setActiveTab('activity_feed')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'activity_feed' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Activity Feed</button>
+            <button onClick={() => setActiveTab('blog')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'blog' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Blog</button>
+            <button onClick={() => setActiveTab('ecom')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'ecom' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Ecom</button>
+            <button onClick={() => setActiveTab('scheduler')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'scheduler' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Social</button>
+            <button onClick={() => setActiveTab('memory')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'memory' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Memory</button>
+            <button onClick={() => setActiveTab('revenue')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'revenue' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Revenue</button>
+            <button onClick={() => setActiveTab('agents')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'agents' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Agents</button>
+            <button onClick={() => setActiveTab('builder')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'builder' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Builder</button>
           </div>
 
           {/* Modal / Dialog for creating a project */}
@@ -1557,10 +1571,16 @@ export function Dashboard() {
             </div>
           )}
 
-          {/* Standalone Global Tools (Super AI Toolbox, Vibe, Empire) available with or without a workspace */}
+          {/* Standalone Global Tools (Super AI Toolbox, Chatbot Lab, Vibe, Empire) available with or without a workspace */}
           {activeTab === 'toolbox' && (
             <div className="space-y-6">
               <SuperAiToolbox />
+            </div>
+          )}
+
+          {activeTab === 'chatbot_lab' && (
+            <div className="space-y-6">
+              <ChatbotBasicsLab />
             </div>
           )}
 
@@ -1577,7 +1597,7 @@ export function Dashboard() {
           )}
 
           {/* If there are no workspaces created yet and on workspace-dependent tab */}
-          {projects.length === 0 && !projectsLoading && activeTab !== 'toolbox' && activeTab !== 'vibe' && activeTab !== 'empire' && (
+          {projects.length === 0 && !projectsLoading && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'vibe' && activeTab !== 'empire' && (
             <div className="flex flex-col items-center justify-center text-center py-20 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-2xl max-w-2xl mx-auto p-8 shadow-xl">
               <Database className="w-16 h-16 text-emerald-500/30 mb-4 animate-pulse" />
               <h2 className="text-2xl font-black mb-2 text-slate-900 dark:text-slate-200">Initialize Your First Workspace</h2>
