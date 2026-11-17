@@ -108,7 +108,6 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
 
   const handleDeleteSession = async (sessionId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm('Are you sure you want to delete this chat conversation?')) return;
     try {
       await deleteDoc(doc(db, 'chat_sessions', sessionId));
       const updated = sessions.filter(s => s.id !== sessionId);
@@ -132,7 +131,6 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
     if (!inputMessage.trim() || isGenerating) return;
 
     let currentSessionId = activeSessionId;
-    let updatedSessions = [...sessions];
 
     // If no active session, create one
     if (!currentSessionId) {
@@ -167,22 +165,23 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
     setIsGenerating(true);
 
     try {
-      // Call Gemini API route
-      const res = await fetch('/api/ai/generate', {
+      const res = await fetch('/api/gemini', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          toolId: 'social-post',
-          userId,
-          parameters: { topic: promptText, tone: 'professional' },
-          model: 'gemini-3.5-flash',
-          tone: 'professional',
-          language: 'English'
+          mode: 'agent_chat',
+          prompt: promptText,
+          history: messages.map(m => ({ role: m.role, text: m.text })),
+          systemInstruction: 'You are NISAR AI Assistant, a helpful, concise, and expert AI studio assistant.',
+          model: 'gemini-3.5-flash'
         })
       });
 
       const data = await res.json();
-      const modelReplyText = data.success && data.output ? (typeof data.output === 'string' ? data.output : JSON.stringify(data.output)) : 'AI generation completed successfully.';
+      if (!res.ok || data.error) {
+        throw new Error(data.error || 'Failed to generate response');
+      }
+      const modelReplyText = data.text || 'AI response received.';
 
       const modelMsg: ChatMessage = {
         role: 'model',
@@ -231,14 +230,14 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
   const handleDownloadPdf = () => {
     const activeSession = sessions.find(s => s.id === activeSessionId);
     if (!activeSession) return;
-    
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
+
+    const escapeHtml = (str: string) =>
+      str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     const htmlContent = `
       <html>
         <head>
-          <title>${activeSession.title} - Chat Export</title>
+          <title>${escapeHtml(activeSession.title)} - Chat Export</title>
           <style>
             body { font-family: Arial, sans-serif; padding: 20px; color: #111; max-width: 800px; margin: 0 auto; }
             h1 { font-size: 20px; border-bottom: 2px solid #10b981; padding-bottom: 10px; }
@@ -250,24 +249,38 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
           </style>
         </head>
         <body>
-          <h1>${activeSession.title}</h1>
-          <div class="meta">Exported from NISAR AI Studio • Session ID: ${activeSession.id}</div>
+          <h1>${escapeHtml(activeSession.title)}</h1>
+          <div class="meta">Exported from NISAR AI Studio • Session ID: ${escapeHtml(activeSession.id)}</div>
           <div>
             ${messages.map(m => `
               <div class="msg ${m.role}">
                 <div class="role">${m.role === 'user' ? 'User' : 'Gemini AI'} (${new Date(m.timestamp).toLocaleString()})</div>
-                <div>${m.text.replace(/\n/g, '<br>')}</div>
+                <div>${escapeHtml(m.text).replace(/\n/g, '<br>')}</div>
               </div>
             `).join('')}
           </div>
-          <script>
-            window.onload = function() { window.print(); }
-          </script>
         </body>
       </html>
     `;
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
+
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const frameDoc = iframe.contentWindow?.document;
+    if (frameDoc) {
+      frameDoc.open();
+      frameDoc.write(htmlContent);
+      frameDoc.close();
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+    }
+    setTimeout(() => iframe.remove(), 1000);
   };
 
   const filteredSessions = sessions.filter(s => 
