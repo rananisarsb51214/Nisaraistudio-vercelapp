@@ -69,7 +69,7 @@ export function SuperAiToolbox() {
     void fetchCredits();
     void fetchHistory();
 
-    if (!db) return;
+    if (!db || !user) return;
 
     const creditsPath = `user_credits/${userId}`;
     const creditsRef = doc(db, 'user_credits', userId);
@@ -86,7 +86,7 @@ export function SuperAiToolbox() {
     );
 
     return () => unsubscribe();
-  }, [userId, authLoading]);
+  }, [userId, authLoading, user]);
 
   const fetchCredits = async () => {
     try {

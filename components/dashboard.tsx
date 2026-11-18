@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from './auth-provider';
+import { loginWithGoogle, useAuth } from './auth-provider';
 import { useCollection, useDocumentData } from 'react-firebase-hooks/firestore';
 import { projectService } from '@/lib/services/projectService';
 import { userPreferenceService } from '../lib/services/userPreferenceService';
@@ -39,7 +39,12 @@ import type { LeadRecord } from '@/types/leads';
 
 export { AI_TOOLS_CATALOG, type AIToolItem, type DashboardTab };
 
-export function Dashboard() {
+interface DashboardProps {
+  previewMode?: boolean;
+  onExitPreview?: () => void;
+}
+
+export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps = {}) {
   const { user } = useAuth();
   
   // State for project selection and navigation
@@ -64,18 +69,14 @@ export function Dashboard() {
   const [disabledTools, setDisabledTools] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!user) {
-      setCreditsLoading(false);
-      setLeadsSummaryLoading(false);
-      return;
-    }
-
     let cancelled = false;
-    fetch(`/api/ai/credits?userId=${encodeURIComponent(user.uid)}`)
+    const targetCreditsUserId = user?.uid || 'default_user';
+
+    fetch(`/api/ai/credits?userId=${encodeURIComponent(targetCreditsUserId)}`)
       .then((r) => r.json())
       .then((data) => {
         if (!cancelled && data.success && data.credits) {
-          setCredits(normalizeUserCredits(user.uid, data.credits));
+          setCredits(normalizeUserCredits(targetCreditsUserId, data.credits));
         }
       })
       .catch(() => {})
@@ -83,7 +84,40 @@ export function Dashboard() {
         if (!cancelled) setCreditsLoading(false);
       });
 
-    if (!db) return;
+    if (!db) {
+      setLeadsSummaryLoading(false);
+      return;
+    }
+
+    const unsubToolsConfig = onSnapshot(
+      getToolsConfigRef(),
+      (snap) => {
+        if (snap.exists()) {
+          const raw = snap.data()?.disabledTools;
+          if (Array.isArray(raw)) {
+            setDisabledTools(raw.filter((id): id is string => typeof id === 'string'));
+          }
+        } else {
+          setDisabledTools([]);
+        }
+      },
+      (err) => {
+        try {
+          handleFirestoreError(err, OperationType.GET, 'app_settings/tools_config');
+        } catch {
+          // Logged
+        }
+      }
+    );
+
+    if (!user) {
+      setLeadsSummary({ total: 0, hot: 0, cold: 0 });
+      setLeadsSummaryLoading(false);
+      return () => {
+        cancelled = true;
+        unsubToolsConfig();
+      };
+    }
 
     const unsubCredits = onSnapshot(
       doc(db, 'user_credits', user.uid),
@@ -130,27 +164,6 @@ export function Dashboard() {
         setLeadsSummaryLoading(false);
         try {
           handleFirestoreError(err, OperationType.GET, 'leads');
-        } catch {
-          // Logged
-        }
-      }
-    );
-
-    const unsubToolsConfig = onSnapshot(
-      getToolsConfigRef(),
-      (snap) => {
-        if (snap.exists()) {
-          const raw = snap.data()?.disabledTools;
-          if (Array.isArray(raw)) {
-            setDisabledTools(raw.filter((id): id is string => typeof id === 'string'));
-          }
-        } else {
-          setDisabledTools([]);
-        }
-      },
-      (err) => {
-        try {
-          handleFirestoreError(err, OperationType.GET, 'app_settings/tools_config');
         } catch {
           // Logged
         }
@@ -1205,14 +1218,25 @@ export function Dashboard() {
 
           <ThemeSwitcher />
 
-          <button
-            type="button"
-            onClick={() => auth.signOut()}
-            className="min-h-[40px] flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-[#0e1318] hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:text-rose-700 dark:hover:text-rose-300 border border-slate-200 dark:border-emerald-950/70 rounded-xl transition whitespace-nowrap shrink-0 cursor-pointer"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Sign Out</span>
-          </button>
+          {user ? (
+            <button
+              type="button"
+              onClick={() => auth.signOut()}
+              className="min-h-[40px] flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-[#0e1318] hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:text-rose-700 dark:hover:text-rose-300 border border-slate-200 dark:border-emerald-950/70 rounded-xl transition whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => loginWithGoogle()}
+              className="min-h-[40px] flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl transition whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              <span>Sign In</span>
+            </button>
+          )}
         </div>
       </header>
 
@@ -1513,6 +1537,38 @@ export function Dashboard() {
         {/* Spacious Workspace Canvas */}
         <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-9 bg-slate-50 dark:bg-[#080b0e]">
           <div className="max-w-7xl mx-auto space-y-8">
+            {/* Unauthenticated Dashboard Preview Banner */}
+            {(previewMode || !user) && (
+              <div className="p-4 sm:px-6 rounded-2xl bg-white dark:bg-[#0e1318] border border-emerald-500/35 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="space-y-0.5">
+                  <p className="text-xs sm:text-sm font-bold text-slate-950 dark:text-white">
+                    Dashboard Preview Mode
+                  </p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                    Sign in with Google to view private leads, create workspaces, and save Admin Panel tool toggles.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                  {onExitPreview && (
+                    <button
+                      type="button"
+                      onClick={onExitPreview}
+                      className="min-h-[40px] px-4 py-2 rounded-xl border border-slate-200 dark:border-emerald-950/70 bg-slate-50 dark:bg-[#090d11] text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition whitespace-nowrap cursor-pointer"
+                    >
+                      Back to Login
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => loginWithGoogle()}
+                    className="min-h-[40px] px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition whitespace-nowrap cursor-pointer"
+                  >
+                    Continue with Google
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Mobile Quick Navigation Strip (Inline, non-sticky) */}
             <div className="flex lg:hidden items-center gap-2 p-1.5 rounded-xl bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70">
               <button

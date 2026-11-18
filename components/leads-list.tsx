@@ -25,7 +25,7 @@ import {
   User,
 } from 'lucide-react';
 import { db, handleFirestoreError, OperationType } from '@/lib/firebase';
-import { useAuth } from '@/components/auth-provider';
+import { loginWithGoogle, useAuth } from '@/components/auth-provider';
 import type { LeadRecord } from '@/types/leads';
 
 const ADMIN_EMAIL = 'nisarrsna@gmail.com';
@@ -159,7 +159,30 @@ export function LeadsList({ filterLabel = 'all', searchQuery = '' }: LeadsListPr
     }
   };
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <section
+        aria-label="Leads List Preview Sign In"
+        className="w-full bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+      >
+        <div className="space-y-1">
+          <h3 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white">
+            Sign in with Google to view live Firestore leads
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+            Security rules ke mutabiq captured leads aur Auto-Gemini WhatsApp replies dekhne ke liye Google Sign-In zaroori hai.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => loginWithGoogle()}
+          className="min-h-[44px] px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold whitespace-nowrap shrink-0 cursor-pointer"
+        >
+          Continue with Google
+        </button>
+      </section>
+    );
+  }
 
   const isLeadHot = (l: LeadRecord) =>
     l.leadLabel === 'HOT' ||
