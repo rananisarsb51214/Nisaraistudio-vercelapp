@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Search, Sparkles, BookOpen, Zap, Bot, Brain, Globe, Calendar, 
   Layers, Layout, Activity, Plus, Trash2, ArrowRight, X, Command,
-  Terminal, ShieldCheck, CornerDownLeft, Loader2, Check
+  Terminal, ShieldCheck, CornerDownLeft, Loader2, Check, Link2, Tag
 } from 'lucide-react';
 
 export interface CommandItem {
@@ -107,6 +107,30 @@ export default function CommandPalette({
         onClose();
       },
       shortcut: 'Lab'
+    },
+    {
+      id: 'cmd_backlink_detect',
+      label: 'Backlink Auto-Detect',
+      description: 'Crawl webpages for dofollow/nofollow/sponsored/affiliate links, export CSV & Gemini SEO audit',
+      category: 'AI Tools',
+      icon: <Link2 className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />,
+      action: () => {
+        setActiveTab('backlink_detect');
+        onClose();
+      },
+      shortcut: 'SEO'
+    },
+    {
+      id: 'cmd_affiliate_converter',
+      label: 'Real-Time Affiliate Link Converter',
+      description: 'Instant single & bulk article URL monetization for Amazon, Impact, ClickBank, ShareASale & CJ',
+      category: 'AI Tools',
+      icon: <Tag className="w-4 h-4 text-cyan-700 dark:text-cyan-400" />,
+      action: () => {
+        setActiveTab('affiliate_converter');
+        onClose();
+      },
+      shortcut: 'Vault'
     },
     {
       id: 'cmd_quick_gemini',

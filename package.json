@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "rm -rf .next-dev && next dev",
+    "dev": "rm -rf .next-dev && next dev -p 3000",
     "build": "rm -rf .next dist && NODE_ENV=production next build && mkdir -p .next/standalone/.next && cp -r .next/static .next/standalone/.next/static && mkdir -p dist && cp -r .next/* dist/",
     "start": "node .next/standalone/server.js",
     "lint": "next lint"

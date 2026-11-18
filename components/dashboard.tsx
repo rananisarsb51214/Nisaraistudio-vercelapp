@@ -11,7 +11,7 @@ import {
   Share2, LogOut, Database, TrendingUp, Video, Layers, 
   Settings, Clipboard, ExternalLink, RefreshCw, Calendar, 
   CheckCircle, ArrowRight, Brain, UserCheck, AlertCircle, Eye, EyeOff,
-  Bot, Cpu, Sliders, Layout, Clock, Zap, Activity, Search, Star, MessageSquare
+  Bot, Cpu, Sliders, Layout, Clock, Zap, Activity, Search, Star, MessageSquare, Tag
 } from 'lucide-react';
 import { addDoc, collection, Timestamp, query, where, deleteDoc, doc } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
@@ -25,6 +25,8 @@ import { PomelliSheetsConverter } from './ai/pomelli-sheets-converter';
 import { AiLinkConverter } from './ai/ai-link-converter';
 import { ChatHistorySidebar } from './ai/chat-history-sidebar';
 import { ChatbotBasicsLab } from './ai/chatbot-basics-lab';
+import { BacklinkAutoDetect } from './ai/backlink-auto-detect';
+import { AffiliateLinkConverter } from './ai/affiliate-link-converter';
 import { ThemeSwitcher } from './theme-switcher';
 
 export interface AIToolItem {
@@ -34,7 +36,7 @@ export interface AIToolItem {
   description: string;
   icon: React.ElementType;
   badge: string;
-  tabId: 'toolbox' | 'chatbot_lab' | 'overview' | 'blog' | 'ecom' | 'scheduler' | 'memory' | 'revenue' | 'agents' | 'builder' | 'social_templates' | 'template_gallery' | 'activity_feed' | 'empire' | 'vibe' | 'pomelli_sheets' | 'ai_link_converter' | 'chat_history';
+  tabId: 'toolbox' | 'chatbot_lab' | 'backlink_detect' | 'affiliate_converter' | 'overview' | 'blog' | 'ecom' | 'scheduler' | 'memory' | 'revenue' | 'agents' | 'builder' | 'social_templates' | 'template_gallery' | 'activity_feed' | 'empire' | 'vibe' | 'pomelli_sheets' | 'ai_link_converter' | 'chat_history';
   accentColor: string;
   badgeBg: string;
 }
@@ -59,6 +61,28 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     icon: Bot,
     badge: 'Rule vs LLM Lab',
     tabId: 'chatbot_lab',
+    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/10',
+    badgeBg: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-900 dark:text-cyan-300 border-cyan-500/30'
+  },
+  {
+    id: 'backlink_detect',
+    name: 'Backlink Auto-Detect',
+    category: 'SEO Intelligence & Link Audit',
+    description: 'Crawl live webpages for dofollow/nofollow/sponsored/affiliate links, export CSVs, and generate Gemini outreach pitches.',
+    icon: Search,
+    badge: 'Live HTML Audit',
+    tabId: 'backlink_detect',
+    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/10',
+    badgeBg: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border-emerald-500/30'
+  },
+  {
+    id: 'affiliate_converter',
+    name: 'Real-Time Affiliate Converter',
+    category: 'Monetization & Link Vault',
+    description: 'Instant single & bulk article URL monetization for Amazon, Impact, ClickBank, ShareASale, CJ, UTM tags & FTC disclosures.',
+    icon: Tag,
+    badge: 'Instant Vault',
+    tabId: 'affiliate_converter',
     accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/10',
     badgeBg: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-900 dark:text-cyan-300 border-cyan-500/30'
   },
@@ -224,7 +248,8 @@ export function Dashboard() {
   
   // State for project selection and navigation
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'toolbox' | 'chatbot_lab' | 'overview' | 'blog' | 'ecom' | 'scheduler' | 'memory' | 'revenue' | 'agents' | 'builder' | 'social_templates' | 'template_gallery' | 'activity_feed' | 'empire' | 'vibe' | 'pomelli_sheets' | 'ai_link_converter' | 'chat_history'>('toolbox');
+  const [activeTab, setActiveTab] = useState<'toolbox' | 'chatbot_lab' | 'backlink_detect' | 'affiliate_converter' | 'overview' | 'blog' | 'ecom' | 'scheduler' | 'memory' | 'revenue' | 'agents' | 'builder' | 'social_templates' | 'template_gallery' | 'activity_feed' | 'empire' | 'vibe' | 'pomelli_sheets' | 'ai_link_converter' | 'chat_history'>('toolbox');
+  const [affiliatePrefillUrl, setAffiliatePrefillUrl] = useState<string>('');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isCreatingProject, setIsCreatingProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
@@ -1519,6 +1544,8 @@ export function Dashboard() {
           <div className="flex md:hidden overflow-x-auto space-x-2 pb-4 mb-4 border-b border-slate-300 dark:border-slate-800 font-mono text-xs">
             <button onClick={() => setActiveTab('toolbox')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'toolbox' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Toolbox</button>
             <button onClick={() => setActiveTab('chatbot_lab')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'chatbot_lab' ? 'bg-cyan-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Chatbot Lab</button>
+            <button onClick={() => setActiveTab('backlink_detect')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'backlink_detect' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Backlinks</button>
+            <button onClick={() => setActiveTab('affiliate_converter')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'affiliate_converter' ? 'bg-cyan-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Affiliate</button>
             <button onClick={() => setActiveTab('overview')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'overview' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Overview</button>
             <button onClick={() => setActiveTab('activity_feed')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'activity_feed' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Activity Feed</button>
             <button onClick={() => setActiveTab('blog')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'blog' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Blog</button>
@@ -1584,6 +1611,23 @@ export function Dashboard() {
             </div>
           )}
 
+          {activeTab === 'backlink_detect' && (
+            <div className="space-y-6">
+              <BacklinkAutoDetect
+                onSendToAffiliateConverter={(url) => {
+                  setAffiliatePrefillUrl(url);
+                  setActiveTab('affiliate_converter');
+                }}
+              />
+            </div>
+          )}
+
+          {activeTab === 'affiliate_converter' && (
+            <div className="space-y-6">
+              <AffiliateLinkConverter initialUrl={affiliatePrefillUrl} />
+            </div>
+          )}
+
           {activeTab === 'vibe' && (!currentProject || projects.length === 0) && (
             <div className="space-y-6">
               <VibeResponding />
@@ -1597,7 +1641,7 @@ export function Dashboard() {
           )}
 
           {/* If there are no workspaces created yet and on workspace-dependent tab */}
-          {projects.length === 0 && !projectsLoading && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'vibe' && activeTab !== 'empire' && (
+          {projects.length === 0 && !projectsLoading && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'backlink_detect' && activeTab !== 'affiliate_converter' && activeTab !== 'vibe' && activeTab !== 'empire' && (
             <div className="flex flex-col items-center justify-center text-center py-20 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-2xl max-w-2xl mx-auto p-8 shadow-xl">
               <Database className="w-16 h-16 text-emerald-500/30 mb-4 animate-pulse" />
               <h2 className="text-2xl font-black mb-2 text-slate-900 dark:text-slate-200">Initialize Your First Workspace</h2>

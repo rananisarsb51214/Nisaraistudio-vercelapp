@@ -112,5 +112,15 @@ service cloud.firestore {
     match /vibe_notifications/{notificationId} {
       allow create, read, update, delete: if true;
     }
+
+    // Backlink Auto-Detect Scans
+    match /backlink_scans/{scanId} {
+      allow create, read, update, delete: if true;
+    }
+
+    // Real-Time Affiliate Link Converter Vault
+    match /affiliate_links/{linkId} {
+      allow create, read, update, delete: if true;
+    }
   }
 }

@@ -250,6 +250,47 @@
         "output": { "type": "string" }
       },
       "required": ["userId", "toolId", "output"]
+    },
+    "BacklinkScan": {
+      "title": "BacklinkScan",
+      "description": "Detected backlinks, outbound/internal link breakdown, and optional AI outreach audit from a crawled webpage.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "targetUrl": { "type": "string" },
+        "targetDomain": { "type": "string" },
+        "pageTitle": { "type": "string" },
+        "canonicalUrl": { "type": "string" },
+        "summary": { "type": "object" },
+        "links": { "type": "array" },
+        "aiAudit": { "type": "object" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "targetUrl", "summary", "links"]
+    },
+    "AffiliateLink": {
+      "title": "AffiliateLink",
+      "description": "Converted affiliate link or bulk text conversion record with tracking params, HTML/Markdown snippets, and optional FTC disclosure.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "label": { "type": "string" },
+        "mode": { "type": "string" },
+        "originalUrl": { "type": "string" },
+        "convertedUrl": { "type": "string" },
+        "network": { "type": "string" },
+        "paramKey": { "type": "string" },
+        "tag": { "type": "string" },
+        "shortSlug": { "type": "string" },
+        "htmlSnippet": { "type": "string" },
+        "markdownSnippet": { "type": "string" },
+        "aiHook": { "type": "string" },
+        "aiDisclosure": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "originalUrl", "convertedUrl", "network"]
     }
   },
   "firestore": {
@@ -328,6 +369,14 @@
     "/vibe_notifications/{notificationId}": {
       "schema": "VibeNotification",
       "description": "System notifications for Vibe Responding."
+    },
+    "/backlink_scans/{scanId}": {
+      "schema": "BacklinkScan",
+      "description": "Backlink auto-detect crawl reports and AI outreach audits."
+    },
+    "/affiliate_links/{linkId}": {
+      "schema": "AffiliateLink",
+      "description": "Saved real-time affiliate link conversions and snippets."
     }
   }
 }
