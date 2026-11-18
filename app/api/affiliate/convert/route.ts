@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI, Type } from '@google/genai';
+import { Type } from '@google/genai';
 import {
   collection,
   deleteDoc,
@@ -16,6 +16,7 @@ import { checkAndDeductCredits, refundQuotaOrCredit } from '@/lib/credits/credit
 import { convertLinksInText, convertSingleAffiliateUrl } from '@/lib/links/affiliate-engine';
 import type { AffiliateNetworkPreset, SavedAffiliateLink } from '@/types/links';
 import type { QuotaStatus } from '@/types/credits';
+import { createGeminiClient, parseGeminiError } from '@/lib/ai/gemini-error';
 
 export async function GET(req: NextRequest) {
   try {
@@ -166,7 +167,7 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const ai = new GoogleGenAI({ apiKey });
+      const ai = createGeminiClient(apiKey);
       const summaryContext = isBulk
         ? `Bulk article/caption with ${bulkResult?.conversions.length || 0} converted affiliate links.`
         : `Target Domain: ${singleResult?.domain} | Converted URL: ${singleResult?.convertedUrl}`;
@@ -251,13 +252,15 @@ Return a valid JSON object with:
         'affiliate-link-converter'
       );
     }
-    console.error('[API /api/affiliate/convert POST Error]:', error);
+    const parsed = parseGeminiError(error);
+    console.warn('[API /api/affiliate/convert POST Error]:', parsed.code, parsed.message);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Affiliate link conversion failed.',
+        code: parsed.code,
+        error: parsed.message,
       },
-      { status: 500 }
+      { status: parsed.status }
     );
   }
 }

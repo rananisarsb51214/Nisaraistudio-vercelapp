@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI, Type } from '@google/genai';
+import { Type } from '@google/genai';
 import {
   collection,
   doc,
@@ -20,6 +20,7 @@ import type {
   LinkRelType,
 } from '@/types/links';
 import type { QuotaStatus } from '@/types/credits';
+import { createGeminiClient, parseGeminiError } from '@/lib/ai/gemini-error';
 
 const SOCIAL_DOMAINS = [
   'twitter.com',
@@ -345,7 +346,7 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const ai = new GoogleGenAI({ apiKey });
+      const ai = createGeminiClient(apiKey);
       const sampleAnchors = links
         .slice(0, 20)
         .map((l) => `- [${l.anchorText}] -> ${l.url} (${l.relType}, ${l.category})`)
@@ -429,13 +430,15 @@ Provide an SEO audit and outreach strategy as JSON:
     if (deductedFrom !== 'none' && deductedCost > 0) {
       await refundQuotaOrCredit(resolvedUserId, deductedFrom, deductedCost, 'backlink-auto-detect');
     }
-    console.error('[API /api/backlinks/detect POST Error]:', error);
+    const parsed = parseGeminiError(error);
+    console.warn('[API /api/backlinks/detect POST Error]:', parsed.code, parsed.message);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Backlink detection failed.',
+        code: parsed.code,
+        error: parsed.message,
       },
-      { status: 500 }
+      { status: parsed.status }
     );
   }
 }

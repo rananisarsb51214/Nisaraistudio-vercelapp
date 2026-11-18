@@ -1,5 +1,11 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { Type } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  createGeminiClient,
+  parseGeminiError,
+  resolveGeminiModel,
+  supportsSamplingTemperature,
+} from "@/lib/ai/gemini-error";
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -10,17 +16,13 @@ export async function POST(req: NextRequest) {
     const { mode, topic, url, brand, country } = body;
 
     if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json({ error: "Gemini API key is not configured on the server." }, { status: 500 });
+      return NextResponse.json(
+        { error: "Gemini API key is not configured on the server.", code: "API_KEY_MISSING" },
+        { status: 500 }
+      );
     }
 
-    const ai = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY,
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build',
-        }
-      }
-    });
+    const ai = createGeminiClient(process.env.GEMINI_API_KEY);
 
     if (mode === "blog") {
       if (!topic) {
@@ -42,7 +44,7 @@ Return a JSON object containing:
 Respond ONLY with valid JSON matching the schema structure. Do not wrap in markdown code blocks.`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-4-hydrogen",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
@@ -125,7 +127,7 @@ Schema structure:
 Respond ONLY with valid JSON. Do not write text outside of JSON.`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-4-hydrogen",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
@@ -219,7 +221,7 @@ Return a JSON object containing:
 Respond ONLY with valid JSON. Do not add any conversational text or formatting.`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-4-hydrogen",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
@@ -262,12 +264,15 @@ Respond ONLY with valid JSON. Do not add any conversational text or formatting.`
         parts: [{ text: prompt }]
       });
 
+      const resolvedModel = resolveGeminiModel(model);
       const response = await ai.models.generateContent({
-        model: model || "gemini-3.5-flash",
+        model: resolvedModel,
         contents: contents,
         config: {
           systemInstruction: systemInstruction || "You are a helpful custom assistant.",
-          temperature: typeof temperature === 'number' ? temperature : 0.7,
+          ...(supportsSamplingTemperature(resolvedModel) && typeof temperature === 'number'
+            ? { temperature }
+            : {}),
         }
       });
 
@@ -299,7 +304,7 @@ Return a JSON object containing:
 Respond ONLY with valid JSON matching the schema structure. Do not wrap in markdown code blocks.`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-4-hydrogen",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
@@ -324,8 +329,9 @@ Respond ONLY with valid JSON matching the schema structure. Do not wrap in markd
       return NextResponse.json({ error: "Invalid mode specified" }, { status: 400 });
     }
 
-  } catch (error: any) {
-    console.error("Gemini API server route error:", error);
-    return NextResponse.json({ error: error.message || "Failed to process request." }, { status: 500 });
+  } catch (error: unknown) {
+    const parsed = parseGeminiError(error);
+    console.warn("Gemini API server route error:", parsed.code, parsed.message);
+    return NextResponse.json({ error: parsed.message, code: parsed.code }, { status: parsed.status });
   }
 }

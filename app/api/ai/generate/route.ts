@@ -5,6 +5,7 @@ import { AI_TOOLS_REGISTRY } from '@/lib/ai/schemas';
 import { checkAndDeductCredits, refundQuotaOrCredit } from '@/lib/credits/credits-service';
 import { saveGenerationHistory } from '@/lib/firestore/history-service';
 import { ToolExecutionRequest, ToolExecutionResponse } from '@/types/ai';
+import { parseGeminiError } from '@/lib/ai/gemini-error';
 
 export async function POST(req: NextRequest) {
   let deductedFrom: 'daily_free' | 'paid_credits' | 'none' = 'none';
@@ -121,15 +122,15 @@ export async function POST(req: NextRequest) {
     if (deductedFrom !== 'none' && deductedCost > 0 && resolvedToolId) {
       await refundQuotaOrCredit(resolvedUserId, deductedFrom, deductedCost, resolvedToolId);
     }
-    console.error('[API /api/ai/generate Error]:', error);
-    const message =
-      error instanceof Error ? error.message : 'An error occurred during AI generation.';
+    const parsed = parseGeminiError(error);
+    console.warn('[API /api/ai/generate Error]:', parsed.code, parsed.message);
     return NextResponse.json(
       {
         success: false,
-        error: message,
+        code: parsed.code,
+        error: parsed.message,
       },
-      { status: 500 }
+      { status: parsed.status }
     );
   }
 }

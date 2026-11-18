@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import { AIReplyResult, BrandProfile, SocialPlatform } from './types';
+import { createGeminiClient } from '../ai/gemini-error';
 
 let aiInstance: GoogleGenAI | null = null;
 
@@ -9,7 +10,7 @@ function getGeminiClient(): GoogleGenAI {
     if (!apiKey) {
       console.warn('[Vibe Gemini] GEMINI_API_KEY environment variable is missing.');
     }
-    aiInstance = new GoogleGenAI({ apiKey: apiKey || '' });
+    aiInstance = createGeminiClient(apiKey || '');
   }
   return aiInstance;
 }
@@ -124,11 +125,10 @@ Generate a JSON object with keys:
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash',
+      model: 'gemini-4-hydrogen',
       contents: userPrompt,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        temperature: 0.3,
         responseMimeType: 'application/json',
         responseSchema: {
           type: Type.OBJECT,

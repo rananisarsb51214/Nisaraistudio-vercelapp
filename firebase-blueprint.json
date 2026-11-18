@@ -291,6 +291,37 @@
         "createdAt": { "type": "string" }
       },
       "required": ["id", "userId", "originalUrl", "convertedUrl", "network"]
+    },
+    "Lead": {
+      "title": "Lead",
+      "description": "Captured lead inquiry from the top Lead Form (Naam, Phone Number, City) with Auto-Gemini HOT/COLD classification and Roman Urdu WhatsApp reply.",
+      "type": "object",
+      "properties": {
+        "naam": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "phoneNumber": { "type": "string", "minLength": 5, "maxLength": 30 },
+        "city": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "source": { "type": "string", "maxLength": 40 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "aiStatus": { "type": "string", "enum": ["pending", "completed", "error"] },
+        "leadLabel": { "type": "string", "enum": ["HOT", "COLD"] },
+        "whatsappReply": { "type": "string", "maxLength": 600 },
+        "aiModel": { "type": "string", "maxLength": 80 },
+        "aiError": { "type": "string", "maxLength": 300 },
+        "aiProcessedAt": { "type": "object" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["naam", "phoneNumber", "city", "createdAt"]
+    },
+    "ToolConfig": {
+      "title": "ToolConfig",
+      "description": "Global admin toggle state for enabling or disabling AI Studio tools across the workspace.",
+      "type": "object",
+      "properties": {
+        "disabledTools": { "type": "array" },
+        "updatedBy": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "object" }
+      },
+      "required": ["disabledTools"]
     }
   },
   "firestore": {
@@ -377,6 +408,14 @@
     "/affiliate_links/{linkId}": {
       "schema": "AffiliateLink",
       "description": "Saved real-time affiliate link conversions and snippets."
+    },
+    "/leads/{leadId}": {
+      "schema": "Lead",
+      "description": "Lead capture submissions from the Free Offer Lead Form."
+    },
+    "/app_settings/{settingId}": {
+      "schema": "ToolConfig",
+      "description": "Admin-controlled global workspace settings including enabled/disabled tools."
     }
   }
 }

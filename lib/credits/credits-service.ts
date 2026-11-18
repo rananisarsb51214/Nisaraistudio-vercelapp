@@ -328,3 +328,84 @@ export async function topUpUserCredits(
     handleFirestoreError(error, OperationType.WRITE, docPath);
   }
 }
+
+export interface AdminCreditUpdateInput {
+  paidCredits?: number;
+  adjustPaidDelta?: number;
+  dailyLimit?: number;
+  resetDailyUsed?: boolean;
+  tier?: UserCredits['tier'];
+  description?: string;
+}
+
+export async function adminUpdateUserCredits(
+  userId: string,
+  updates: AdminCreditUpdateInput
+): Promise<UserCredits> {
+  const safeUserId = userId?.trim() || 'default_user';
+  const docPath = `user_credits/${safeUserId}`;
+  const ref = doc(db, 'user_credits', safeUserId);
+
+  try {
+    const updated = await runTransaction(db, async (transaction) => {
+      const snap = await transaction.get(ref);
+      const current = normalizeUserCredits(
+        safeUserId,
+        snap.exists() ? (snap.data() as Partial<UserCredits>) : null
+      );
+      const nowIso = new Date().toISOString();
+      const todayStr = getUtcDateString();
+
+      let nextPaid = current.paidCredits;
+      if (typeof updates.paidCredits === 'number' && Number.isFinite(updates.paidCredits)) {
+        nextPaid = Math.max(0, Math.min(1000000, Math.round(updates.paidCredits)));
+      } else if (typeof updates.adjustPaidDelta === 'number' && Number.isFinite(updates.adjustPaidDelta)) {
+        nextPaid = Math.max(0, Math.min(1000000, current.paidCredits + Math.round(updates.adjustPaidDelta)));
+      }
+
+      const nextDailyLimit =
+        typeof updates.dailyLimit === 'number' && Number.isFinite(updates.dailyLimit)
+          ? Math.max(0, Math.min(10000, Math.round(updates.dailyLimit)))
+          : current.dailyLimit;
+
+      const nextDailyUsed = updates.resetDailyUsed ? 0 : current.dailyUsed;
+      const nextTier = updates.tier || current.tier;
+
+      const deltaPaid = nextPaid - current.paidCredits;
+      const nextEarned = deltaPaid > 0 ? current.totalEarned + deltaPaid : current.totalEarned;
+
+      const nextDoc: UserCredits = {
+        ...current,
+        paidCredits: nextPaid,
+        balance: nextPaid,
+        dailyLimit: nextDailyLimit,
+        dailyUsed: nextDailyUsed,
+        lastResetDate: todayStr,
+        totalEarned: nextEarned,
+        tier: nextTier,
+        lastRefillAt: deltaPaid > 0 ? nowIso : current.lastRefillAt,
+        updatedAt: nowIso,
+      };
+
+      transaction.set(ref, nextDoc, { merge: true });
+      return nextDoc;
+    });
+
+    try {
+      const txRef = collection(db, 'user_credits', safeUserId, 'transactions');
+      await addDoc(txRef, {
+        userId: safeUserId,
+        amount: typeof updates.adjustPaidDelta === 'number' ? Math.round(updates.adjustPaidDelta) : 0,
+        type: 'bonus',
+        description: updates.description || 'Admin Panel Credits Control adjustment',
+        timestamp: new Date().toISOString(),
+      });
+    } catch (e) {
+      console.warn('[CreditsService] Admin update tx log skipped:', e);
+    }
+
+    return updated;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, docPath);
+  }
+}

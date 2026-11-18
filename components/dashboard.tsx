@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from './auth-provider';
 import { useCollection, useDocumentData } from 'react-firebase-hooks/firestore';
 import { projectService } from '@/lib/services/projectService';
@@ -11,9 +11,10 @@ import {
   Share2, LogOut, Database, TrendingUp, Video, Layers, 
   Settings, Clipboard, ExternalLink, RefreshCw, Calendar, 
   CheckCircle, ArrowRight, Brain, UserCheck, AlertCircle, Eye, EyeOff,
-  Bot, Cpu, Sliders, Layout, Clock, Zap, Activity, Search, Star, MessageSquare, Tag
+  Bot, Cpu, Sliders, Layout, Clock, Zap, Activity, Search, Star, MessageSquare, Tag,
+  Shield, Menu, X, Lock
 } from 'lucide-react';
-import { addDoc, collection, Timestamp, query, where, deleteDoc, doc } from 'firebase/firestore';
+import { addDoc, collection, Timestamp, query, where, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import WebsiteBuilder from './website-builder';
 import TemplateGallery from './template-gallery';
@@ -27,232 +28,150 @@ import { ChatHistorySidebar } from './ai/chat-history-sidebar';
 import { ChatbotBasicsLab } from './ai/chatbot-basics-lab';
 import { BacklinkAutoDetect } from './ai/backlink-auto-detect';
 import { AffiliateLinkConverter } from './ai/affiliate-link-converter';
+import { LeadForm } from './lead-form';
+import { DashboardKpiStrip } from './dashboard-kpi-strip';
+import { AdminPanel } from './admin-panel';
 import { ThemeSwitcher } from './theme-switcher';
+import { AI_TOOLS_CATALOG, type AIToolItem, type DashboardTab } from '@/lib/ai/tools-catalog';
+import { getToolsConfigRef, isStudioAdmin } from '@/lib/services/toolSettingsService';
+import { normalizeUserCredits, type UserCredits } from '@/types/credits';
+import type { LeadRecord } from '@/types/leads';
 
-export interface AIToolItem {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  icon: React.ElementType;
-  badge: string;
-  tabId: 'toolbox' | 'chatbot_lab' | 'backlink_detect' | 'affiliate_converter' | 'overview' | 'blog' | 'ecom' | 'scheduler' | 'memory' | 'revenue' | 'agents' | 'builder' | 'social_templates' | 'template_gallery' | 'activity_feed' | 'empire' | 'vibe' | 'pomelli_sheets' | 'ai_link_converter' | 'chat_history';
-  accentColor: string;
-  badgeBg: string;
-}
-
-export const AI_TOOLS_CATALOG: AIToolItem[] = [
-  {
-    id: 'toolbox',
-    name: 'Super AI Toolbox (30+ Tools)',
-    category: 'Content, Video, Marketing, Biz & Productivity',
-    description: 'The flagship modular Super AI Toolbox: 30+ tools powered by Google Gemini 2.5, Firebase Credits, and Firestore generation history.',
-    icon: Sparkles,
-    badge: 'Flagship Suite',
-    tabId: 'toolbox',
-    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/10',
-    badgeBg: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-500/30'
-  },
-  {
-    id: 'chatbot_lab',
-    name: 'Chatbot Basics Lab (Rule vs LLM)',
-    category: 'Interactive Sandbox & Inspector',
-    description: 'Compare keyword rule-matching vs. simulated & live Gemini 2.5 Flash language models with live JSON payload & token inspection.',
-    icon: Bot,
-    badge: 'Rule vs LLM Lab',
-    tabId: 'chatbot_lab',
-    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/10',
-    badgeBg: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-900 dark:text-cyan-300 border-cyan-500/30'
-  },
-  {
-    id: 'backlink_detect',
-    name: 'Backlink Auto-Detect',
-    category: 'SEO Intelligence & Link Audit',
-    description: 'Crawl live webpages for dofollow/nofollow/sponsored/affiliate links, export CSVs, and generate Gemini outreach pitches.',
-    icon: Search,
-    badge: 'Live HTML Audit',
-    tabId: 'backlink_detect',
-    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/10',
-    badgeBg: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border-emerald-500/30'
-  },
-  {
-    id: 'affiliate_converter',
-    name: 'Real-Time Affiliate Converter',
-    category: 'Monetization & Link Vault',
-    description: 'Instant single & bulk article URL monetization for Amazon, Impact, ClickBank, ShareASale, CJ, UTM tags & FTC disclosures.',
-    icon: Tag,
-    badge: 'Instant Vault',
-    tabId: 'affiliate_converter',
-    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/10',
-    badgeBg: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-900 dark:text-cyan-300 border-cyan-500/30'
-  },
-  {
-    id: 'chat_history',
-    name: 'Firestore Chat History & Sidebar',
-    category: 'Conversational Memory & RAG',
-    description: 'Persistent multi-turn chat sidebar with Firestore synchronization, allowing users to revisit past conversations.',
-    icon: MessageSquare,
-    badge: 'Firestore Memory',
-    tabId: 'chat_history',
-    accentColor: 'border-purple-500/40 hover:border-purple-400 bg-purple-50 dark:bg-purple-950/10',
-    badgeBg: 'bg-purple-100 dark:bg-purple-500/20 text-purple-900 dark:text-purple-300 border-purple-500/30'
-  },
-  {
-    id: 'ai_link_converter',
-    name: 'AI Add Link & URL Converter',
-    category: 'AI Intelligence & Grounding',
-    description: 'Paste any link, URL, or blob reference to analyze, ground with Google Search, and convert into marketing campaigns or code.',
-    icon: Globe,
-    badge: 'Search Grounding',
-    tabId: 'ai_link_converter',
-    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/10',
-    badgeBg: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-900 dark:text-cyan-300 border-cyan-500/30'
-  },
-  {
-    id: 'pomelli_sheets',
-    name: 'Pomelli Website & Google Sheets Chat',
-    category: 'Workspace & Google Workspace',
-    description: 'Embed Pomelli website campaigns (labs.google.com/u/0/pomelli/website/9ov4uKkvJNxaHuCztahkUN) and Google Sheets Gemini Chat with Memory.',
-    icon: Globe,
-    badge: 'Google Sheets & Pomelli',
-    tabId: 'pomelli_sheets',
-    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/10',
-    badgeBg: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-900 dark:text-cyan-300 border-cyan-500/30'
-  },
-  {
-    id: 'vibe',
-    name: 'Vibe Responding — AI Social Media',
-    category: 'Social Automation & Inbox',
-    description: 'AI Social Media Automation, Unified Social Inbox, Gemini Response Engine, Brand Voice, and Redis Queues.',
-    icon: MessageSquare,
-    badge: 'Vibe Responding Engine',
-    tabId: 'vibe',
-    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/10',
-    badgeBg: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-500/30'
-  },
-  {
-    id: 'empire',
-    name: 'Empire OS Redis Core',
-    category: 'Distributed Orchestration',
-    description: 'Redis state coordinator, BullMQ job queues, atomic locks, and multi-agent execution pipeline.',
-    icon: Database,
-    badge: 'Redis Execution Layer',
-    tabId: 'empire',
-    accentColor: 'border-rose-500/40 hover:border-rose-400 bg-rose-50 dark:bg-rose-950/10',
-    badgeBg: 'bg-rose-100 dark:bg-rose-500/20 text-rose-900 dark:text-rose-300 border-rose-500/30'
-  },
-  {
-    id: 'blog',
-    name: 'SEO Blog Post Factory',
-
-    category: 'Content Generation',
-    description: 'Automated SEO article generation, keyword analysis, and complete publishing pipeline.',
-    icon: BookOpen,
-    badge: 'Gemini 3.5 Flash',
-    tabId: 'blog',
-    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-50 dark:bg-emerald-950/10',
-    badgeBg: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-500/30'
-  },
-  {
-    id: 'agents',
-    name: 'Autonomous Agent Builder',
-    category: 'Agents & Workflows',
-    description: 'Create custom AI personas, instructions, temperature controls, and test in sandbox.',
-    icon: Bot,
-    badge: 'Custom Personas',
-    tabId: 'agents',
-    accentColor: 'border-purple-500/40 hover:border-purple-400 bg-purple-50 dark:bg-purple-950/10',
-    badgeBg: 'bg-purple-100 dark:bg-purple-500/20 text-purple-900 dark:text-purple-300 border-purple-500/30'
-  },
-  {
-    id: 'ecom',
-    name: 'Ecom Money Machine',
-    category: 'Sales & Copywriting',
-    description: 'Product landing page analysis, affiliate sales funnels, and conversion ad copy suites.',
-    icon: Sparkles,
-    badge: 'Conversion Copy',
-    tabId: 'ecom',
-    accentColor: 'border-cyan-500/40 hover:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/10',
-    badgeBg: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-900 dark:text-cyan-300 border-cyan-500/30'
-  },
-  {
-    id: 'builder',
-    name: 'Campaign Site Builder',
-    category: 'Web Apps & Pages',
-    description: 'Drag-and-drop website block builder with export options and 20 full-site gallery templates.',
-    icon: Globe,
-    badge: '20 Gallery Sites',
-    tabId: 'builder',
-    accentColor: 'border-sky-500/40 hover:border-sky-400 bg-sky-50 dark:bg-sky-950/10',
-    badgeBg: 'bg-sky-100 dark:bg-sky-500/20 text-sky-900 dark:text-sky-300 border-sky-500/30'
-  },
-  {
-    id: 'scheduler',
-    name: 'Social Media Automation',
-    category: 'Marketing & Distribution',
-    description: 'Auto-schedule multi-channel social posts with prompt templates and execution queues.',
-    icon: Calendar,
-    badge: 'Multi-Channel',
-    tabId: 'scheduler',
-    accentColor: 'border-amber-500/40 hover:border-amber-400 bg-amber-50 dark:bg-amber-950/10',
-    badgeBg: 'bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 border-amber-500/30'
-  },
-  {
-    id: 'memory',
-    name: 'Semantic Memory Engine',
-    category: 'Knowledge & RAG',
-    description: 'RAG knowledge base keeping all AI tools synchronized with your brand voice and rules.',
-    icon: Brain,
-    badge: 'RAG Alignment',
-    tabId: 'memory',
-    accentColor: 'border-indigo-500/40 hover:border-indigo-400 bg-indigo-50 dark:bg-indigo-950/10',
-    badgeBg: 'bg-indigo-100 dark:bg-indigo-500/20 text-indigo-900 dark:text-indigo-300 border-indigo-500/30'
-  },
-  {
-    id: 'social_templates',
-    name: 'Social Live Templates',
-    category: 'Prompts & Copy',
-    description: 'Ready-to-use social copy templates with instant live variable replacement and copying.',
-    icon: Share2,
-    badge: 'Instant Prompts',
-    tabId: 'social_templates',
-    accentColor: 'border-pink-500/40 hover:border-pink-400 bg-pink-50 dark:bg-pink-950/10',
-    badgeBg: 'bg-pink-100 dark:bg-pink-500/20 text-pink-900 dark:text-pink-300 border-pink-500/30'
-  },
-  {
-    id: 'template_gallery',
-    name: 'Blueprint Site Gallery',
-    category: 'Templates & Architecture',
-    description: 'Browse 20 complete full-stack website blueprints ready for instant workspace load.',
-    icon: Layers,
-    badge: '20 Full Blueprints',
-    tabId: 'template_gallery',
-    accentColor: 'border-emerald-500/40 hover:border-emerald-400 bg-teal-50 dark:bg-teal-950/10',
-    badgeBg: 'bg-teal-100 dark:bg-teal-500/20 text-teal-900 dark:text-teal-300 border-teal-500/30'
-  },
-  {
-    id: 'revenue',
-    name: 'Revenue Engine',
-    category: 'Financial Analytics',
-    description: 'Track campaign revenue, monetization funnels, and workspace ROI statistics.',
-    icon: Coins,
-    badge: 'ROI Analytics',
-    tabId: 'revenue',
-    accentColor: 'border-yellow-500/40 hover:border-yellow-400 bg-amber-50 dark:bg-yellow-950/10',
-    badgeBg: 'bg-amber-100 dark:bg-yellow-500/20 text-amber-900 dark:text-yellow-300 border-yellow-500/30'
-  }
-];
+export { AI_TOOLS_CATALOG, type AIToolItem, type DashboardTab };
 
 export function Dashboard() {
   const { user } = useAuth();
   
   // State for project selection and navigation
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'toolbox' | 'chatbot_lab' | 'backlink_detect' | 'affiliate_converter' | 'overview' | 'blog' | 'ecom' | 'scheduler' | 'memory' | 'revenue' | 'agents' | 'builder' | 'social_templates' | 'template_gallery' | 'activity_feed' | 'empire' | 'vibe' | 'pomelli_sheets' | 'ai_link_converter' | 'chat_history'>('toolbox');
+  const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
+  const [adminSubTab, setAdminSubTab] = useState<'leads' | 'credits' | 'tools'>('leads');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [affiliatePrefillUrl, setAffiliatePrefillUrl] = useState<string>('');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isCreatingProject, setIsCreatingProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+
+  // Live Credits (Free Quota & Paid Credits)
+  const [credits, setCredits] = useState<UserCredits | null>(null);
+  const [creditsLoading, setCreditsLoading] = useState(true);
+
+  // Live Leads Count (Total, HOT, COLD)
+  const [leadsSummary, setLeadsSummary] = useState({ total: 0, hot: 0, cold: 0 });
+  const [leadsSummaryLoading, setLeadsSummaryLoading] = useState(true);
+
+  // Live Admin Tools On/Off Settings
+  const [disabledTools, setDisabledTools] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!user) {
+      setCreditsLoading(false);
+      setLeadsSummaryLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    fetch(`/api/ai/credits?userId=${encodeURIComponent(user.uid)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (!cancelled && data.success && data.credits) {
+          setCredits(normalizeUserCredits(user.uid, data.credits));
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setCreditsLoading(false);
+      });
+
+    if (!db) return;
+
+    const unsubCredits = onSnapshot(
+      doc(db, 'user_credits', user.uid),
+      (snap) => {
+        if (snap.exists()) {
+          setCredits(normalizeUserCredits(user.uid, snap.data() as Partial<UserCredits>));
+        }
+        setCreditsLoading(false);
+      },
+      (err) => {
+        setCreditsLoading(false);
+        try {
+          handleFirestoreError(err, OperationType.GET, `user_credits/${user.uid}`);
+        } catch {
+          // Logged
+        }
+      }
+    );
+
+    const leadsQuery = isStudioAdmin(user)
+      ? query(collection(db, 'leads'))
+      : query(collection(db, 'leads'), where('userId', '==', user.uid));
+
+    const unsubLeads = onSnapshot(
+      leadsQuery,
+      (snap) => {
+        let hot = 0;
+        let cold = 0;
+        snap.docs.forEach((d) => {
+          const item = d.data() as Partial<LeadRecord>;
+          const isHot =
+            item.leadLabel === 'HOT' ||
+            (!item.leadLabel &&
+              ['lahore', 'karachi', 'islamabad'].some((c) =>
+                item.city?.toLowerCase().includes(c)
+              ));
+          if (isHot) hot += 1;
+          else cold += 1;
+        });
+        setLeadsSummary({ total: snap.size, hot, cold });
+        setLeadsSummaryLoading(false);
+      },
+      (err) => {
+        setLeadsSummaryLoading(false);
+        try {
+          handleFirestoreError(err, OperationType.GET, 'leads');
+        } catch {
+          // Logged
+        }
+      }
+    );
+
+    const unsubToolsConfig = onSnapshot(
+      getToolsConfigRef(),
+      (snap) => {
+        if (snap.exists()) {
+          const raw = snap.data()?.disabledTools;
+          if (Array.isArray(raw)) {
+            setDisabledTools(raw.filter((id): id is string => typeof id === 'string'));
+          }
+        } else {
+          setDisabledTools([]);
+        }
+      },
+      (err) => {
+        try {
+          handleFirestoreError(err, OperationType.GET, 'app_settings/tools_config');
+        } catch {
+          // Logged
+        }
+      }
+    );
+
+    return () => {
+      cancelled = true;
+      unsubCredits();
+      unsubLeads();
+      unsubToolsConfig();
+    };
+  }, [user]);
+
+  const effectiveCredits = credits || normalizeUserCredits(user?.uid || 'default_user', null);
+  const remainingFreeCredits = Math.max(0, effectiveCredits.dailyLimit - effectiveCredits.dailyUsed);
+  const enabledToolsCatalog = AI_TOOLS_CATALOG.filter((tool) => !disabledTools.includes(tool.id));
+  const activeToolDefinition = AI_TOOLS_CATALOG.find((tool) => tool.tabId === activeTab);
+  const isActiveToolDisabled = Boolean(
+    activeToolDefinition && disabledTools.includes(activeToolDefinition.id)
+  );
 
   // User Preferences from Firestore (Favorite AI Tools)
   const userPrefRef = user ? userPreferenceService.getUserPreferencesRef(user.uid) : null;
@@ -294,7 +213,7 @@ export function Dashboard() {
   const [agentPersona, setAgentPersona] = useState('');
   const [agentInstructions, setAgentInstructions] = useState('');
   const [agentTemperature, setAgentTemperature] = useState(0.7);
-  const [agentModel, setAgentModel] = useState('gemini-3.5-flash');
+  const [agentModel, setAgentModel] = useState('gemini-4-hydrogen');
   const [agentLoading, setAgentLoading] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
 
@@ -306,7 +225,19 @@ export function Dashboard() {
   // Form states for AI Blog Generation
   const [blogTopic, setBlogTopic] = useState('');
   const [blogLoading, setBlogLoading] = useState(false);
+  const [blogError, setBlogError] = useState<string | null>(null);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+
+  const extractApiError = async (res: Response): Promise<string> => {
+    const raw = await res.text();
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed.error === 'string') return parsed.error;
+    } catch {
+      // Fallback to raw text
+    }
+    return raw || `Request failed (${res.status})`;
+  };
 
   // Form states for E-Com funnel generator
   const [productUrl, setProductUrl] = useState('');
@@ -437,7 +368,7 @@ export function Dashboard() {
         body: JSON.stringify({ mode: 'social_template', topic: templateTopic.trim(), platform: templatePlatform }),
       });
 
-      if (!response.ok) throw new Error(await response.text());
+      if (!response.ok) throw new Error(await extractApiError(response));
       const resData = await response.json();
       if (resData.error) throw new Error(resData.error);
 
@@ -465,8 +396,10 @@ export function Dashboard() {
 
       setTemplateTopic('');
     } catch (err: any) {
-      console.error(err);
-      alert('Failed to generate template: ' + (err.message || err));
+      const msg = err?.message || 'Failed to generate template.';
+      console.warn('[Template Generation]:', msg);
+      setFavoriteNotification(`Template generation failed: ${msg}`);
+      setTimeout(() => setFavoriteNotification(null), 5000);
     } finally {
       setTemplateLoading(false);
     }
@@ -529,11 +462,11 @@ export function Dashboard() {
           prompt: testGeminiPrompt.trim(),
           systemInstruction: 'You are Google Gemini AI in NISAR AI Studio. Provide a concise, accurate, and insightful response in 2-3 sentences.',
           temperature: 0.7,
-          model: 'gemini-3.5-flash'
+          model: 'gemini-4-hydrogen'
         })
       });
 
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) throw new Error(await extractApiError(res));
       const data = await res.json();
       if (data.error) throw new Error(data.error);
 
@@ -606,6 +539,7 @@ export function Dashboard() {
     if (!blogTopic.trim() || !selectedProjectId || !user) return;
 
     setBlogLoading(true);
+    setBlogError(null);
     let jobId = '';
     try {
       // 1. Create job in Firestore as "Processing"
@@ -622,7 +556,7 @@ export function Dashboard() {
       });
 
       if (!response.ok) {
-        throw new Error(await response.text());
+        throw new Error(await extractApiError(response));
       }
 
       const resData = await response.json();
@@ -655,7 +589,7 @@ export function Dashboard() {
           handleFirestoreError(err, OperationType.CREATE, 'memory');
         }
       } catch (memErr) {
-        console.error("Auto-memory save failed:", memErr);
+        console.warn("Auto-memory save skipped:", memErr);
       }
 
       // Log the generation activity
@@ -668,11 +602,13 @@ export function Dashboard() {
 
       setBlogTopic('');
     } catch (err: any) {
-      console.error(err);
+      const cleanMessage = err?.message || 'Server error occurred while generating the blog post.';
+      console.warn('[Blog Generation Failed]:', cleanMessage);
+      setBlogError(cleanMessage);
       if (jobId) {
         await projectService.updateJob(jobId, {
           status: 'Failed',
-          content: `Generation failed: ${err.message || 'Server error occurred'}`,
+          content: `Generation failed: ${cleanMessage}`,
         });
       }
     } finally {
@@ -699,7 +635,7 @@ export function Dashboard() {
       });
 
       if (!response.ok) {
-        throw new Error(await response.text());
+        throw new Error(await extractApiError(response));
       }
 
       const resData = await response.json();
@@ -733,7 +669,7 @@ export function Dashboard() {
           handleFirestoreError(err, OperationType.CREATE, 'memory');
         }
       } catch (memErr) {
-        console.error("Auto-memory save failed:", memErr);
+        console.warn("Auto-memory save skipped:", memErr);
       }
 
       // Log activity
@@ -748,7 +684,10 @@ export function Dashboard() {
       setProductUrl('');
       setBrandName('');
     } catch (err: any) {
-      alert(`Marketing automation engine error: ${err.message}`);
+      const msg = err?.message || 'Marketing automation error occurred.';
+      console.warn('[Ecom Generation]:', msg);
+      setFavoriteNotification(`Marketing automation error: ${msg}`);
+      setTimeout(() => setFavoriteNotification(null), 5000);
     } finally {
       setEcomLoading(false);
     }
@@ -800,7 +739,7 @@ export function Dashboard() {
       });
 
       if (!response.ok) {
-        throw new Error(await response.text());
+        throw new Error(await extractApiError(response));
       }
 
       const resData = await response.json();
@@ -830,9 +769,13 @@ export function Dashboard() {
       }
 
       setEvolverInput('');
-      alert(`🎉 Browser Evolver successful! Auto-saved memory node: evolved_${key}`);
+      setFavoriteNotification(`Browser Evolver saved memory node: evolved_${key}`);
+      setTimeout(() => setFavoriteNotification(null), 4000);
     } catch (err: any) {
-      alert(`Browser Evolver error: ${err.message}`);
+      const msg = err?.message || 'Browser Evolver error.';
+      console.warn('[Browser Evolver]:', msg);
+      setFavoriteNotification(`Browser Evolver error: ${msg}`);
+      setTimeout(() => setFavoriteNotification(null), 5000);
     } finally {
       setEvolverLoading(false);
     }
@@ -899,9 +842,10 @@ export function Dashboard() {
       setAgentPersona('');
       setAgentInstructions('');
       setAgentTemperature(0.7);
-      setAgentModel('gemini-3.5-flash');
+      setAgentModel('gemini-4-hydrogen');
     } catch (err: any) {
-      alert(`Failed to save agent: ${err.message}`);
+      setFavoriteNotification(`Failed to save agent: ${err?.message || 'Unknown error'}`);
+      setTimeout(() => setFavoriteNotification(null), 5000);
     } finally {
       setAgentLoading(false);
     }
@@ -938,7 +882,7 @@ export function Dashboard() {
       });
 
       if (!response.ok) {
-        throw new Error(await response.text());
+        throw new Error(await extractApiError(response));
       }
 
       const resData = await response.json();
@@ -1149,91 +1093,122 @@ export function Dashboard() {
   const currentProject = projects.find(p => p.id === selectedProjectId);
 
   return (
-    <div className="flex flex-col min-h-screen text-slate-950 dark:text-slate-100 bg-slate-50 dark:bg-[#0b0c10]">
-      {/* Dynamic Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-slate-300 dark:border-slate-800 bg-white dark:bg-[#12141c]">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-emerald-600 rounded-lg text-white font-black tracking-wider text-xl shadow-md">
-            NST
-          </div>
-          <div>
-            <h1 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-800 dark:from-emerald-400 to-teal-700 dark:to-teal-300">
-              NISAR AI Studio
-            </h1>
-            <p className="text-xs text-slate-700 dark:text-slate-400 font-mono">Super AI Toolbox</p>
-          </div>
-        </div>
-
-        {/* Global Search & Command Palette Trigger (Ctrl+K) */}
-        <div className="hidden md:block flex-1 max-w-md mx-6 relative">
+    <div className="flex flex-col min-h-screen text-slate-950 dark:text-slate-100 bg-slate-50 dark:bg-[#080b0e]">
+      {/* Clean 3-Zone Top Header: Brand | Primary Nav | Actions */}
+      <header className="sticky top-0 z-30 h-16 sm:h-[72px] px-4 sm:px-6 lg:px-8 border-b border-slate-200 dark:border-emerald-950/70 bg-white/95 dark:bg-[#0b0f13]/95 backdrop-blur-md flex items-center justify-between gap-4 sm:gap-8">
+        {/* Zone 1: Brand Wordmark + Mobile Menu Trigger */}
+        <div className="flex items-center gap-3 shrink-0">
           <button
             type="button"
-            onClick={() => setIsCommandPaletteOpen(true)}
-            className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 hover:border-emerald-500/50 rounded-xl px-4 py-2 pl-10 pr-12 text-sm text-slate-800 dark:text-slate-300 hover:text-slate-950 dark:hover:text-slate-100 flex items-center justify-between text-left transition duration-150 group shadow-inner cursor-pointer"
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl border border-slate-200 dark:border-emerald-950/70 bg-slate-50 dark:bg-[#0e1318] text-slate-800 dark:text-slate-200 cursor-pointer"
+            aria-label="Open navigation menu"
           >
-            <div className="flex items-center space-x-2">
-              <Search className="w-4 h-4 text-slate-700 dark:text-slate-400 group-hover:text-emerald-400 transition" />
-              <span className="text-xs font-sans">Search tools, AI models, commands...</span>
-            </div>
-            <div className="flex items-center space-x-1.5 bg-slate-200 dark:bg-[#1e2230] text-[10px] text-slate-700 dark:text-slate-400 group-hover:text-emerald-400 border border-slate-400 dark:border-slate-700 group-hover:border-emerald-500/40 px-2.5 py-1 rounded-lg font-mono font-bold select-none transition">
-              <span className="text-[10px]">Ctrl+K</span>
-            </div>
+            <Menu className="w-5 h-5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('overview')}
+            className="flex items-center gap-2.5 whitespace-nowrap shrink-0 cursor-pointer text-left"
+          >
+            <span className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm tracking-tight shrink-0">
+              N
+            </span>
+            <span className="text-base sm:text-lg font-extrabold tracking-tight text-slate-950 dark:text-white whitespace-nowrap">
+              NISAR AI STUDIO
+            </span>
           </button>
         </div>
 
-        {/* User profile, workspace select & logout */}
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center bg-slate-200 dark:bg-[#1e2230] rounded-lg px-3 py-1.5 border border-slate-400 dark:border-slate-700">
-            <span className="text-xs text-slate-700 dark:text-slate-400 mr-2 font-semibold font-mono">Workspace:</span>
+        {/* Zone 2: Clean Single-Line Nav Links */}
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+          <button
+            type="button"
+            onClick={() => setActiveTab('overview')}
+            className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
+              activeTab === 'overview'
+                ? 'border-emerald-500 text-emerald-700 dark:text-emerald-400 font-semibold'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
+            }`}
+          >
+            Overview
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('toolbox')}
+            className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
+              activeTab === 'toolbox'
+                ? 'border-emerald-500 text-emerald-700 dark:text-emerald-400 font-semibold'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
+            }`}
+          >
+            AI Toolbox
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setAdminSubTab('leads');
+              setActiveTab('admin');
+            }}
+            className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 inline-flex items-center gap-1.5 ${
+              activeTab === 'admin'
+                ? 'border-emerald-500 text-emerald-700 dark:text-emerald-400 font-semibold'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
+            }`}
+          >
+            <Shield className="w-3.5 h-3.5" />
+            <span>Admin Panel</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsCommandPaletteOpen(true)}
+            className="hidden lg:inline-flex items-center gap-2 py-1 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white transition whitespace-nowrap shrink-0 cursor-pointer"
+          >
+            <Search className="w-3.5 h-3.5" />
+            <span>Search</span>
+            <span className="text-[11px] font-mono text-slate-400">Ctrl+K</span>
+          </button>
+        </nav>
+
+        {/* Zone 3: Workspace Switcher, Theme & Sign Out */}
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          <div className="hidden xl:flex items-center bg-slate-100 dark:bg-[#0e1318] rounded-xl px-3 py-1.5 border border-slate-200 dark:border-emerald-950/70">
             {projectsLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin text-emerald-700 dark:text-emerald-400" />
+              <Loader2 className="w-4 h-4 animate-spin text-emerald-600 dark:text-emerald-400" />
             ) : (
               <select
-                className="bg-transparent text-sm text-slate-900 dark:text-slate-200 font-bold focus:outline-none cursor-pointer"
+                aria-label="Select Workspace"
+                className="bg-transparent text-xs font-semibold text-slate-900 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[140px] truncate"
                 value={selectedProjectId}
                 onChange={(e) => setSelectedProjectId(e.target.value)}
               >
-                {projects.map(p => (
-                  <option key={p.id} value={p.id} className="bg-white dark:bg-[#1e2230] text-slate-950 dark:text-slate-200">
+                {projects.map((p) => (
+                  <option key={p.id} value={p.id} className="bg-white dark:bg-[#0e1318] text-slate-950 dark:text-slate-100">
                     {p.name}
                   </option>
                 ))}
                 {projects.length === 0 && (
-                  <option value="" disabled>No workspaces available</option>
+                  <option value="" disabled>No workspaces</option>
                 )}
               </select>
             )}
-            <button 
-              onClick={() => setIsCreatingProject(true)} 
-              className="ml-3 p-1 bg-emerald-600 hover:bg-emerald-500 rounded text-white transition"
+            <button
+              type="button"
+              onClick={() => setIsCreatingProject(true)}
+              className="ml-2 p-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition cursor-pointer"
               title="Create Workspace"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-3.5 h-3.5" />
             </button>
           </div>
-
-          <div className="hidden md:flex flex-col items-end text-xs font-mono">
-            <span className="text-slate-800 dark:text-slate-300 font-bold">{user?.displayName || user?.email}</span>
-            <span className="text-emerald-700 dark:text-emerald-400 text-[10px]">Tier: Premium Enterprise</span>
-          </div>
-
-          <a
-            href="https://nisaraistudiovercel-app.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-1.5 px-3 py-1.5 text-xs bg-emerald-100 text-emerald-900 border border-emerald-700/40 hover:bg-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 dark:hover:bg-emerald-500/30 rounded-lg transition font-semibold shadow-sm"
-            title="Open Live NISAR AI Studio Deployment"
-          >
-            <Globe className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
-            <span className="hidden sm:inline">Live App</span>
-            <ExternalLink className="w-3 h-3 opacity-70" />
-          </a>
 
           <ThemeSwitcher />
 
           <button
+            type="button"
             onClick={() => auth.signOut()}
-            className="flex items-center space-x-1 px-3 py-1.5 text-xs text-rose-800 border border-rose-700/40 bg-rose-100 hover:bg-rose-200 dark:text-rose-400 dark:border-rose-950 dark:bg-rose-950/20 dark:hover:bg-rose-950/50 rounded-lg transition cursor-pointer"
+            className="min-h-[40px] flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-[#0e1318] hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:text-rose-700 dark:hover:text-rose-300 border border-slate-200 dark:border-emerald-950/70 rounded-xl transition whitespace-nowrap shrink-0 cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Sign Out</span>
@@ -1241,160 +1216,383 @@ export function Dashboard() {
         </div>
       </header>
 
-      {/* Main Container */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Navigation Sidebar */}
-        <nav className="w-64 bg-white dark:bg-[#12141c] border-r border-slate-300 dark:border-slate-800 p-4 space-y-1.5 hidden md:block overflow-y-auto custom-scrollbar">
-          <div className="text-[10px] font-mono tracking-wider uppercase text-slate-600 dark:text-slate-500 font-bold pl-2 pb-1">
-            Navigation
-          </div>
-          <button
-            onClick={() => setActiveTab('overview')}
-            className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-semibold transition ${
-              activeTab === 'overview' 
-                ? 'bg-slate-200 dark:bg-[#1e2230] text-emerald-700 dark:text-emerald-400 border-l-2 border-emerald-500 font-bold' 
-                : 'text-slate-700 dark:text-slate-400 hover:bg-slate-200/80 dark:hover:bg-slate-800/40 hover:text-slate-950 dark:hover:text-slate-200'
-            }`}
-          >
-            <Layers className="w-4 h-4" />
-            <span>Workspace Overview</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('activity_feed')}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-semibold transition ${
-              activeTab === 'activity_feed' 
-                ? 'bg-slate-200 dark:bg-[#1e2230] text-emerald-700 dark:text-emerald-400 border-l-2 border-emerald-500 font-bold' 
-                : 'text-slate-700 dark:text-slate-400 hover:bg-slate-200/80 dark:hover:bg-slate-800/40 hover:text-slate-950 dark:hover:text-slate-200'
-            }`}
-          >
-            <div className="flex items-center space-x-3">
-              <Activity className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
-              <span>Activity Feed</span>
-            </div>
-            {activities.length > 0 && (
-              <span className="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-[10px] font-mono px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">
-                {activities.length}
+      {/* Mobile Slide-Over Navigation Drawer */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          <div
+            className="fixed inset-0 bg-black/70 backdrop-blur-xs"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <aside className="relative z-10 w-80 max-w-[85vw] h-full bg-white dark:bg-[#0b0f13] border-r border-slate-200 dark:border-emerald-950/70 p-5 flex flex-col gap-5 overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-emerald-950/50">
+              <span className="text-base font-extrabold text-slate-950 dark:text-white">
+                NISAR AI STUDIO
               </span>
-            )}
-          </button>
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="min-h-[40px] min-w-[40px] flex items-center justify-center rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                aria-label="Close menu"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-          {/* ⭐ Pinned Preferred Tools Section */}
-          {favoriteToolIds.length > 0 && (
-            <div className="pt-3 pb-1 border-t border-slate-300 dark:border-slate-800/80 my-2">
-              <div className="flex items-center justify-between pl-2 pr-1 pb-1.5 text-[10px] font-mono tracking-wider uppercase text-amber-800 dark:text-amber-400 font-bold">
-                <span className="flex items-center space-x-1">
-                  <Star className="w-3 h-3 fill-amber-400 text-amber-800 dark:text-amber-400" />
-                  <span>Pinned Tools ({favoriteToolIds.length})</span>
-                </span>
+            {/* Mobile Workspace Switcher */}
+            <div className="space-y-2">
+              <span className="text-xs font-semibold text-slate-500">Workspace</span>
+              <div className="flex items-center gap-2">
+                <select
+                  className="flex-1 min-h-[42px] bg-slate-50 dark:bg-[#0e1318] border border-slate-300 dark:border-emerald-950/70 rounded-xl px-3 py-2 text-xs font-semibold text-slate-900 dark:text-slate-100"
+                  value={selectedProjectId}
+                  onChange={(e) => setSelectedProjectId(e.target.value)}
+                >
+                  {projects.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                  {projects.length === 0 && <option value="">No workspace yet</option>}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsCreatingProject(true);
+                  }}
+                  className="min-h-[42px] min-w-[42px] flex items-center justify-center rounded-xl bg-emerald-600 text-white"
+                  title="Create Workspace"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
               </div>
-              <div className="space-y-1">
-                {AI_TOOLS_CATALOG.filter(tool => favoriteToolIds.includes(tool.id)).map(tool => {
+            </div>
+
+            <div className="space-y-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('overview');
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`w-full min-h-[44px] flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
+                  activeTab === 'overview'
+                    ? 'bg-emerald-600 text-white'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#121a21]'
+                }`}
+              >
+                <Layers className="w-4 h-4" />
+                <span>Overview</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setAdminSubTab('leads');
+                  setActiveTab('admin');
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`w-full min-h-[44px] flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
+                  activeTab === 'admin'
+                    ? 'bg-emerald-600 text-white'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#121a21]'
+                }`}
+              >
+                <Shield className="w-4 h-4" />
+                <span>Admin Panel</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('activity_feed');
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`w-full min-h-[44px] flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
+                  activeTab === 'activity_feed'
+                    ? 'bg-emerald-600 text-white'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#121a21]'
+                }`}
+              >
+                <span className="flex items-center gap-3">
+                  <Activity className="w-4 h-4" />
+                  <span>Activity Feed</span>
+                </span>
+                {activities.length > 0 && (
+                  <span className="text-xs font-mono tabular-nums opacity-80">{activities.length}</span>
+                )}
+              </button>
+            </div>
+
+            <div className="pt-3 border-t border-slate-200 dark:border-emerald-950/50 space-y-1.5">
+              <div className="text-xs font-semibold text-slate-500 px-2 pb-1">
+                Active Studio Tools ({enabledToolsCatalog.length})
+              </div>
+              {enabledToolsCatalog.map((tool) => {
+                const ToolIcon = tool.icon;
+                return (
+                  <button
+                    key={`mob_nav_${tool.id}`}
+                    type="button"
+                    onClick={() => {
+                      setActiveTab(tool.tabId);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`w-full min-h-[42px] flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-medium transition ${
+                      activeTab === tool.tabId
+                        ? 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#121a21]'
+                    }`}
+                  >
+                    <ToolIcon className="w-4 h-4 shrink-0" />
+                    <span className="truncate">{tool.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
+        </div>
+      )}
+
+      {/* Main Workspace Frame */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Desktop Navigation Sidebar */}
+        <nav className="w-64 lg:w-72 bg-white dark:bg-[#0b0f13] border-r border-slate-200 dark:border-emerald-950/70 p-5 space-y-6 hidden lg:block overflow-y-auto custom-scrollbar shrink-0">
+          <div className="space-y-1.5">
+            <div className="text-xs font-semibold text-slate-500 px-3 pb-1">
+              Workspace
+            </div>
+            <button
+              type="button"
+              onClick={() => setActiveTab('overview')}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition cursor-pointer ${
+                activeTab === 'overview'
+                  ? 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold'
+                  : 'text-slate-700 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#121820] hover:text-slate-950 dark:hover:text-white'
+              }`}
+            >
+              <Layers className="w-4 h-4 shrink-0" />
+              <span>Workspace Overview</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setAdminSubTab('leads');
+                setActiveTab('admin');
+              }}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition cursor-pointer ${
+                activeTab === 'admin'
+                  ? 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold'
+                  : 'text-slate-700 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#121820] hover:text-slate-950 dark:hover:text-white'
+              }`}
+            >
+              <span className="flex items-center gap-3">
+                <Shield className="w-4 h-4 shrink-0" />
+                <span>Admin Panel</span>
+              </span>
+              <span className="text-xs font-mono tabular-nums opacity-75">
+                {leadsSummary.total}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('activity_feed')}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition cursor-pointer ${
+                activeTab === 'activity_feed'
+                  ? 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold'
+                  : 'text-slate-700 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#121820] hover:text-slate-950 dark:hover:text-white'
+              }`}
+            >
+              <span className="flex items-center gap-3">
+                <Activity className="w-4 h-4 shrink-0" />
+                <span>Activity Feed</span>
+              </span>
+              {activities.length > 0 && (
+                <span className="text-xs font-mono tabular-nums opacity-75">
+                  {activities.length}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Pinned Preferred Tools */}
+          {favoriteToolIds.length > 0 && (
+            <div className="pt-4 border-t border-slate-200 dark:border-emerald-950/50 space-y-1.5">
+              <div className="flex items-center justify-between px-3 pb-1 text-xs font-semibold text-amber-700 dark:text-amber-400">
+                <span className="flex items-center gap-1.5">
+                  <Star className="w-3.5 h-3.5 fill-amber-400" />
+                  <span>Pinned Tools</span>
+                </span>
+                <span className="font-mono tabular-nums">{favoriteToolIds.length}</span>
+              </div>
+              {enabledToolsCatalog
+                .filter((tool) => favoriteToolIds.includes(tool.id))
+                .map((tool) => {
                   const ToolIcon = tool.icon;
                   return (
                     <button
                       key={`fav_side_${tool.id}`}
+                      type="button"
                       onClick={() => setActiveTab(tool.tabId)}
-                      className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold transition group ${
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition group cursor-pointer ${
                         activeTab === tool.tabId
-                          ? 'bg-amber-100 dark:bg-amber-500/15 text-amber-900 dark:text-amber-300 border-l-2 border-amber-400 font-bold'
-                          : 'text-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800/60 hover:text-slate-950 dark:hover:text-white'
+                          ? 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold'
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#121820]'
                       }`}
                     >
-                      <div className="flex items-center space-x-2 truncate min-w-0 pr-1">
-                        <ToolIcon className="w-3.5 h-3.5 text-amber-800 dark:text-amber-400 shrink-0" />
+                      <div className="flex items-center gap-2.5 truncate min-w-0 pr-1">
+                        <ToolIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                         <span className="truncate">{tool.name}</span>
                       </div>
-                      <span 
+                      <span
                         onClick={(e) => handleToggleFavorite(tool.id, tool.name, e)}
-                        className="p-1 text-amber-800 dark:text-amber-400 hover:text-rose-400 transition"
-                        title="Unpin from preferred suite"
+                        className="p-1 text-amber-600 dark:text-amber-400 hover:text-rose-400 transition"
+                        title="Unpin tool"
                       >
-                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-800 dark:text-amber-400" />
+                        <Star className="w-3.5 h-3.5 fill-amber-400" />
                       </span>
                     </button>
                   );
                 })}
-              </div>
             </div>
           )}
 
-          <div className="pt-3 pb-1 border-t border-slate-300 dark:border-slate-800/80 my-2 text-[10px] font-mono tracking-wider uppercase text-slate-600 dark:text-slate-500 font-bold pl-2">
-            All AI Studio Tools
-          </div>
-
-          <div className="space-y-1">
-            {AI_TOOLS_CATALOG.map(tool => {
+          {/* Active AI Studio Tools */}
+          <div className="pt-4 border-t border-slate-200 dark:border-emerald-950/50 space-y-1.5">
+            <div className="flex items-center justify-between px-3 pb-1 text-xs font-semibold text-slate-500">
+              <span>AI Studio Tools</span>
+              <span className="font-mono tabular-nums">
+                {enabledToolsCatalog.length}/{AI_TOOLS_CATALOG.length}
+              </span>
+            </div>
+            {AI_TOOLS_CATALOG.map((tool) => {
               const ToolIcon = tool.icon;
               const isFav = favoriteToolIds.includes(tool.id);
+              const isDisabled = disabledTools.includes(tool.id);
               return (
                 <div key={`side_tool_${tool.id}`} className="group relative flex items-center">
                   <button
+                    type="button"
                     onClick={() => setActiveTab(tool.tabId)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition ${
-                      activeTab === tool.tabId
-                        ? 'bg-slate-200 dark:bg-[#1e2230] text-emerald-700 dark:text-emerald-400 border-l-2 border-emerald-500 font-bold'
-                        : 'text-slate-700 dark:text-slate-400 hover:bg-slate-200/80 dark:hover:bg-slate-800/40 hover:text-slate-950 dark:hover:text-slate-200'
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition cursor-pointer ${
+                      isDisabled
+                        ? 'text-slate-400 dark:text-slate-600 opacity-60 hover:bg-slate-100 dark:hover:bg-[#121820]'
+                        : activeTab === tool.tabId
+                        ? 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold'
+                        : 'text-slate-700 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#121820] hover:text-slate-950 dark:hover:text-white'
                     }`}
                   >
-                    <div className="flex items-center space-x-2.5 truncate min-w-0 pr-1">
+                    <div className="flex items-center gap-2.5 truncate min-w-0 pr-1">
                       <ToolIcon className="w-3.5 h-3.5 shrink-0" />
                       <span className="truncate">{tool.name}</span>
                     </div>
-                    <span
-                      onClick={(e) => handleToggleFavorite(tool.id, tool.name, e)}
-                      className={`p-1 rounded transition ${
-                        isFav 
-                          ? 'text-amber-800 dark:text-amber-400 opacity-100' 
-                          : 'text-slate-600 hover:text-amber-400 opacity-0 group-hover:opacity-100'
-                      }`}
-                      title={isFav ? "Unfavorite tool" : "Favorite tool"}
-                    >
-                      <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-amber-400 text-amber-800 dark:text-amber-400' : ''}`} />
-                    </span>
+                    {isDisabled ? (
+                      <span className="text-[10px] font-mono text-slate-500 shrink-0">OFF</span>
+                    ) : (
+                      <span
+                        onClick={(e) => handleToggleFavorite(tool.id, tool.name, e)}
+                        className={`p-1 rounded transition ${
+                          isFav
+                            ? 'text-amber-600 dark:text-amber-400 opacity-100'
+                            : 'text-slate-500 hover:text-amber-400 opacity-0 group-hover:opacity-100'
+                        }`}
+                        title={isFav ? 'Unfavorite tool' : 'Favorite tool'}
+                      >
+                        <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-amber-400' : ''}`} />
+                      </span>
+                    )}
                   </button>
                 </div>
               );
             })}
           </div>
-
-          <div className="pt-8 text-[10px] font-mono tracking-wider uppercase text-slate-600 dark:text-slate-500 font-bold pl-2 pb-2">
-            System Stats
-          </div>
-          <div className="p-3 bg-slate-100 dark:bg-[#171a24] rounded-lg border border-slate-300 dark:border-slate-800 font-mono text-[11px] text-slate-700 dark:text-slate-400 space-y-2">
-            <div className="flex justify-between">
-              <span>DB Connection:</span>
-              <span className="text-emerald-700 dark:text-emerald-400 font-bold">Online</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Sync Protocol:</span>
-              <span className="text-cyan-800 dark:text-cyan-400">gRPC Realtime</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Workspace ID:</span>
-              <span className="text-slate-600 dark:text-slate-500 truncate max-w-[80px]">{selectedProjectId || 'None'}</span>
-            </div>
-          </div>
         </nav>
 
-        {/* Workspace Display Body */}
-        <main className="flex-1 overflow-y-auto p-6 bg-slate-50 dark:bg-[#0d0f14]">
-          {/* Mobile Global Search Spotlight */}
-          <div className="block md:hidden mb-4 relative">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search workspaces, agents, automation..."
-                value={globalSearchQuery}
-                onChange={(e) => {
-                  setGlobalSearchQuery(e.target.value);
-                  setIsSearchFocused(true);
+        {/* Spacious Workspace Canvas */}
+        <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-9 bg-slate-50 dark:bg-[#080b0e]">
+          <div className="max-w-7xl mx-auto space-y-8">
+            {/* Mobile Quick Navigation Strip (Inline, non-sticky) */}
+            <div className="flex lg:hidden items-center gap-2 p-1.5 rounded-xl bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70">
+              <button
+                type="button"
+                onClick={() => setActiveTab('overview')}
+                className={`flex-1 min-h-[42px] px-3 py-2 rounded-lg text-xs font-semibold transition whitespace-nowrap cursor-pointer ${
+                  activeTab === 'overview'
+                    ? 'bg-emerald-600 text-white'
+                    : 'text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                Overview
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setAdminSubTab('leads');
+                  setActiveTab('admin');
                 }}
-                onFocus={() => setIsSearchFocused(true)}
-                className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-lg px-4 py-2.5 pl-10 pr-4 text-xs text-slate-950 dark:text-slate-100 placeholder-slate-600 dark:placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              />
-              <Search className="w-3.5 h-3.5 text-slate-700 dark:text-slate-400 absolute left-3 top-3.5" />
+                className={`flex-1 min-h-[42px] px-3 py-2 rounded-lg text-xs font-semibold transition whitespace-nowrap inline-flex items-center justify-center gap-1.5 cursor-pointer ${
+                  activeTab === 'admin'
+                    ? 'bg-emerald-600 text-white'
+                    : 'text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                <Shield className="w-3.5 h-3.5" />
+                <span>Admin Panel</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('toolbox')}
+                className={`flex-1 min-h-[42px] px-3 py-2 rounded-lg text-xs font-semibold transition whitespace-nowrap cursor-pointer ${
+                  activeTab === 'toolbox'
+                    ? 'bg-emerald-600 text-white'
+                    : 'text-slate-700 dark:text-slate-300'
+                }`}
+              >
+                AI Toolbox
+              </button>
             </div>
+
+            {/* 3 Summary KPI Cards: Free Credits, Paid Credits, Total Leads */}
+            <DashboardKpiStrip
+              remainingFree={remainingFreeCredits}
+              dailyLimit={effectiveCredits.dailyLimit}
+              dailyUsed={effectiveCredits.dailyUsed}
+              paidCredits={effectiveCredits.paidCredits}
+              totalEarned={effectiveCredits.totalEarned}
+              totalSpent={effectiveCredits.totalSpent}
+              totalLeads={leadsSummary.total}
+              hotLeads={leadsSummary.hot}
+              coldLeads={leadsSummary.cold}
+              loadingCredits={creditsLoading}
+              loadingLeads={leadsSummaryLoading}
+              onOpenAdminLeads={() => {
+                setAdminSubTab('leads');
+                setActiveTab('admin');
+              }}
+              onOpenAdminCredits={() => {
+                setAdminSubTab('credits');
+                setActiveTab('admin');
+              }}
+            />
+
+            {/* Mobile Global Search Spotlight */}
+            <div className="block md:hidden relative">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search workspaces, agents, tools..."
+                  value={globalSearchQuery}
+                  onChange={(e) => {
+                    setGlobalSearchQuery(e.target.value);
+                    setIsSearchFocused(true);
+                  }}
+                  onFocus={() => setIsSearchFocused(true)}
+                  className="w-full min-h-[44px] bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-xl px-4 py-2.5 pl-10 pr-4 text-sm text-slate-950 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              </div>
 
             {isSearchFocused && (globalSearchQuery.trim().length > 0) && (
               <div className="absolute left-0 right-0 mt-2 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl shadow-2xl z-50 max-h-[350px] overflow-y-auto divide-y divide-slate-300 dark:divide-slate-800/60 custom-scrollbar">
@@ -1540,78 +1738,156 @@ export function Dashboard() {
               />
             )}
           </div>
-          {/* Mobile Tab Swapper */}
-          <div className="flex md:hidden overflow-x-auto space-x-2 pb-4 mb-4 border-b border-slate-300 dark:border-slate-800 font-mono text-xs">
-            <button onClick={() => setActiveTab('toolbox')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'toolbox' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Toolbox</button>
-            <button onClick={() => setActiveTab('chatbot_lab')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'chatbot_lab' ? 'bg-cyan-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Chatbot Lab</button>
-            <button onClick={() => setActiveTab('backlink_detect')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'backlink_detect' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Backlinks</button>
-            <button onClick={() => setActiveTab('affiliate_converter')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'affiliate_converter' ? 'bg-cyan-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Affiliate</button>
-            <button onClick={() => setActiveTab('overview')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'overview' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Overview</button>
-            <button onClick={() => setActiveTab('activity_feed')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'activity_feed' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Activity Feed</button>
-            <button onClick={() => setActiveTab('blog')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'blog' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Blog</button>
-            <button onClick={() => setActiveTab('ecom')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'ecom' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Ecom</button>
-            <button onClick={() => setActiveTab('scheduler')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'scheduler' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Social</button>
-            <button onClick={() => setActiveTab('memory')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'memory' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Memory</button>
-            <button onClick={() => setActiveTab('revenue')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'revenue' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Revenue</button>
-            <button onClick={() => setActiveTab('agents')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'agents' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Agents</button>
-            <button onClick={() => setActiveTab('builder')} className={`px-3 py-1.5 rounded-lg shrink-0 ${activeTab === 'builder' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300'}`}>Builder</button>
-          </div>
+          {/* Admin Panel Tab (Always available regardless of workspace selection) */}
+          {activeTab === 'admin' && (
+            <AdminPanel
+              initialSubTab={adminSubTab}
+              disabledTools={disabledTools}
+              totalLeadsCount={leadsSummary.total}
+              hotLeadsCount={leadsSummary.hot}
+              coldLeadsCount={leadsSummary.cold}
+              currentUserCredits={effectiveCredits}
+              onCreditsUpdated={(updated) => setCredits(updated)}
+            />
+          )}
 
-          {/* Modal / Dialog for creating a project */}
-          {isCreatingProject && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-              <div className="bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl p-6 w-full max-w-md shadow-2xl">
-                <h3 className="text-lg font-bold text-slate-950 dark:text-slate-100 mb-4 flex items-center space-x-2">
-                  <Database className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-                  <span>Create Workspace Folder</span>
-                </h3>
-                <form onSubmit={handleCreateProject} className="space-y-4">
-                  <div>
-                    <label className="block text-xs text-slate-700 dark:text-slate-400 font-bold mb-2">Workspace Name</label>
-                    <input
-                      type="text"
-                      className="w-full bg-slate-100 dark:bg-[#181b24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-950 dark:text-slate-100 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
-                      placeholder="e.g. Health & Fitness Blog"
-                      value={newProjectName}
-                      onChange={(e) => setNewProjectName(e.target.value)}
-                      required
-                      autoFocus
-                    />
-                  </div>
-                  <div className="flex justify-end space-x-3 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsCreatingProject(false)}
-                      className="px-4 py-2 text-xs bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-300 rounded-lg font-semibold"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-4 py-2 text-xs bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold"
-                    >
-                      Create
-                    </button>
-                  </div>
-                </form>
+          {/* Disabled Tool Notice (When an admin toggles a tool OFF) */}
+          {activeTab !== 'admin' && isActiveToolDisabled && activeToolDefinition && (
+            <div className="bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl p-8 sm:p-12 text-center space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-[#090d11] border border-slate-200 dark:border-emerald-950/70 flex items-center justify-center mx-auto">
+                <Lock className="w-6 h-6 text-slate-500 dark:text-slate-400" />
+              </div>
+              <div className="space-y-1.5 max-w-md mx-auto">
+                <h2 className="text-xl font-bold text-slate-950 dark:text-white">
+                  {activeToolDefinition.name} is Paused
+                </h2>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Is tool ko Admin Panel mein OFF kiya gaya hai. Dobara chalane ke liye Admin Panel &rarr; Tools On/Off se ON karein.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('overview')}
+                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-[#090d11] border border-slate-200 dark:border-emerald-950/70 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-semibold cursor-pointer"
+                >
+                  Back to Overview
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAdminSubTab('tools');
+                    setActiveTab('admin');
+                  }}
+                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold cursor-pointer"
+                >
+                  Manage Tools On/Off
+                </button>
               </div>
             </div>
           )}
 
+          {/* Overview Tab: Lead Form & Studio Tools Directory (Always accessible, even with 0 workspaces) */}
+          {activeTab === 'overview' && (
+            <div className="space-y-8">
+              <LeadForm source="dashboard" />
+
+              {/* Studio Tools Directory (Clean single-elevation dark + emerald grid) */}
+              <section className="bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl p-6 sm:p-8 space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-200 dark:border-emerald-950/50 pb-5">
+                  <div className="space-y-1">
+                    <h2 className="text-lg sm:text-xl font-bold text-slate-950 dark:text-white">
+                      AI Studio Tools Directory
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                      {enabledToolsCatalog.length} active tools ready · Toggle availability anytime from Admin Panel.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAdminSubTab('tools');
+                      setActiveTab('admin');
+                    }}
+                    className="min-h-[40px] px-4 py-2 rounded-xl border border-slate-200 dark:border-emerald-950/70 bg-slate-50 dark:bg-[#090d11] hover:border-emerald-500/50 text-xs font-semibold text-emerald-700 dark:text-emerald-400 whitespace-nowrap self-start sm:self-auto cursor-pointer"
+                  >
+                    Tools On/Off Settings
+                  </button>
+                </div>
+
+                {enabledToolsCatalog.length === 0 ? (
+                  <div className="py-10 text-center rounded-xl border border-dashed border-slate-300 dark:border-emerald-950/70 bg-slate-50 dark:bg-[#090d11]">
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                      Tamam tools abhi Admin Panel se OFF hain
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                    {enabledToolsCatalog.map((tool) => {
+                      const ToolIcon = tool.icon;
+                      const isFav = favoriteToolIds.includes(tool.id);
+                      return (
+                        <div
+                          key={`overview_tool_${tool.id}`}
+                          onClick={() => setActiveTab(tool.tabId)}
+                          className="p-5 rounded-xl border border-slate-200 dark:border-emerald-950/60 hover:border-emerald-500/50 bg-slate-50 dark:bg-[#090d11] transition flex flex-col justify-between gap-4 cursor-pointer group"
+                        >
+                          <div className="space-y-3">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center shrink-0">
+                                <ToolIcon className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
+                              </div>
+                              <button
+                                type="button"
+                                onClick={(e) => handleToggleFavorite(tool.id, tool.name, e)}
+                                className="min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-slate-400 hover:text-amber-400 transition cursor-pointer"
+                                title={isFav ? 'Unpin tool' : 'Pin tool'}
+                              >
+                                <Star className={`w-4 h-4 ${isFav ? 'fill-amber-400 text-amber-400' : ''}`} />
+                              </button>
+                            </div>
+
+                            <div className="space-y-1">
+                              <h3 className="text-sm sm:text-base font-bold text-slate-950 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+                                {tool.name}
+                              </h3>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">
+                                {tool.category}
+                              </p>
+                            </div>
+
+                            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed line-clamp-2">
+                              {tool.description}
+                            </p>
+                          </div>
+
+                          <div className="pt-3 border-t border-slate-200 dark:border-emerald-950/40 flex items-center justify-between text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                            <span>Open Tool</span>
+                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </section>
+            </div>
+          )}
+
           {/* Standalone Global Tools (Super AI Toolbox, Chatbot Lab, Vibe, Empire) available with or without a workspace */}
-          {activeTab === 'toolbox' && (
+          {!isActiveToolDisabled && activeTab === 'toolbox' && (
             <div className="space-y-6">
               <SuperAiToolbox />
             </div>
           )}
 
-          {activeTab === 'chatbot_lab' && (
+          {!isActiveToolDisabled && activeTab === 'chatbot_lab' && (
             <div className="space-y-6">
               <ChatbotBasicsLab />
             </div>
           )}
 
-          {activeTab === 'backlink_detect' && (
+          {!isActiveToolDisabled && activeTab === 'backlink_detect' && (
             <div className="space-y-6">
               <BacklinkAutoDetect
                 onSendToAffiliateConverter={(url) => {
@@ -1622,82 +1898,78 @@ export function Dashboard() {
             </div>
           )}
 
-          {activeTab === 'affiliate_converter' && (
+          {!isActiveToolDisabled && activeTab === 'affiliate_converter' && (
             <div className="space-y-6">
               <AffiliateLinkConverter initialUrl={affiliatePrefillUrl} />
             </div>
           )}
 
-          {activeTab === 'vibe' && (!currentProject || projects.length === 0) && (
+          {!isActiveToolDisabled && activeTab === 'vibe' && (!currentProject || projects.length === 0) && (
             <div className="space-y-6">
               <VibeResponding />
             </div>
           )}
 
-          {activeTab === 'empire' && (!currentProject || projects.length === 0) && (
+          {!isActiveToolDisabled && activeTab === 'empire' && (!currentProject || projects.length === 0) && (
             <div className="space-y-6">
               <EmpireRedisMonitor />
             </div>
           )}
 
           {/* If there are no workspaces created yet and on workspace-dependent tab */}
-          {projects.length === 0 && !projectsLoading && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'backlink_detect' && activeTab !== 'affiliate_converter' && activeTab !== 'vibe' && activeTab !== 'empire' && (
-            <div className="flex flex-col items-center justify-center text-center py-20 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-2xl max-w-2xl mx-auto p-8 shadow-xl">
-              <Database className="w-16 h-16 text-emerald-500/30 mb-4 animate-pulse" />
-              <h2 className="text-2xl font-black mb-2 text-slate-900 dark:text-slate-200">Initialize Your First Workspace</h2>
-              <p className="text-sm text-slate-700 dark:text-slate-400 max-w-md mb-8">
-                Create a project workspace first. This container stores your blog production queues, e-commerce affiliate funnels, memories, and automations.
-              </p>
+          {!isActiveToolDisabled && projects.length === 0 && !projectsLoading && activeTab !== 'overview' && activeTab !== 'admin' && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'backlink_detect' && activeTab !== 'affiliate_converter' && activeTab !== 'vibe' && activeTab !== 'empire' && (
+            <div className="flex flex-col items-center justify-center text-center py-16 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl max-w-2xl mx-auto p-8 space-y-5">
+              <Database className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
+              <div className="space-y-2">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-950 dark:text-white">Initialize Your First Workspace</h2>
+                <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto">
+                  Create a project workspace to store your blog queues, e-commerce funnels, memories, and automations.
+                </p>
+              </div>
               <button
+                type="button"
                 onClick={() => setIsCreatingProject(true)}
-                className="flex items-center space-x-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white py-3 px-6 rounded-xl font-bold transition duration-200 shadow-lg"
+                className="min-h-[44px] flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 px-6 rounded-xl font-semibold transition cursor-pointer"
               >
-                <Plus className="w-5 h-5" />
+                <Plus className="w-4 h-4" />
                 <span>Create Workspace</span>
               </button>
             </div>
           )}
 
           {/* Render Active Workspace Content */}
-          {projects.length > 0 && currentProject && (
-            <div className="space-y-6">
+          {!isActiveToolDisabled && projects.length > 0 && currentProject && activeTab !== 'admin' && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'backlink_detect' && activeTab !== 'affiliate_converter' && (
+            <div className="space-y-8">
               
-              {/* Active Project Banner */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl">
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <span className="p-1 bg-emerald-600/15 text-emerald-700 dark:text-emerald-400 rounded text-[10px] uppercase font-bold tracking-wider font-mono">
-                      Active Workspace
-                    </span>
-                    <span className="text-xs text-slate-600 dark:text-slate-500 font-mono">ID: {currentProject.id}</span>
+              {/* Active Project Header Bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
+                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Active Workspace</span>
+                    <span aria-hidden="true">·</span>
+                    <span className="truncate max-w-[200px]">{currentProject.id}</span>
                   </div>
-                  <h2 className="text-2xl font-black text-slate-950 dark:text-slate-100 mt-1">{currentProject.name}</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-950 dark:text-white">{currentProject.name}</h2>
                 </div>
-                <div className="flex items-center space-x-3 mt-4 md:mt-0">
-                  {/* Active Tool Preferred Pin Quick Action */}
-                  {activeTab !== 'overview' && activeTab !== 'activity_feed' && (
-                    (() => {
-                      const activeTool = AI_TOOLS_CATALOG.find(t => t.tabId === activeTab);
-                      if (!activeTool) return null;
-                      const isFav = favoriteToolIds.includes(activeTool.id);
-                      return (
-                        <button
-                          onClick={(e) => handleToggleFavorite(activeTool.id, activeTool.name, e)}
-                          className={`flex items-center space-x-1.5 px-3 py-2 text-xs rounded-lg font-bold border transition ${
-                            isFav 
-                              ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 border-amber-500/40 hover:bg-amber-500/30' 
-                              : 'bg-slate-200 dark:bg-slate-800/80 text-slate-800 dark:text-slate-300 border-slate-400 dark:border-slate-700 hover:text-amber-300 hover:border-amber-500/40'
-                          }`}
-                        >
-                          <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-amber-400 text-amber-800 dark:text-amber-400' : ''}`} />
-                          <span>{isFav ? 'Pinned to Favorites' : 'Pin to Preferred Tools'}</span>
-                        </button>
-                      );
-                    })()
+                <div className="flex flex-wrap items-center gap-3">
+                  {activeTab !== 'overview' && activeTab !== 'activity_feed' && activeToolDefinition && (
+                    <button
+                      type="button"
+                      onClick={(e) => handleToggleFavorite(activeToolDefinition.id, activeToolDefinition.name, e)}
+                      className={`min-h-[40px] flex items-center gap-1.5 px-3.5 py-2 text-xs rounded-xl font-semibold border transition cursor-pointer ${
+                        favoriteToolIds.includes(activeToolDefinition.id)
+                          ? 'bg-amber-50 dark:bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/40'
+                          : 'bg-slate-50 dark:bg-[#090d11] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-emerald-950/70 hover:border-emerald-500/40'
+                      }`}
+                    >
+                      <Star className={`w-3.5 h-3.5 ${favoriteToolIds.includes(activeToolDefinition.id) ? 'fill-amber-400' : ''}`} />
+                      <span>{favoriteToolIds.includes(activeToolDefinition.id) ? 'Pinned' : 'Pin Tool'}</span>
+                    </button>
                   )}
                   <button
+                    type="button"
                     onClick={() => handleDeleteProject(currentProject.id)}
-                    className="flex items-center space-x-1 px-3 py-2 text-xs bg-rose-100 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 border border-rose-700/40 dark:border-rose-950 hover:bg-rose-950/40 rounded-lg transition"
+                    className="min-h-[40px] flex items-center gap-1.5 px-3.5 py-2 text-xs bg-rose-50 dark:bg-rose-950/25 text-rose-700 dark:text-rose-400 border border-rose-500/30 hover:bg-rose-100 dark:hover:bg-rose-950/40 rounded-xl font-semibold transition cursor-pointer"
                     title="Delete Workspace"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -1706,149 +1978,75 @@ export function Dashboard() {
                 </div>
               </div>
 
-              {/* ==================== TAB: OVERVIEW ==================== */}
+              {/* ==================== TAB: OVERVIEW (Workspace Pipelines) ==================== */}
               {activeTab === 'overview' && (
-                <div className="space-y-6">
-                  {/* ⭐ Preferred AI Tools - Stored in Firestore */}
-                  <div className="p-6 bg-gradient-to-r from-[#141824] via-white dark:via-[#12141c] to-[#171424] border border-amber-500/30 rounded-2xl shadow-xl space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-300 dark:border-slate-800 pb-4">
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <span className="p-1 bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-400 rounded text-[10px] uppercase font-bold tracking-wider font-mono border border-amber-500/30 flex items-center gap-1">
-                            <Star className="w-3 h-3 fill-amber-400" />
-                            <span>Personalized Suite</span>
-                          </span>
-                          <span className="text-xs text-slate-700 dark:text-slate-400 font-mono">Synced with Firestore</span>
-                        </div>
-                        <h3 className="text-xl font-black text-slate-950 dark:text-slate-100 mt-1 flex items-center space-x-2">
-                          <span>⭐ Your Preferred AI Tools</span>
-                          <span className="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 px-2.5 py-0.5 rounded-full font-mono border border-amber-500/30 font-bold">
-                            {favoriteToolIds.length} Pinned
-                          </span>
-                        </h3>
-                      </div>
-                      <p className="text-xs text-slate-700 dark:text-slate-400 max-w-sm">
-                        Click the star icon on any tool card below or in the sidebar to pin your preferred tools at the top of your workstation interface.
-                      </p>
-                    </div>
-
-                    {/* Preferred Cards Grid */}
-                    {favoriteToolIds.length === 0 ? (
-                      <div className="text-center py-8 bg-slate-100/80 dark:bg-[#171a24]/50 border border-dashed border-slate-300 dark:border-slate-800 rounded-xl p-4">
-                        <Star className="w-8 h-8 text-amber-500/40 mx-auto mb-2 animate-bounce" />
-                        <p className="text-sm font-bold text-slate-800 dark:text-slate-300">No tools pinned to your preferred suite yet</p>
-                        <p className="text-xs text-slate-600 dark:text-slate-500 mt-1">Star any tool in the directory below or in the navigation sidebar to surface it here.</p>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {AI_TOOLS_CATALOG.filter(tool => favoriteToolIds.includes(tool.id)).map(tool => {
-                          const ToolIcon = tool.icon;
-                          return (
-                            <div
-                              key={`pref_card_${tool.id}`}
-                              onClick={() => setActiveTab(tool.tabId)}
-                              className={`p-4 rounded-xl border transition duration-200 cursor-pointer flex flex-col justify-between group relative overflow-hidden ${tool.accentColor} shadow-lg hover:shadow-amber-950/20`}
-                            >
-                              <div>
-                                <div className="flex items-center justify-between mb-3">
-                                  <div className="p-2.5 bg-slate-100 dark:bg-[#171a24] rounded-lg border border-slate-400 dark:border-slate-700 text-slate-950 dark:text-slate-100 group-hover:scale-105 transition">
-                                    <ToolIcon className="w-5 h-5 text-amber-800 dark:text-amber-400" />
-                                  </div>
-                                  <div className="flex items-center space-x-2">
-                                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border ${tool.badgeBg}`}>
-                                      {tool.badge}
-                                    </span>
-                                    <button
-                                      onClick={(e) => handleToggleFavorite(tool.id, tool.name, e)}
-                                      className="p-1 text-amber-800 dark:text-amber-400 hover:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-950/30 rounded transition"
-                                      title="Unpin tool"
-                                    >
-                                      <Star className="w-4 h-4 fill-amber-400 text-amber-800 dark:text-amber-400" />
-                                    </button>
-                                  </div>
-                                </div>
-                                <h4 className="text-base font-bold text-slate-950 dark:text-slate-100 group-hover:text-amber-300 transition flex items-center space-x-1">
-                                  <span>{tool.name}</span>
-                                </h4>
-                                <span className="text-[10px] text-slate-700 dark:text-slate-400 font-mono block mb-2">{tool.category}</span>
-                                <p className="text-xs text-slate-800 dark:text-slate-300 line-clamp-2 leading-relaxed">{tool.description}</p>
-                              </div>
-                              <div className="mt-4 pt-3 border-t border-slate-300 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-800 dark:text-amber-400 group-hover:translate-x-1 transition">
-                                <span>Launch Preferred Tool</span>
-                                <ArrowRight className="w-3.5 h-3.5" />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
+                <div className="space-y-8">
 
                   {/* Workspace Analytics Metrics */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl relative overflow-hidden">
-                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">AI Blog Posts</div>
-                      <div className="text-3xl font-black text-slate-950 dark:text-slate-100 mt-2">{jobs.length}</div>
-                      <div className="text-xs text-emerald-700 dark:text-emerald-400 font-mono mt-1 flex items-center space-x-1">
-                        <CheckCircle className="w-3 h-3" />
-                        <span>{jobs.filter(j => j.status === 'Completed').length} Published successfully</span>
+                    <div className="p-5 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs font-semibold">AI Blog Posts</div>
+                      <div className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-slate-950 dark:text-white mt-2">{jobs.length}</div>
+                      <div className="text-xs text-emerald-700 dark:text-emerald-400 font-mono mt-1.5 flex items-center gap-1">
+                        <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+                        <span>{jobs.filter(j => j.status === 'Completed').length} published</span>
                       </div>
                     </div>
 
-                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl">
-                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">Affiliate Products</div>
-                      <div className="text-3xl font-black text-slate-950 dark:text-slate-100 mt-2">{products.length}</div>
-                      <div className="text-xs text-cyan-800 dark:text-cyan-400 font-mono mt-1">Ecom Money funnels loaded</div>
+                    <div className="p-5 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs font-semibold">Affiliate Products</div>
+                      <div className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-slate-950 dark:text-white mt-2">{products.length}</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1.5">Ecom sales funnels</div>
                     </div>
 
-                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl">
-                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">Knowledge Nodes</div>
-                      <div className="text-3xl font-black text-slate-950 dark:text-slate-100 mt-2">{memories.length}</div>
-                      <div className="text-xs text-indigo-800 dark:text-indigo-400 font-mono mt-1">SaaS semantic alignment memory</div>
+                    <div className="p-5 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs font-semibold">Knowledge Nodes</div>
+                      <div className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-slate-950 dark:text-white mt-2">{memories.length}</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1.5">Semantic workspace memory</div>
                     </div>
 
-                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl">
-                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">Schedules Queued</div>
-                      <div className="text-3xl font-black text-slate-950 dark:text-slate-100 mt-2">{schedules.length}</div>
-                      <div className="text-xs text-amber-800 dark:text-amber-400 font-mono mt-1">Social postings automation</div>
+                    <div className="p-5 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs font-semibold">Schedules Queued</div>
+                      <div className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-slate-950 dark:text-white mt-2">{schedules.length}</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1.5">Social postings queued</div>
                     </div>
 
-                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl">
-                      <div className="text-slate-600 dark:text-slate-500 text-xs font-bold font-mono uppercase">Custom AI Agents</div>
-                      <div className="text-3xl font-black text-slate-950 dark:text-slate-100 mt-2">{agents.length}</div>
-                      <div className="text-xs text-teal-700 dark:text-teal-400 font-mono mt-1">Intelligent custom persona agents</div>
+                    <div className="p-5 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl">
+                      <div className="text-slate-600 dark:text-slate-400 text-xs font-semibold">Custom AI Agents</div>
+                      <div className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-slate-950 dark:text-white mt-2">{agents.length}</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-1.5">Persona agents ready</div>
                     </div>
                   </div>
 
                   {/* Dual Grid */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Recent Jobs pipeline */}
-                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
-                      <div className="flex justify-between items-center pb-2 border-b border-slate-300 dark:border-slate-800">
-                        <h3 className="font-bold text-slate-900 dark:text-slate-200 flex items-center space-x-2">
+                    <div className="p-6 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl space-y-4">
+                      <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-emerald-950/50">
+                        <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
                           <BookOpen className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
                           <span>Blog Production Pipeline</span>
                         </h3>
-                        <button onClick={() => setActiveTab('blog')} className="text-xs text-emerald-700 dark:text-emerald-400 font-bold hover:underline">
+                        <button onClick={() => setActiveTab('blog')} className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold hover:underline cursor-pointer">
                           Go to Factory &rarr;
                         </button>
                       </div>
 
-                      <div className="space-y-2 max-h-[250px] overflow-y-auto">
+                      <div className="space-y-2.5 max-h-[250px] overflow-y-auto">
                         {jobsLoading && <Loader2 className="w-6 h-6 animate-spin text-emerald-700 dark:text-emerald-400 mx-auto" />}
                         {jobs.length === 0 && !jobsLoading && (
-                          <p className="text-slate-600 dark:text-slate-500 text-sm py-4 text-center">No blog production tasks initiated yet.</p>
+                          <p className="text-slate-600 dark:text-slate-400 text-sm py-4 text-center">No blog production tasks initiated yet.</p>
                         )}
                         {jobs.map(job => (
-                          <div key={job.id} className="flex justify-between items-center p-3 bg-slate-100 dark:bg-[#171a24] rounded-lg border border-slate-300 dark:border-slate-800">
-                            <div>
-                              <p className="text-sm font-bold text-slate-900 dark:text-slate-200 line-clamp-1">{job.topic}</p>
-                              <span className="text-[10px] font-mono text-slate-600 dark:text-slate-500">Created {job.createdAt?.toDate().toLocaleTimeString()}</span>
+                          <div key={job.id} className="flex justify-between items-center p-3.5 bg-slate-50 dark:bg-[#090d11] rounded-xl border border-slate-200 dark:border-emerald-950/60">
+                            <div className="min-w-0 pr-3">
+                              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 line-clamp-1">{job.topic}</p>
+                              <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">Created {job.createdAt?.toDate().toLocaleTimeString()}</span>
                             </div>
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono ${
-                              job.status === 'Completed' ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 border border-emerald-700/40 dark:border-emerald-900' :
-                              job.status === 'Processing' ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-400 border border-amber-700/40 dark:border-amber-900 animate-pulse' :
-                              job.status === 'Failed' ? 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400 border border-rose-700/40 dark:border-rose-900' :
+                            <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono shrink-0 ${
+                              job.status === 'Completed' ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-700/30 dark:border-emerald-900' :
+                              job.status === 'Processing' ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-700/30 dark:border-amber-900' :
+                              job.status === 'Failed' ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-700/30 dark:border-rose-900' :
                               'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
                             }`}>
                               {job.status}
@@ -1859,36 +2057,36 @@ export function Dashboard() {
                     </div>
 
                     {/* Ecom Affiliates pipeline */}
-                    <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
-                      <div className="flex justify-between items-center pb-2 border-b border-slate-300 dark:border-slate-800">
-                        <h3 className="font-bold text-slate-900 dark:text-slate-200 flex items-center space-x-2">
+                    <div className="p-6 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl space-y-4">
+                      <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-emerald-950/50">
+                        <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
                           <Sparkles className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
-                          <span>Affiliate Landing Copy suites</span>
+                          <span>Affiliate Landing Copy Suites</span>
                         </h3>
-                        <button onClick={() => setActiveTab('ecom')} className="text-xs text-emerald-700 dark:text-emerald-400 font-bold hover:underline">
+                        <button onClick={() => setActiveTab('ecom')} className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold hover:underline cursor-pointer">
                           Go to Funnels &rarr;
                         </button>
                       </div>
 
-                      <div className="space-y-2 max-h-[250px] overflow-y-auto">
+                      <div className="space-y-2.5 max-h-[250px] overflow-y-auto">
                         {productsLoading && <Loader2 className="w-6 h-6 animate-spin text-emerald-700 dark:text-emerald-400 mx-auto" />}
                         {products.length === 0 && !productsLoading && (
-                          <p className="text-slate-600 dark:text-slate-500 text-sm py-4 text-center">No affiliate marketing links analyzed yet.</p>
+                          <p className="text-slate-600 dark:text-slate-400 text-sm py-4 text-center">No affiliate marketing links analyzed yet.</p>
                         )}
                         {products.map(p => (
-                          <div key={p.id} className="flex justify-between items-center p-3 bg-slate-100 dark:bg-[#171a24] rounded-lg border border-slate-300 dark:border-slate-800">
+                          <div key={p.id} className="flex justify-between items-center p-3.5 bg-slate-50 dark:bg-[#090d11] rounded-xl border border-slate-200 dark:border-emerald-950/60">
                             <div className="min-w-0 flex-1 pr-4">
-                              <p className="text-sm font-bold text-slate-900 dark:text-slate-200 truncate">{p.url}</p>
-                              <span className="text-[10px] font-mono text-slate-600 dark:text-slate-500">Brand: {p.brand} | Region: {p.country}</span>
+                              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{p.url}</p>
+                              <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">Brand: {p.brand} · Region: {p.country}</span>
                             </div>
                             <button
                               onClick={() => {
                                 setSelectedProductId(p.id);
                                 setActiveTab('ecom');
                               }}
-                              className="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2 py-1 rounded"
+                              className="min-h-[36px] text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3 py-1.5 rounded-lg shrink-0 cursor-pointer"
                             >
-                              Open suite
+                              Open Suite
                             </button>
                           </div>
                         ))}
@@ -1897,22 +2095,22 @@ export function Dashboard() {
                   </div>
 
                   {/* Recent Activity Feed */}
-                  <div id="recent-activities-feed" className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-xl space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-300 dark:border-slate-800 gap-4">
-                      <div className="flex items-center space-x-2">
-                        <Activity className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
+                  <div id="recent-activities-feed" className="p-6 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl space-y-5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 dark:border-emerald-950/50 gap-4">
+                      <div className="flex items-center gap-3">
+                        <Activity className="w-5 h-5 text-emerald-700 dark:text-emerald-400 shrink-0" />
                         <div>
-                          <h3 className="font-bold text-slate-950 dark:text-slate-100 text-base flex items-center space-x-2">
+                          <h3 className="font-bold text-slate-950 dark:text-white text-base flex flex-wrap items-center gap-3">
                             <span>Recent Studio Activity</span>
                             <button
                               onClick={() => setActiveTab('activity_feed')}
-                              className="text-[11px] font-mono text-emerald-700 dark:text-emerald-400 hover:text-emerald-300 font-bold flex items-center space-x-1 pl-2 hover:underline"
+                              className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline inline-flex items-center gap-1 cursor-pointer"
                             >
                               <span>Full Activity Feed</span>
-                              <ArrowRight className="w-3 h-3" />
+                              <ArrowRight className="w-3.5 h-3.5" />
                             </button>
                           </h3>
-                          <p className="text-xs text-slate-700 dark:text-slate-400">Chronological history of your workspace actions</p>
+                          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Chronological history of your workspace actions</p>
                         </div>
                       </div>
                       
@@ -1923,13 +2121,13 @@ export function Dashboard() {
                           placeholder="Search actions..."
                           value={activitySearch}
                           onChange={(e) => setActivitySearch(e.target.value)}
-                          className="w-full bg-slate-100 dark:bg-[#171a24] border border-slate-400 dark:border-slate-700 rounded-lg px-3 py-1.5 pl-8 text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-600 dark:placeholder-slate-500"
+                          className="w-full min-h-[40px] bg-slate-50 dark:bg-[#090d11] border border-slate-300 dark:border-emerald-950/70 rounded-xl px-3.5 py-2 pl-9 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder-slate-500"
                         />
-                        <Clock className="w-3.5 h-3.5 text-slate-600 dark:text-slate-500 absolute left-2.5 top-2.5" />
+                        <Clock className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                       </div>
                     </div>
 
-                    {/* Filter Pills */}
+                    {/* Filter Tabs */}
                     <div className="flex flex-wrap gap-2 text-xs">
                       {[
                         { id: 'all', label: 'All Activity' },
@@ -1942,10 +2140,10 @@ export function Dashboard() {
                         <button
                           key={tab.id}
                           onClick={() => setActivityFilter(tab.id as any)}
-                          className={`px-3 py-1 rounded-full transition font-semibold ${
+                          className={`min-h-[36px] px-3.5 py-1.5 rounded-xl transition font-semibold cursor-pointer ${
                             activityFilter === tab.id
                               ? 'bg-emerald-600 text-white'
-                              : 'bg-slate-100 dark:bg-[#181b24] text-slate-700 dark:text-slate-400 hover:text-slate-950 dark:hover:text-slate-200 border border-slate-300 dark:border-slate-800'
+                              : 'bg-slate-100 dark:bg-[#090d11] text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white border border-slate-200 dark:border-emerald-950/70'
                           }`}
                         >
                           {tab.label}
@@ -2073,21 +2271,20 @@ export function Dashboard() {
               {activeTab === 'activity_feed' && (
                 <div className="space-y-6">
                   {/* Top Header Card */}
-                  <div className="p-6 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg">
+                  <div className="p-6 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center space-x-3">
                         <div className="p-2.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
                           <Activity className="w-6 h-6 text-emerald-700 dark:text-emerald-400" />
                         </div>
                         <div>
-                          <h2 className="text-xl font-bold text-slate-950 dark:text-slate-100 flex items-center space-x-2">
-                            <span>Gemini API & Activity Feed</span>
-                            <span className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-700/40 dark:border-emerald-800/60 font-semibold">
-                              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                              <span>Firestore Live Sync</span>
+                          <h2 className="text-xl font-bold text-slate-950 dark:text-white flex flex-wrap items-center gap-2.5">
+                            <span>Gemini API &amp; Activity Feed</span>
+                            <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 font-semibold">
+                              Firestore Live Sync
                             </span>
                           </h2>
-                          <p className="text-xs text-slate-700 dark:text-slate-400">
+                          <p className="text-xs text-slate-600 dark:text-slate-400">
                             Real-time audit log of all interactions with Google Gemini API, agent sandboxes, and studio workflows stored persistently in Firestore.
                           </p>
                         </div>
@@ -2098,7 +2295,7 @@ export function Dashboard() {
                       <button
                         onClick={handleClearAllActivities}
                         disabled={activities.length === 0}
-                        className="px-3.5 py-2 bg-rose-100 dark:bg-rose-950/30 hover:bg-rose-200 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 border border-rose-700/40 dark:border-rose-900/50 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-xs font-bold transition flex items-center space-x-1.5"
+                        className="min-h-[40px] px-4 py-2 bg-rose-100 dark:bg-rose-950/30 hover:bg-rose-200 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 border border-rose-700/40 dark:border-rose-900/50 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-xs font-semibold transition flex items-center space-x-1.5 cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         <span>Purge Activity Log</span>
@@ -2107,14 +2304,14 @@ export function Dashboard() {
                   </div>
 
                   {/* Quick Gemini API Interactive Logger */}
-                  <div className="p-5 bg-white dark:bg-[#12141c] border border-slate-300 dark:border-slate-800 rounded-2xl space-y-4 shadow-md">
-                    <div className="flex items-center justify-between pb-3 border-b border-slate-300 dark:border-slate-800">
+                  <div className="p-6 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl space-y-4">
+                    <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-emerald-950/50">
                       <div className="flex items-center space-x-2">
                         <Sparkles className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-                        <h3 className="font-bold text-slate-900 dark:text-slate-200 text-sm">Interactive Gemini API Request Logger</h3>
+                        <h3 className="font-bold text-slate-900 dark:text-white text-sm">Interactive Gemini API Request Logger</h3>
                       </div>
-                      <span className="text-[10px] font-mono px-2.5 py-0.5 bg-slate-200 dark:bg-slate-800/80 text-slate-800 dark:text-slate-300 rounded-md border border-slate-400 dark:border-slate-700">
-                        Model: gemini-3.5-flash
+                      <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                        Model: gemini-2.5-flash
                       </span>
                     </div>
 
@@ -2425,6 +2622,13 @@ export function Dashboard() {
                           )}
                         </button>
                       </form>
+
+                      {blogError && (
+                        <div className="p-3 rounded-lg border border-rose-500/40 bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-200 text-xs flex items-start space-x-2">
+                          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600 dark:text-rose-400" />
+                          <span>{blogError}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Jobs List */}
@@ -3268,9 +3472,9 @@ export function Dashboard() {
                               value={agentModel}
                               onChange={(e) => setAgentModel(e.target.value)}
                             >
-                              <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
-                              <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash Lite</option>
-                              <option value="gemini-3.5-pro">Gemini 3.5 Pro</option>
+                              <option value="gemini-4-hydrogen">Gemini 4 Hydrogen (Fast)</option>
+                              <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash Lite</option>
+                              <option value="gemini-4-argon">Gemini 4 Argon (Pro)</option>
                             </select>
                           </div>
                         </div>
@@ -3745,13 +3949,6 @@ export function Dashboard() {
                 </div>
               )}
 
-              {/* ==================== TAB: SUPER AI TOOLBOX ==================== */}
-              {activeTab === 'toolbox' && (
-                <div className="space-y-6">
-                  <SuperAiToolbox />
-                </div>
-              )}
-
               {/* ==================== TAB: VIBE RESPONDING AI SOCIAL MEDIA ==================== */}
               {activeTab === 'vibe' && (
                 <div className="space-y-6">
@@ -3782,6 +3979,50 @@ export function Dashboard() {
 
             </div>
           )}
+
+          {/* Create Workspace Modal (Available regardless of active tab) */}
+          {isCreatingProject && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-sm p-4">
+              <div className="bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-5">
+                <h3 className="text-lg font-bold text-slate-950 dark:text-white flex items-center gap-2">
+                  <Database className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
+                  <span>Create Workspace Folder</span>
+                </h3>
+                <form onSubmit={handleCreateProject} className="space-y-4">
+                  <div>
+                    <label className="block text-xs text-slate-700 dark:text-slate-400 font-semibold mb-2">
+                      Workspace Name
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full min-h-[44px] bg-slate-50 dark:bg-[#090d11] border border-slate-300 dark:border-emerald-950/70 rounded-xl px-3.5 py-2 text-sm text-slate-950 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                      placeholder="e.g. Health & Fitness Blog"
+                      value={newProjectName}
+                      onChange={(e) => setNewProjectName(e.target.value)}
+                      required
+                      autoFocus
+                    />
+                  </div>
+                  <div className="flex justify-end gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsCreatingProject(false)}
+                      className="min-h-[42px] px-4 py-2 text-xs bg-slate-100 dark:bg-[#090d11] border border-slate-200 dark:border-emerald-950/70 text-slate-800 dark:text-slate-300 rounded-xl font-semibold cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="min-h-[42px] px-5 py-2 text-xs bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-semibold cursor-pointer"
+                    >
+                      Create
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+          </div>
         </main>
       </div>
 

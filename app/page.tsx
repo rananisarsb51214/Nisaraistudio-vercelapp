@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 import { useAuth } from '../components/auth-provider';
 import { Login } from '../components/login';
 import { Dashboard } from '../components/dashboard';
+import { LeadForm } from '../components/lead-form';
 import { ThemeSwitcher } from '../components/theme-switcher';
 import { Sparkles, Shield, Cpu, RefreshCw } from 'lucide-react';
 
@@ -25,7 +26,7 @@ export default function Home() {
       {user ? (
         <Dashboard />
       ) : (
-        <div className="relative flex flex-col items-center justify-center min-h-screen px-4 overflow-hidden">
+        <div className="relative flex flex-col items-center justify-start min-h-screen px-4 py-10 md:py-12 gap-6 overflow-x-hidden">
           <div className="absolute top-5 right-5 z-20">
             <ThemeSwitcher />
           </div>
@@ -33,6 +34,11 @@ export default function Home() {
           {/* Decorative Background Glows */}
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
+
+          {/* Top Priority Lead Form */}
+          <div className="relative z-10 w-full max-w-4xl pt-6 sm:pt-2">
+            <LeadForm source="landing" />
+          </div>
 
           {/* Core Login Container */}
           <div className="relative z-10 w-full max-w-md p-8 bg-white dark:bg-[#12141c]/80 border border-slate-900/20 dark:border-slate-800/80 backdrop-blur-md rounded-2xl shadow-xl dark:shadow-2xl text-center space-y-6">

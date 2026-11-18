@@ -6,6 +6,49 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isValidLeadId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidLeadCreate(data) {
+      return data.keys().hasAll(['naam', 'phoneNumber', 'city', 'createdAt'])
+        && data.keys().hasOnly(['naam', 'phoneNumber', 'city', 'source', 'userId', 'createdAt', 'aiStatus'])
+        && data.naam is string && data.naam.size() >= 1 && data.naam.size() <= 100
+        && data.phoneNumber is string && data.phoneNumber.size() >= 5 && data.phoneNumber.size() <= 30
+        && data.city is string && data.city.size() >= 1 && data.city.size() <= 80
+        && (!('source' in data) || (data.source is string && data.source.size() <= 40))
+        && (!('userId' in data) || (data.userId is string && data.userId.size() <= 128 && (request.auth == null ? data.userId == 'guest' : data.userId == request.auth.uid)))
+        && (!('aiStatus' in data) || data.aiStatus == 'pending')
+        && data.createdAt == request.time;
+    }
+
+    function isValidLeadAiUpdate() {
+      let data = request.resource.data;
+      return data.keys().hasOnly(['naam', 'phoneNumber', 'city', 'source', 'userId', 'createdAt', 'aiStatus', 'leadLabel', 'whatsappReply', 'aiModel', 'aiError', 'aiProcessedAt'])
+        && data.diff(resource.data).affectedKeys().hasOnly(['aiStatus', 'leadLabel', 'whatsappReply', 'aiModel', 'aiError', 'aiProcessedAt'])
+        && data.aiStatus in ['pending', 'completed', 'error']
+        && (!('leadLabel' in data) || data.leadLabel in ['HOT', 'COLD'])
+        && (!('whatsappReply' in data) || (data.whatsappReply is string && data.whatsappReply.size() <= 600))
+        && (!('aiModel' in data) || (data.aiModel is string && data.aiModel.size() <= 80))
+        && (!('aiError' in data) || (data.aiError is string && data.aiError.size() <= 300))
+        && data.aiProcessedAt == request.time;
+    }
+
+    function isLeadsAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email == 'nisarrsna@gmail.com';
+    }
+
+    function isValidToolConfig(data) {
+      return data.keys().hasAll(['disabledTools'])
+        && data.keys().hasOnly(['disabledTools', 'updatedBy', 'updatedAt'])
+        && data.disabledTools is list
+        && data.disabledTools.size() <= 50
+        && (data.disabledTools.size() == 0 || data.disabledTools[0] is string)
+        && (!('updatedBy' in data) || (data.updatedBy is string && data.updatedBy.size() <= 128));
+    }
+
     // Projects Rules
     match /projects/{projectId} {
       allow create: if !isAuthenticated() || request.resource.data.tenantId == request.auth.uid;
@@ -121,6 +164,27 @@ service cloud.firestore {
     // Real-Time Affiliate Link Converter Vault
     match /affiliate_links/{linkId} {
       allow create, read, update, delete: if true;
+    }
+
+    // Lead Form Submissions (PII-protected reads, validated creates, immutable-PII Auto-Gemini updates)
+    match /leads/{leadId} {
+      allow create: if isValidLeadId(leadId) && isValidLeadCreate(request.resource.data);
+      allow get: if isLeadsAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow list: if isLeadsAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow update: if isValidLeadAiUpdate() && (
+        isLeadsAdmin()
+        || (isAuthenticated() && resource.data.userId == request.auth.uid)
+        || (!('aiStatus' in resource.data) || resource.data.aiStatus in ['pending', 'error'])
+      );
+      allow delete: if isLeadsAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+    }
+
+    // Global App & Tools On/Off Settings (Public read, Admin-only write)
+    match /app_settings/{settingId} {
+      allow get: if isValidLeadId(settingId);
+      allow list: if isAuthenticated();
+      allow create, update: if isValidLeadId(settingId) && isLeadsAdmin() && isValidToolConfig(request.resource.data);
+      allow delete: if isLeadsAdmin();
     }
   }
 }

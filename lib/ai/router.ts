@@ -1,7 +1,12 @@
 import { GoogleGenAI } from '@google/genai';
 import { AI_TOOLS_REGISTRY } from './schemas';
 import { buildExecutionPrompt } from './prompts';
-import { ToolExecutionRequest, ToolExecutionResponse } from '@/types/ai';
+import { ToolExecutionRequest } from '@/types/ai';
+import {
+  createGeminiClient,
+  resolveGeminiModel,
+  supportsSamplingTemperature,
+} from './gemini-error';
 
 let geminiClient: GoogleGenAI | null = null;
 
@@ -11,7 +16,7 @@ function getGemini(): GoogleGenAI {
     if (!apiKey) {
       throw new Error('GEMINI_API_KEY environment variable is missing.');
     }
-    geminiClient = new GoogleGenAI({ apiKey });
+    geminiClient = createGeminiClient(apiKey);
   }
   return geminiClient;
 }
@@ -39,7 +44,7 @@ export async function executeTool(request: ToolExecutionRequest): Promise<{
   }
 
   const ai = getGemini();
-  const modelToUse = request.model || tool.defaultModel || 'gemini-2.5-flash';
+  const modelToUse = resolveGeminiModel(request.model || tool.defaultModel);
   const { systemInstruction, userPrompt } = buildExecutionPrompt(
     tool,
     request.parameters,
@@ -51,7 +56,7 @@ export async function executeTool(request: ToolExecutionRequest): Promise<{
     contents: userPrompt,
     config: {
       systemInstruction,
-      temperature: 0.7,
+      ...(supportsSamplingTemperature(modelToUse) ? { temperature: 0.7 } : {}),
     },
   });
 

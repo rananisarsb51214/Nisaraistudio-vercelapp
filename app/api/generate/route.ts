@@ -1,8 +1,8 @@
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI } from '@google/genai';
 import { checkAndDeductCredits, refundQuotaOrCredit } from '@/lib/credits/credits-service';
+import { createGeminiClient, parseGeminiError, resolveGeminiModel } from '@/lib/ai/gemini-error';
 
 export async function POST(req: NextRequest) {
   let deductedFrom: 'daily_free' | 'paid_credits' | 'none' = 'none';
@@ -46,9 +46,10 @@ export async function POST(req: NextRequest) {
     deductedCost = deductRes.deductedCost;
 
     // 2. Call Google Gemini API securely server-side
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = createGeminiClient(apiKey);
+    const resolvedModel = resolveGeminiModel(model);
     const response = await ai.models.generateContent({
-      model: typeof model === 'string' && model.trim() ? model.trim() : 'gemini-2.5-flash',
+      model: resolvedModel,
       contents: prompt,
     });
 
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
     if (deductedFrom !== 'none' && deductedCost > 0) {
       await refundQuotaOrCredit(resolvedUserId, deductedFrom, deductedCost, 'direct-prompt');
     }
-    const message = error instanceof Error ? error.message : 'Generation failed.';
-    return NextResponse.json({ error: message }, { status: 500 });
+    const parsed = parseGeminiError(error);
+    return NextResponse.json({ error: parsed.message, code: parsed.code }, { status: parsed.status });
   }
 }

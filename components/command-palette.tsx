@@ -239,6 +239,18 @@ export default function CommandPalette({
       shortcut: 'Tab 1'
     },
     {
+      id: 'cmd_nav_admin_panel',
+      label: 'Admin Panel (Leads, Credits, Tools)',
+      description: 'Open Leads List, Credits Control, and Tools On/Off toggles',
+      category: 'Navigation',
+      icon: <ShieldCheck className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />,
+      action: () => {
+        setActiveTab('admin');
+        onClose();
+      },
+      shortcut: 'Admin'
+    },
+    {
       id: 'cmd_nav_activity',
       label: 'Gemini API & Activity Feed',
       description: 'Live Firestore audit logs of all AI interactions and studio events',

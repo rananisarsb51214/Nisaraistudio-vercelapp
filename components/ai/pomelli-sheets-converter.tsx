@@ -11,7 +11,7 @@ const APPS_SCRIPT_CODE = `/**
 const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
 
 // Selected Gemini model
-const MODEL_NAME = "gemini-1.5-flash";
+const MODEL_NAME = "gemini-4-hydrogen";
 
 /**
  * Custom Menu when opening the Google Sheet
