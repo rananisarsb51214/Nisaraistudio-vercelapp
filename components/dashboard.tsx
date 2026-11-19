@@ -22,9 +22,10 @@ import CommandPalette from './command-palette';
 import { EmpireRedisMonitor } from './empire-redis-monitor';
 import { VibeResponding } from './vibe/vibe-responding';
 import { SuperAiToolbox } from './ai/super-ai-toolbox';
+import Link from 'next/link';
 import { PomelliSheetsConverter } from './ai/pomelli-sheets-converter';
 import { AiLinkConverter } from './ai/ai-link-converter';
-import { ChatHistorySidebar } from './ai/chat-history-sidebar';
+import { MemoryGeminiChatbot } from './ai/memory-gemini-chatbot';
 import { ChatbotBasicsLab } from './ai/chatbot-basics-lab';
 import { BacklinkAutoDetect } from './ai/backlink-auto-detect';
 import { AffiliateLinkConverter } from './ai/affiliate-link-converter';
@@ -1175,6 +1176,25 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
           </button>
           <button
             type="button"
+            onClick={() => setActiveTab('chat_history')}
+            className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 inline-flex items-center gap-1.5 ${
+              activeTab === 'chat_history'
+                ? 'border-[#00D9FF] text-indigo-700 dark:text-[#00D9FF] font-semibold'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
+            }`}
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Memory Chatbot</span>
+          </button>
+          <Link
+            href="/tools"
+            className="hidden xl:inline-flex items-center gap-1.5 py-1 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-[#00D9FF] transition whitespace-nowrap shrink-0"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#00D9FF]" />
+            <span>SEO Tools</span>
+          </Link>
+          <button
+            type="button"
             onClick={() => setIsCommandPaletteOpen(true)}
             className="hidden lg:inline-flex items-center gap-2 py-1 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white transition whitespace-nowrap shrink-0 cursor-pointer"
           >
@@ -1535,7 +1555,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
         </nav>
 
         {/* Spacious Workspace Canvas */}
-        <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-9 bg-slate-50 dark:bg-[#080b0e]">
+        <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-9 bg-slate-50 dark:bg-[#070B14]">
           <div className="max-w-7xl mx-auto space-y-8">
             {/* Unauthenticated Dashboard Preview Banner */}
             {(previewMode || !user) && (
@@ -1859,16 +1879,25 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
                       {enabledToolsCatalog.length} active tools ready · Toggle availability anytime from Admin Panel.
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAdminSubTab('tools');
-                      setActiveTab('admin');
-                    }}
-                    className="min-h-[40px] px-4 py-2 rounded-xl border border-slate-200 dark:border-emerald-950/70 bg-slate-50 dark:bg-[#090d11] hover:border-emerald-500/50 text-xs font-semibold text-emerald-700 dark:text-emerald-400 whitespace-nowrap self-start sm:self-auto cursor-pointer"
-                  >
-                    Tools On/Off Settings
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
+                    <Link
+                      href="/tools"
+                      className="min-h-[40px] px-4 py-2 rounded-xl border border-indigo-500/30 bg-indigo-50 dark:bg-[#070B14] hover:border-[#00D9FF] text-xs font-semibold text-indigo-700 dark:text-[#00D9FF] whitespace-nowrap inline-flex items-center gap-1.5"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Public 10 SEO Tools</span>
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAdminSubTab('tools');
+                        setActiveTab('admin');
+                      }}
+                      className="min-h-[40px] px-4 py-2 rounded-xl border border-slate-200 dark:border-emerald-950/70 bg-slate-50 dark:bg-[#090d11] hover:border-emerald-500/50 text-xs font-semibold text-emerald-700 dark:text-emerald-400 whitespace-nowrap cursor-pointer"
+                    >
+                      Tools On/Off Settings
+                    </button>
+                  </div>
                 </div>
 
                 {enabledToolsCatalog.length === 0 ? (
@@ -1960,6 +1989,12 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
             </div>
           )}
 
+          {!isActiveToolDisabled && activeTab === 'chat_history' && (
+            <div className="space-y-6">
+              <MemoryGeminiChatbot selectedProjectId={selectedProjectId} />
+            </div>
+          )}
+
           {!isActiveToolDisabled && activeTab === 'vibe' && (!currentProject || projects.length === 0) && (
             <div className="space-y-6">
               <VibeResponding />
@@ -1973,7 +2008,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
           )}
 
           {/* If there are no workspaces created yet and on workspace-dependent tab */}
-          {!isActiveToolDisabled && projects.length === 0 && !projectsLoading && activeTab !== 'overview' && activeTab !== 'admin' && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'backlink_detect' && activeTab !== 'affiliate_converter' && activeTab !== 'vibe' && activeTab !== 'empire' && (
+          {!isActiveToolDisabled && projects.length === 0 && !projectsLoading && activeTab !== 'overview' && activeTab !== 'admin' && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'backlink_detect' && activeTab !== 'affiliate_converter' && activeTab !== 'chat_history' && activeTab !== 'vibe' && activeTab !== 'empire' && (
             <div className="flex flex-col items-center justify-center text-center py-16 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl max-w-2xl mx-auto p-8 space-y-5">
               <Database className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
               <div className="space-y-2">
@@ -1994,7 +2029,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
           )}
 
           {/* Render Active Workspace Content */}
-          {!isActiveToolDisabled && projects.length > 0 && currentProject && activeTab !== 'admin' && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'backlink_detect' && activeTab !== 'affiliate_converter' && (
+          {!isActiveToolDisabled && projects.length > 0 && currentProject && activeTab !== 'admin' && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'backlink_detect' && activeTab !== 'affiliate_converter' && activeTab !== 'chat_history' && (
             <div className="space-y-8">
               
               {/* Active Project Header Bar */}
@@ -4023,13 +4058,6 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
               {activeTab === 'ai_link_converter' && (
                 <div className="space-y-6">
                   <AiLinkConverter />
-                </div>
-              )}
-
-              {/* ==================== TAB: CHAT HISTORY SIDEBAR ==================== */}
-              {activeTab === 'chat_history' && (
-                <div className="space-y-6">
-                  <ChatHistorySidebar selectedProjectId={selectedProjectId} />
                 </div>
               )}
 

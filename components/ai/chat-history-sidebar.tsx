@@ -9,7 +9,7 @@ import {
 import { useAuth } from '../auth-provider';
 import { db, handleFirestoreError, OperationType } from '../../lib/firebase';
 import { 
-  collection, query, where, getDocs, addDoc, doc, updateDoc, deleteDoc, Timestamp 
+  collection, query, where, getDocs, addDoc, doc, updateDoc, deleteDoc, serverTimestamp, Timestamp 
 } from 'firebase/firestore';
 
 export interface ChatMessage {
@@ -42,11 +42,16 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
 
   // Fetch chat sessions from Firestore
   useEffect(() => {
-    if (!userId) return;
+    if (!user?.uid || !db) {
+      setSessions([]);
+      setIsLoadingSessions(false);
+      return;
+    }
     fetchSessions();
-  }, [userId]);
+  }, [user?.uid]);
 
   const fetchSessions = async () => {
+    if (!user?.uid || !db) return;
     setIsLoadingSessions(true);
     try {
       const q = query(collection(db, 'chat_sessions'), where('userId', '==', userId));
@@ -80,10 +85,26 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
   };
 
   const handleCreateNewChat = async () => {
+    if (!user?.uid || !db) return;
     try {
-      const newSessionData = {
+      const docRef = await addDoc(collection(db, 'chat_sessions'), {
         title: 'New AI Conversation',
-        userId,
+        userId: user.uid,
+        projectId: selectedProjectId || 'default',
+        messages: [
+          {
+            role: 'model' as const,
+            text: 'Hello! I am your NISAR AI Assistant with persistent Firestore memory. How can I assist you today?',
+            timestamp: new Date().toISOString()
+          }
+        ],
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+      const newSession: ChatSession = {
+        id: docRef.id,
+        title: 'New AI Conversation',
+        userId: user.uid,
         projectId: selectedProjectId || 'default',
         messages: [
           {
@@ -95,9 +116,6 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now()
       };
-
-      const docRef = await addDoc(collection(db, 'chat_sessions'), newSessionData);
-      const newSession: ChatSession = { id: docRef.id, ...newSessionData };
       setSessions([newSession, ...sessions]);
       setActiveSessionId(docRef.id);
       setMessages(newSession.messages);
@@ -132,23 +150,21 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
 
     let currentSessionId = activeSessionId;
 
-    // If no active session, create one
-    if (!currentSessionId) {
+    // If no active session, create one when authenticated
+    if (!currentSessionId && user?.uid && db) {
       try {
-        const newSessionData = {
-          title: inputMessage.slice(0, 30) + '...',
-          userId,
+        const docRef = await addDoc(collection(db, 'chat_sessions'), {
+          title: (inputMessage.slice(0, 60).trim() || 'Chat Session'),
+          userId: user.uid,
           projectId: selectedProjectId || 'default',
           messages: [],
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now()
-        };
-        const docRef = await addDoc(collection(db, 'chat_sessions'), newSessionData);
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
         currentSessionId = docRef.id;
         setActiveSessionId(currentSessionId);
       } catch (err) {
         console.error(err);
-        return;
       }
     }
 
@@ -165,23 +181,30 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
     setIsGenerating(true);
 
     try {
-      const res = await fetch('/api/gemini', {
+      const res = await fetch('/api/ai/chatbot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          mode: 'agent_chat',
           prompt: promptText,
+          userId,
           history: messages.map(m => ({ role: m.role, text: m.text })),
-          systemInstruction: 'You are NISAR AI Assistant, a helpful, concise, and expert AI studio assistant.',
-          model: 'gemini-3.5-flash'
+          systemInstruction: 'You are NISAR AI Assistant, a helpful, concise, and expert AI studio assistant.'
         })
       });
 
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        throw new Error(data.error || 'Failed to generate response');
+      const contentType = res.headers.get('content-type') || '';
+      if (!res.ok) {
+        let msg = `Failed to generate response (${res.status})`;
+        if (contentType.includes('application/json')) {
+          const errJson = await res.json();
+          msg = errJson?.error || msg;
+        }
+        throw new Error(msg);
       }
-      const modelReplyText = data.text || 'AI response received.';
+
+      const modelReplyText = contentType.includes('application/json')
+        ? (await res.json()).text || 'AI response received.'
+        : (await res.text()) || 'AI response received.';
 
       const modelMsg: ChatMessage = {
         role: 'model',
@@ -193,16 +216,17 @@ export function ChatHistorySidebar({ selectedProjectId }: { selectedProjectId: s
       setMessages(finalMessages);
 
       // Update Firestore
-      const sessionRef = doc(db, 'chat_sessions', currentSessionId);
-      const titleCandidate = finalMessages.find(m => m.role === 'user')?.text.slice(0, 30) + '...' || 'Chat Session';
-      await updateDoc(sessionRef, {
-        title: titleCandidate,
-        messages: finalMessages,
-        updatedAt: Timestamp.now()
-      });
+      if (user?.uid && db && currentSessionId) {
+        const sessionRef = doc(db, 'chat_sessions', currentSessionId);
+        const titleCandidate = (finalMessages.find(m => m.role === 'user')?.text.slice(0, 60).trim() || 'Chat Session');
+        await updateDoc(sessionRef, {
+          title: titleCandidate,
+          messages: finalMessages.slice(-200),
+          updatedAt: serverTimestamp()
+        });
 
-      // Refresh session list locally
-      setSessions(sessions.map(s => s.id === currentSessionId ? { ...s, title: titleCandidate, messages: finalMessages, updatedAt: Timestamp.now() } : s));
+        setSessions(sessions.map(s => s.id === currentSessionId ? { ...s, title: titleCandidate, messages: finalMessages, updatedAt: Timestamp.now() } : s));
+      }
     } catch (err: any) {
       const errorMsg: ChatMessage = {
         role: 'model',

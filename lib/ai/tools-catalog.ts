@@ -105,16 +105,16 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
   },
   {
     id: 'chat_history',
-    name: 'Firestore Chat History & Sidebar',
-    category: 'Conversational Memory & RAG',
+    name: 'Save-Memory Gemini Agent Chatbot',
+    category: 'Persistent Memory & Gemini Chat',
     description:
-      'Persistent multi-turn chat workspace with Firestore synchronization for revisiting past conversations.',
+      'Linked to Google Gemini with persistent Firestore Memory Vault, auto-injected brand context, and saved chat threads.',
     icon: MessageSquare,
-    badge: 'Firestore Memory',
+    badge: 'Save-Memory Chatbot',
     tabId: 'chat_history',
     accentColor:
-      'border-slate-200 dark:border-emerald-950/70 hover:border-emerald-500/50 bg-white dark:bg-[#0e1318]',
-    badgeBg: 'text-emerald-700 dark:text-emerald-400',
+      'border-slate-200 dark:border-indigo-500/30 hover:border-[#00D9FF] bg-white dark:bg-[#0D1322]',
+    badgeBg: 'text-indigo-700 dark:text-[#00D9FF]',
   },
   {
     id: 'ai_link_converter',

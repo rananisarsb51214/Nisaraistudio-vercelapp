@@ -16,12 +16,12 @@
 }
 
 .dark {
-  --surface-canvas: #080b0e;
-  --surface-card: #0e1318;
+  --surface-canvas: #070B14;
+  --surface-card: #0D1322;
   --text-primary: #f1f5f9;
-  --scrollbar-track: #0b1015;
-  --scrollbar-thumb: #1f332c;
-  --scrollbar-thumb-hover: #10b981;
+  --scrollbar-track: #070B14;
+  --scrollbar-thumb: #1e293b;
+  --scrollbar-thumb-hover: #00D9FF;
 }
 
 body {

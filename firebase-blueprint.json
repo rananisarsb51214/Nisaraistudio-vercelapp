@@ -322,6 +322,20 @@
         "updatedAt": { "type": "object" }
       },
       "required": ["disabledTools"]
+    },
+    "ChatSession": {
+      "title": "ChatSession",
+      "description": "Persistent Gemini AI conversation thread with linked project and message history.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "projectId": { "type": "string", "maxLength": 128 },
+        "messages": { "type": "array" },
+        "createdAt": { "type": "object" },
+        "updatedAt": { "type": "object" }
+      },
+      "required": ["title", "userId", "messages", "createdAt", "updatedAt"]
     }
   },
   "firestore": {
@@ -416,6 +430,10 @@
     "/app_settings/{settingId}": {
       "schema": "ToolConfig",
       "description": "Admin-controlled global workspace settings including enabled/disabled tools."
+    },
+    "/chat_sessions/{sessionId}": {
+      "schema": "ChatSession",
+      "description": "Saved Gemini chatbot conversation threads linked to each signed-in user."
     }
   }
 }
