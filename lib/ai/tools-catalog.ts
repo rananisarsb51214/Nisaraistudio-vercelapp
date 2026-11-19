@@ -13,10 +13,17 @@ import {
   Share2,
   Layers,
   Coins,
+  Cpu,
+  CreditCard,
+  BarChart3,
 } from 'lucide-react';
 
 export type DashboardTab =
   | 'overview'
+  | 'search_collect'
+  | 'agent_evolver'
+  | 'billing'
+  | 'analytics'
   | 'admin'
   | 'toolbox'
   | 'chatbot_lab'
@@ -52,6 +59,58 @@ export interface AIToolItem {
 
 export const AI_TOOLS_CATALOG: AIToolItem[] = [
   {
+    id: 'search_collect',
+    name: 'Search & Auto-Collect Agent',
+    category: 'Google Search Grounding & CSV/JSON Export',
+    description:
+      'Collect live web intelligence with Gemini Google Search grounding, auto-sync to Firestore, and export as CSV or JSON.',
+    icon: Globe,
+    badge: 'Live Grounding',
+    tabId: 'search_collect',
+    accentColor:
+      'border-slate-200 dark:border-[#00D9FF]/30 hover:border-[#00D9FF] bg-white dark:bg-[#0B0F19]',
+    badgeBg: 'text-indigo-700 dark:text-[#00D9FF]',
+  },
+  {
+    id: 'agent_evolver',
+    name: 'Agent Evolver Control',
+    category: 'Multi-Model Router (Gemini + Claude AI)',
+    description:
+      'Run Niche SaaS, Chrome Extension, Programmatic SEO, and Self-Optimizer agents up to 10,000 characters with Gemini & Claude.',
+    icon: Cpu,
+    badge: 'Gemini + Claude',
+    tabId: 'agent_evolver',
+    accentColor:
+      'border-slate-200 dark:border-[#6366F1]/35 hover:border-[#00D9FF] bg-white dark:bg-[#0B0F19]',
+    badgeBg: 'text-indigo-700 dark:text-[#22D3EE]',
+  },
+  {
+    id: 'billing',
+    name: 'Billing & Credits Hub',
+    category: 'JazzCash / Easypaisa & Stripe Checkout',
+    description:
+      'Manage 10 daily free credits, submit JazzCash/Easypaisa 0323-5052148 TID verification, or purchase Stripe credit packs.',
+    icon: CreditCard,
+    badge: 'PKR & USD Billing',
+    tabId: 'billing',
+    accentColor:
+      'border-slate-200 dark:border-emerald-500/30 hover:border-[#00D9FF] bg-white dark:bg-[#0B0F19]',
+    badgeBg: 'text-emerald-700 dark:text-emerald-400',
+  },
+  {
+    id: 'analytics',
+    name: 'Live Data Analytics & Sync Hub',
+    category: 'Firebase Telemetry & GitHub Auto-Sync',
+    description:
+      'Monitor real-time Firestore collection metrics, tracked Firebase Analytics events, and automated GitHub-to-Vercel deployment sync.',
+    icon: BarChart3,
+    badge: 'Live Telemetry',
+    tabId: 'analytics',
+    accentColor:
+      'border-slate-200 dark:border-[#8B5CF6]/35 hover:border-[#00D9FF] bg-white dark:bg-[#0B0F19]',
+    badgeBg: 'text-violet-700 dark:text-violet-300',
+  },
+  {
     id: 'toolbox',
     name: 'Super AI Toolbox (30+ Tools)',
     category: 'Content, Video, Marketing & Productivity',
@@ -61,8 +120,8 @@ export const AI_TOOLS_CATALOG: AIToolItem[] = [
     badge: 'Flagship Suite',
     tabId: 'toolbox',
     accentColor:
-      'border-slate-200 dark:border-emerald-950/70 hover:border-emerald-500/50 bg-white dark:bg-[#0e1318]',
-    badgeBg: 'text-emerald-700 dark:text-emerald-400',
+      'border-slate-200 dark:border-[#00D9FF]/25 hover:border-[#00D9FF] bg-white dark:bg-[#0B0F19]',
+    badgeBg: 'text-indigo-700 dark:text-[#00D9FF]',
   },
   {
     id: 'chatbot_lab',

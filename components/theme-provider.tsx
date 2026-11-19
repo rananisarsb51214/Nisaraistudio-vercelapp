@@ -4,7 +4,11 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { onSnapshot } from 'firebase/firestore';
 import { useAuth } from './auth-provider';
 import { handleFirestoreError, OperationType } from '@/lib/firebase';
-import { ThemeMode, USER_PREFERENCES_COLLECTION, userPreferenceService } from '@/lib/services/userPreferenceService';
+import {
+  ThemeMode,
+  USER_PREFERENCES_COLLECTION,
+  userPreferenceService,
+} from '@/lib/services/userPreferenceService';
 
 const THEME_STORAGE_KEY = 'nisar-studio-theme';
 
@@ -17,25 +21,34 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: 'dark',
+  theme: 'black',
   setTheme: async () => {},
   toggleTheme: async () => {},
   isSavingTheme: false,
   themeSyncError: null,
 });
 
+function isValidThemeMode(value: unknown): value is ThemeMode {
+  return value === 'black' || value === 'dark' || value === 'light';
+}
+
 function applyThemeToDom(theme: ThemeMode) {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
-  if (theme === 'dark') {
-    root.classList.add('dark');
+  if (theme === 'black') {
+    root.classList.add('dark', 'theme-black');
     root.classList.remove('light-high-contrast');
+    root.style.colorScheme = 'dark';
+  } else if (theme === 'dark') {
+    root.classList.add('dark');
+    root.classList.remove('theme-black', 'light-high-contrast');
+    root.style.colorScheme = 'dark';
   } else {
-    root.classList.remove('dark');
+    root.classList.remove('dark', 'theme-black');
     root.classList.add('light-high-contrast');
+    root.style.colorScheme = 'light';
   }
   root.dataset.theme = theme;
-  root.style.colorScheme = theme;
   try {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch {
@@ -45,7 +58,7 @@ function applyThemeToDom(theme: ThemeMode) {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
-  const [theme, setThemeState] = useState<ThemeMode>('dark');
+  const [theme, setThemeState] = useState<ThemeMode>('black');
   const [isSavingTheme, setIsSavingTheme] = useState(false);
   const [themeSyncError, setThemeSyncError] = useState<string | null>(null);
 
@@ -53,7 +66,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
-      if (saved === 'light' || saved === 'dark') {
+      if (isValidThemeMode(saved)) {
         setThemeState(saved);
         applyThemeToDom(saved);
         return;
@@ -61,7 +74,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Ignore storage access errors
     }
-    applyThemeToDom('dark');
+    applyThemeToDom('black');
   }, []);
 
   // Subscribe to Firestore user_preferences/{uid} metadata once auth is ready
@@ -75,7 +88,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         if (snapshot.exists()) {
           const data = snapshot.data();
           const remoteTheme = data?.theme;
-          if (remoteTheme === 'light' || remoteTheme === 'dark') {
+          if (isValidThemeMode(remoteTheme)) {
             setThemeState(remoteTheme);
             applyThemeToDom(remoteTheme);
           }
@@ -85,7 +98,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       (error) => {
         setThemeSyncError('Could not sync theme preference from Firestore.');
         try {
-          handleFirestoreError(error, OperationType.GET, `${USER_PREFERENCES_COLLECTION}/${user.uid}`);
+          handleFirestoreError(
+            error,
+            OperationType.GET,
+            `${USER_PREFERENCES_COLLECTION}/${user.uid}`
+          );
         } catch (err) {
           console.error('Theme preference snapshot error:', err);
         }
@@ -97,7 +114,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const setTheme = useCallback(
     async (nextTheme: ThemeMode) => {
-      const normalized: ThemeMode = nextTheme === 'light' ? 'light' : 'dark';
+      const normalized: ThemeMode = isValidThemeMode(nextTheme) ? nextTheme : 'black';
       setThemeState(normalized);
       applyThemeToDom(normalized);
       setThemeSyncError(null);
@@ -118,7 +135,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 
   const toggleTheme = useCallback(async () => {
-    const nextTheme: ThemeMode = theme === 'dark' ? 'light' : 'dark';
+    const nextTheme: ThemeMode =
+      theme === 'black' ? 'dark' : theme === 'dark' ? 'light' : 'black';
     await setTheme(nextTheme);
   }, [theme, setTheme]);
 

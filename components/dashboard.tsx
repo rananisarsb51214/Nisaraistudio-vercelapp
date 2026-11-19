@@ -12,7 +12,7 @@ import {
   Settings, Clipboard, ExternalLink, RefreshCw, Calendar, 
   CheckCircle, ArrowRight, Brain, UserCheck, AlertCircle, Eye, EyeOff,
   Bot, Cpu, Sliders, Layout, Clock, Zap, Activity, Search, Star, MessageSquare, Tag,
-  Shield, Menu, X, Lock
+  Shield, Menu, X, Lock, BarChart3, CreditCard
 } from 'lucide-react';
 import { addDoc, collection, Timestamp, query, where, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
@@ -29,12 +29,26 @@ import { MemoryGeminiChatbot } from './ai/memory-gemini-chatbot';
 import { ChatbotBasicsLab } from './ai/chatbot-basics-lab';
 import { BacklinkAutoDetect } from './ai/backlink-auto-detect';
 import { AffiliateLinkConverter } from './ai/affiliate-link-converter';
+import { SearchAutoCollectAgent } from './ai/search-auto-collect';
+import { AgentEvolverControl } from './ai/agent-evolver-control';
+import { BillingHub } from './billing/billing-hub';
+import { AnalyticsCommandPanel } from './ai/analytics-command-panel';
+import { NisarGoogleCommandHome } from './ai/google-command-home';
 import { LeadForm } from './lead-form';
 import { DashboardKpiStrip } from './dashboard-kpi-strip';
 import { AdminPanel } from './admin-panel';
 import { ThemeSwitcher } from './theme-switcher';
 import { AI_TOOLS_CATALOG, type AIToolItem, type DashboardTab } from '@/lib/ai/tools-catalog';
 import { getToolsConfigRef, isStudioAdmin } from '@/lib/services/toolSettingsService';
+import {
+  ensureUserQuotaProfile,
+  type StudioUserProfile,
+} from '@/lib/services/userQuotaService';
+import { trackStudioEvent } from '@/lib/analytics';
+import {
+  GOOGLE_AI_STUDIO_APP_URL,
+  VERCEL_PRODUCTION_URL,
+} from '@/lib/seo/site-config';
 import { normalizeUserCredits, type UserCredits } from '@/types/credits';
 import type { LeadRecord } from '@/types/leads';
 
@@ -58,9 +72,10 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
   const [isCreatingProject, setIsCreatingProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
 
-  // Live Credits (Free Quota & Paid Credits)
+  // Live Credits (Free Quota & Paid Credits) & Unified Studio User Profile (users/{userId})
   const [credits, setCredits] = useState<UserCredits | null>(null);
   const [creditsLoading, setCreditsLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState<StudioUserProfile | null>(null);
 
   // Live Leads Count (Total, HOT, COLD)
   const [leadsSummary, setLeadsSummary] = useState({ total: 0, hot: 0, cold: 0 });
@@ -112,6 +127,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
     );
 
     if (!user) {
+      setUserProfile(null);
       setLeadsSummary({ total: 0, hot: 0, cold: 0 });
       setLeadsSummaryLoading(false);
       return () => {
@@ -119,6 +135,43 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
         unsubToolsConfig();
       };
     }
+
+    ensureUserQuotaProfile({
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+    })
+      .then((profile) => {
+        if (!cancelled) setUserProfile(profile);
+      })
+      .catch(() => {});
+
+    const unsubUserProfile = onSnapshot(
+      doc(db, 'users', user.uid),
+      (snap) => {
+        if (snap.exists()) {
+          const data = snap.data() as Partial<StudioUserProfile>;
+          setUserProfile({
+            uid: user.uid,
+            email: data.email || user.email || '',
+            displayName: data.displayName || user.displayName || 'Studio User',
+            plan: (data.plan as StudioUserProfile['plan']) || 'FREE',
+            credits: typeof data.credits === 'number' ? data.credits : 10,
+            dailyFreeRemaining:
+              typeof data.dailyFreeRemaining === 'number' ? data.dailyFreeRemaining : 10,
+            dailyLimit: typeof data.dailyLimit === 'number' ? data.dailyLimit : 10,
+            lastResetDate: data.lastResetDate || new Date().toISOString().slice(0, 10),
+          });
+        }
+      },
+      (err) => {
+        try {
+          handleFirestoreError(err, OperationType.GET, `users/${user.uid}`);
+        } catch {
+          // Handled safely
+        }
+      }
+    );
 
     const unsubCredits = onSnapshot(
       doc(db, 'user_credits', user.uid),
@@ -173,6 +226,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
 
     return () => {
       cancelled = true;
+      unsubUserProfile();
       unsubCredits();
       unsubLeads();
       unsubToolsConfig();
@@ -1107,15 +1161,15 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
   const currentProject = projects.find(p => p.id === selectedProjectId);
 
   return (
-    <div className="flex flex-col min-h-screen text-slate-950 dark:text-slate-100 bg-slate-50 dark:bg-[#080b0e]">
+    <div className="flex flex-col min-h-screen text-slate-950 dark:text-slate-100 black:text-neutral-100 bg-slate-50 dark:bg-[#050811] black:bg-black transition-colors duration-150">
       {/* Clean 3-Zone Top Header: Brand | Primary Nav | Actions */}
-      <header className="sticky top-0 z-30 h-16 sm:h-[72px] px-4 sm:px-6 lg:px-8 border-b border-slate-200 dark:border-emerald-950/70 bg-white/95 dark:bg-[#0b0f13]/95 backdrop-blur-md flex items-center justify-between gap-4 sm:gap-8">
+      <header className="sticky top-0 z-30 h-16 sm:h-[72px] px-4 sm:px-6 lg:px-8 border-b border-slate-200 dark:border-[#00D9FF]/20 black:border-neutral-800 bg-white/95 dark:bg-[#070B14]/90 black:bg-black/95 backdrop-blur-xl flex items-center justify-between gap-3 sm:gap-5 transition-colors duration-150">
         {/* Zone 1: Brand Wordmark + Mobile Menu Trigger */}
         <div className="flex items-center gap-3 shrink-0">
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(true)}
-            className="lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl border border-slate-200 dark:border-emerald-950/70 bg-slate-50 dark:bg-[#0e1318] text-slate-800 dark:text-slate-200 cursor-pointer"
+            className="lg:hidden min-h-[42px] min-w-[42px] flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 black:border-neutral-800 bg-slate-50 dark:bg-[#0B0F19] black:bg-[#0a0a0a] text-slate-800 dark:text-slate-200 cursor-pointer"
             aria-label="Open navigation menu"
           >
             <Menu className="w-5 h-5" />
@@ -1126,23 +1180,28 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
             onClick={() => setActiveTab('overview')}
             className="flex items-center gap-2.5 whitespace-nowrap shrink-0 cursor-pointer text-left"
           >
-            <span className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm tracking-tight shrink-0">
+            <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#00D9FF] via-[#6366F1] to-[#8B5CF6] text-slate-950 flex items-center justify-center font-black text-sm tracking-tight shrink-0">
               N
             </span>
-            <span className="text-base sm:text-lg font-extrabold tracking-tight text-slate-950 dark:text-white whitespace-nowrap">
-              NISAR AI STUDIO
+            <span className="leading-tight">
+              <span className="text-sm sm:text-base font-extrabold tracking-tight text-slate-950 dark:text-white whitespace-nowrap block">
+                NISAR AI STUDIO
+              </span>
+              <span className="text-[10px] font-mono text-indigo-700 dark:text-[#22D3EE] hidden sm:block whitespace-nowrap">
+                Super AI Toolbox
+              </span>
             </span>
           </button>
         </div>
 
         {/* Zone 2: Clean Single-Line Nav Links */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+        <nav className="hidden lg:flex items-center gap-4 xl:gap-5 text-xs xl:text-sm font-medium">
           <button
             type="button"
             onClick={() => setActiveTab('overview')}
             className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
               activeTab === 'overview'
-                ? 'border-emerald-500 text-emerald-700 dark:text-emerald-400 font-semibold'
+                ? 'border-[#00D9FF] text-indigo-700 dark:text-[#00D9FF] font-semibold'
                 : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
             }`}
           >
@@ -1150,10 +1209,54 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
           </button>
           <button
             type="button"
+            onClick={() => setActiveTab('search_collect')}
+            className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
+              activeTab === 'search_collect'
+                ? 'border-[#00D9FF] text-indigo-700 dark:text-[#00D9FF] font-semibold'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
+            }`}
+          >
+            Search &amp; Collect
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('agent_evolver')}
+            className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
+              activeTab === 'agent_evolver'
+                ? 'border-[#6366F1] text-indigo-700 dark:text-[#22D3EE] font-semibold'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
+            }`}
+          >
+            Agent Evolver
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('billing')}
+            className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
+              activeTab === 'billing'
+                ? 'border-emerald-500 text-emerald-700 dark:text-emerald-400 font-semibold'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
+            }`}
+          >
+            Billing
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('analytics')}
+            className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
+              activeTab === 'analytics'
+                ? 'border-[#8B5CF6] text-violet-700 dark:text-violet-300 font-semibold'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
+            }`}
+          >
+            Analytics
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab('toolbox')}
             className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
               activeTab === 'toolbox'
-                ? 'border-emerald-500 text-emerald-700 dark:text-emerald-400 font-semibold'
+                ? 'border-[#00D9FF] text-indigo-700 dark:text-[#00D9FF] font-semibold'
                 : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
             }`}
           >
@@ -1165,76 +1268,57 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
               setAdminSubTab('leads');
               setActiveTab('admin');
             }}
-            className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 inline-flex items-center gap-1.5 ${
+            className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 inline-flex items-center gap-1 ${
               activeTab === 'admin'
                 ? 'border-emerald-500 text-emerald-700 dark:text-emerald-400 font-semibold'
                 : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
             }`}
           >
             <Shield className="w-3.5 h-3.5" />
-            <span>Admin Panel</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('chat_history')}
-            className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 inline-flex items-center gap-1.5 ${
-              activeTab === 'chat_history'
-                ? 'border-[#00D9FF] text-indigo-700 dark:text-[#00D9FF] font-semibold'
-                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
-            }`}
-          >
-            <MessageSquare className="w-3.5 h-3.5" />
-            <span>Memory Chatbot</span>
-          </button>
-          <Link
-            href="/tools"
-            className="hidden xl:inline-flex items-center gap-1.5 py-1 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-[#00D9FF] transition whitespace-nowrap shrink-0"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-[#00D9FF]" />
-            <span>SEO Tools</span>
-          </Link>
-          <button
-            type="button"
-            onClick={() => setIsCommandPaletteOpen(true)}
-            className="hidden lg:inline-flex items-center gap-2 py-1 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white transition whitespace-nowrap shrink-0 cursor-pointer"
-          >
-            <Search className="w-3.5 h-3.5" />
-            <span>Search</span>
-            <span className="text-[11px] font-mono text-slate-400">Ctrl+K</span>
+            <span>Admin</span>
           </button>
         </nav>
 
-        {/* Zone 3: Workspace Switcher, Theme & Sign Out */}
-        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-          <div className="hidden xl:flex items-center bg-slate-100 dark:bg-[#0e1318] rounded-xl px-3 py-1.5 border border-slate-200 dark:border-emerald-950/70">
-            {projectsLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin text-emerald-600 dark:text-emerald-400" />
-            ) : (
-              <select
-                aria-label="Select Workspace"
-                className="bg-transparent text-xs font-semibold text-slate-900 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[140px] truncate"
-                value={selectedProjectId}
-                onChange={(e) => setSelectedProjectId(e.target.value)}
-              >
-                {projects.map((p) => (
-                  <option key={p.id} value={p.id} className="bg-white dark:bg-[#0e1318] text-slate-950 dark:text-slate-100">
-                    {p.name}
-                  </option>
-                ))}
-                {projects.length === 0 && (
-                  <option value="" disabled>No workspaces</option>
-                )}
-              </select>
-            )}
-            <button
-              type="button"
-              onClick={() => setIsCreatingProject(true)}
-              className="ml-2 p-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition cursor-pointer"
-              title="Create Workspace"
-            >
-              <Plus className="w-3.5 h-3.5" />
-            </button>
-          </div>
+        {/* Zone 3: Live Plan/Credits Control, AI Studio ↗, Theme & Auth */}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => setActiveTab('billing')}
+            className="hidden sm:inline-flex min-h-[38px] items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 black:border-neutral-800 bg-slate-50 dark:bg-[#0B0F19] black:bg-[#0a0a0a] hover:border-[#00D9FF] black:hover:border-neutral-600 text-xs font-medium text-slate-800 dark:text-slate-200 transition whitespace-nowrap shrink-0 cursor-pointer"
+            title="Open Billing Hub & Credits"
+          >
+            <Coins className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span className="font-mono font-semibold text-indigo-700 dark:text-[#22D3EE]">
+              {userProfile?.plan || 'FREE'}
+            </span>
+            <span className="text-slate-400 dark:text-slate-600">·</span>
+            <span className="font-mono tabular-nums font-semibold">
+              {userProfile?.credits ?? remainingFreeCredits} Credits
+            </span>
+          </button>
+
+          <a
+            href={VERCEL_PRODUCTION_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden 2xl:inline-flex min-h-[38px] items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 black:border-neutral-800 bg-slate-50 dark:bg-[#0B0F19] black:bg-[#0a0a0a] hover:border-[#6366F1] text-xs font-semibold text-slate-700 dark:text-slate-200 transition whitespace-nowrap shrink-0"
+          >
+            <span>Vercel</span>
+            <ExternalLink className="w-3.5 h-3.5 text-[#6366F1]" />
+          </a>
+
+          <a
+            href={GOOGLE_AI_STUDIO_APP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() =>
+              trackStudioEvent('open_google_ai_studio', { source: 'dashboard_header' })
+            }
+            className="min-h-[38px] inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#00D9FF] via-[#6366F1] to-[#8B5CF6] text-slate-950 font-bold text-xs transition whitespace-nowrap shrink-0"
+          >
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
+            <span>AI Studio ↗</span>
+          </a>
 
           <ThemeSwitcher />
 
@@ -1242,7 +1326,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
             <button
               type="button"
               onClick={() => auth.signOut()}
-              className="min-h-[40px] flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-[#0e1318] hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:text-rose-700 dark:hover:text-rose-300 border border-slate-200 dark:border-emerald-950/70 rounded-xl transition whitespace-nowrap shrink-0 cursor-pointer"
+              className="min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-[#0B0F19] black:bg-[#0a0a0a] hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:text-rose-700 dark:hover:text-rose-300 border border-slate-200 dark:border-slate-800 black:border-neutral-800 rounded-xl transition whitespace-nowrap shrink-0 cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Sign Out</span>
@@ -1251,7 +1335,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
             <button
               type="button"
               onClick={() => loginWithGoogle()}
-              className="min-h-[40px] flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl transition whitespace-nowrap shrink-0 cursor-pointer"
+              className="min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl transition whitespace-nowrap shrink-0 cursor-pointer"
             >
               <Globe className="w-3.5 h-3.5" />
               <span>Sign In</span>
@@ -1267,7 +1351,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
             className="fixed inset-0 bg-black/70 backdrop-blur-xs"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <aside className="relative z-10 w-80 max-w-[85vw] h-full bg-white dark:bg-[#0b0f13] border-r border-slate-200 dark:border-emerald-950/70 p-5 flex flex-col gap-5 overflow-y-auto">
+          <aside className="relative z-10 w-80 max-w-[85vw] h-full bg-white dark:bg-[#0b0f13] black:bg-[#080808] border-r border-slate-200 dark:border-emerald-950/70 black:border-neutral-800 p-5 flex flex-col gap-5 overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-emerald-950/50">
               <span className="text-base font-extrabold text-slate-950 dark:text-white">
                 NISAR AI STUDIO
@@ -1401,7 +1485,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
       {/* Main Workspace Frame */}
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop Navigation Sidebar */}
-        <nav className="w-64 lg:w-72 bg-white dark:bg-[#0b0f13] border-r border-slate-200 dark:border-emerald-950/70 p-5 space-y-6 hidden lg:block overflow-y-auto custom-scrollbar shrink-0">
+        <nav className="w-64 lg:w-72 bg-white dark:bg-[#0b0f13] black:bg-[#060606] border-r border-slate-200 dark:border-emerald-950/70 black:border-neutral-800 p-5 space-y-6 hidden lg:block overflow-y-auto custom-scrollbar shrink-0 transition-colors duration-150">
           <div className="space-y-1.5">
             <div className="text-xs font-semibold text-slate-500 px-3 pb-1">
               Workspace
@@ -1559,12 +1643,12 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
           <div className="max-w-7xl mx-auto space-y-8">
             {/* Unauthenticated Dashboard Preview Banner */}
             {(previewMode || !user) && (
-              <div className="p-4 sm:px-6 rounded-2xl bg-white dark:bg-[#0e1318] border border-emerald-500/35 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="p-4 sm:px-6 rounded-2xl bg-white dark:bg-[#0e1318] black:bg-[#0a0a0a] border border-emerald-500/35 black:border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors duration-150">
                 <div className="space-y-0.5">
                   <p className="text-xs sm:text-sm font-bold text-slate-950 dark:text-white">
                     Dashboard Preview Mode
                   </p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 black:text-neutral-400">
                     Sign in with Google to view private leads, create workspaces, and save Admin Panel tool toggles.
                   </p>
                 </div>
@@ -1573,7 +1657,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
                     <button
                       type="button"
                       onClick={onExitPreview}
-                      className="min-h-[40px] px-4 py-2 rounded-xl border border-slate-200 dark:border-emerald-950/70 bg-slate-50 dark:bg-[#090d11] text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition whitespace-nowrap cursor-pointer"
+                      className="min-h-[40px] px-4 py-2 rounded-xl border border-slate-200 dark:border-emerald-950/70 black:border-neutral-800 bg-slate-50 dark:bg-[#090d11] black:bg-black text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition whitespace-nowrap cursor-pointer"
                     >
                       Back to Login
                     </button>
@@ -1590,68 +1674,59 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
             )}
 
             {/* Mobile Quick Navigation Strip (Inline, non-sticky) */}
-            <div className="flex lg:hidden items-center gap-2 p-1.5 rounded-xl bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70">
-              <button
-                type="button"
-                onClick={() => setActiveTab('overview')}
-                className={`flex-1 min-h-[42px] px-3 py-2 rounded-lg text-xs font-semibold transition whitespace-nowrap cursor-pointer ${
-                  activeTab === 'overview'
-                    ? 'bg-emerald-600 text-white'
-                    : 'text-slate-700 dark:text-slate-300'
-                }`}
-              >
-                Overview
-              </button>
-              <button
-                type="button"
-                onClick={() => {
+            <div className="flex lg:hidden items-center gap-1.5 overflow-x-auto p-1.5 rounded-xl bg-white dark:bg-[#0B0F19] black:bg-[#0a0a0a] border border-slate-200 dark:border-slate-800 black:border-neutral-800">
+              {(
+                [
+                  { id: 'overview', label: 'Overview' },
+                  { id: 'search_collect', label: 'Search' },
+                  { id: 'agent_evolver', label: 'Evolver' },
+                  { id: 'billing', label: 'Billing' },
+                  { id: 'analytics', label: 'Analytics' },
+                  { id: 'admin', label: 'Admin' },
+                ] as const
+              ).map((tab) => (
+                <button
+                  key={`mob_quick_${tab.id}`}
+                  type="button"
+                  onClick={() => {
+                    if (tab.id === 'admin') setAdminSubTab('leads');
+                    setActiveTab(tab.id);
+                  }}
+                  className={`min-h-[40px] px-3 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap shrink-0 cursor-pointer ${
+                    activeTab === tab.id
+                      ? 'bg-gradient-to-r from-[#00D9FF] to-[#6366F1] text-slate-950'
+                      : 'text-slate-700 dark:text-slate-300'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* 3 Summary KPI Cards on secondary tabs (on overview, Google Command Home sits first) */}
+            {activeTab !== 'overview' && (
+              <DashboardKpiStrip
+                remainingFree={remainingFreeCredits}
+                dailyLimit={effectiveCredits.dailyLimit}
+                dailyUsed={effectiveCredits.dailyUsed}
+                paidCredits={effectiveCredits.paidCredits}
+                totalEarned={effectiveCredits.totalEarned}
+                totalSpent={effectiveCredits.totalSpent}
+                totalLeads={leadsSummary.total}
+                hotLeads={leadsSummary.hot}
+                coldLeads={leadsSummary.cold}
+                loadingCredits={creditsLoading}
+                loadingLeads={leadsSummaryLoading}
+                onOpenAdminLeads={() => {
                   setAdminSubTab('leads');
                   setActiveTab('admin');
                 }}
-                className={`flex-1 min-h-[42px] px-3 py-2 rounded-lg text-xs font-semibold transition whitespace-nowrap inline-flex items-center justify-center gap-1.5 cursor-pointer ${
-                  activeTab === 'admin'
-                    ? 'bg-emerald-600 text-white'
-                    : 'text-slate-700 dark:text-slate-300'
-                }`}
-              >
-                <Shield className="w-3.5 h-3.5" />
-                <span>Admin Panel</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('toolbox')}
-                className={`flex-1 min-h-[42px] px-3 py-2 rounded-lg text-xs font-semibold transition whitespace-nowrap cursor-pointer ${
-                  activeTab === 'toolbox'
-                    ? 'bg-emerald-600 text-white'
-                    : 'text-slate-700 dark:text-slate-300'
-                }`}
-              >
-                AI Toolbox
-              </button>
-            </div>
-
-            {/* 3 Summary KPI Cards: Free Credits, Paid Credits, Total Leads */}
-            <DashboardKpiStrip
-              remainingFree={remainingFreeCredits}
-              dailyLimit={effectiveCredits.dailyLimit}
-              dailyUsed={effectiveCredits.dailyUsed}
-              paidCredits={effectiveCredits.paidCredits}
-              totalEarned={effectiveCredits.totalEarned}
-              totalSpent={effectiveCredits.totalSpent}
-              totalLeads={leadsSummary.total}
-              hotLeads={leadsSummary.hot}
-              coldLeads={leadsSummary.cold}
-              loadingCredits={creditsLoading}
-              loadingLeads={leadsSummaryLoading}
-              onOpenAdminLeads={() => {
-                setAdminSubTab('leads');
-                setActiveTab('admin');
-              }}
-              onOpenAdminCredits={() => {
-                setAdminSubTab('credits');
-                setActiveTab('admin');
-              }}
-            />
+                onOpenAdminCredits={() => {
+                  setAdminSubTab('credits');
+                  setActiveTab('admin');
+                }}
+              />
+            )}
 
             {/* Mobile Global Search Spotlight */}
             <div className="block md:hidden relative">
@@ -1863,26 +1938,100 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
             </div>
           )}
 
-          {/* Overview Tab: Lead Form & Studio Tools Directory (Always accessible, even with 0 workspaces) */}
+          {/* Overview Tab: Google Search-Inspired NISAR AI Command Home, KPI Strip, Lead Form & Tools Directory */}
           {activeTab === 'overview' && (
             <div className="space-y-8">
+              <NisarGoogleCommandHome />
+
+              <DashboardKpiStrip
+                remainingFree={remainingFreeCredits}
+                dailyLimit={effectiveCredits.dailyLimit}
+                dailyUsed={effectiveCredits.dailyUsed}
+                paidCredits={effectiveCredits.paidCredits}
+                totalEarned={effectiveCredits.totalEarned}
+                totalSpent={effectiveCredits.totalSpent}
+                totalLeads={leadsSummary.total}
+                hotLeads={leadsSummary.hot}
+                coldLeads={leadsSummary.cold}
+                loadingCredits={creditsLoading}
+                loadingLeads={leadsSummaryLoading}
+                onOpenAdminLeads={() => {
+                  setAdminSubTab('leads');
+                  setActiveTab('admin');
+                }}
+                onOpenAdminCredits={() => {
+                  setAdminSubTab('credits');
+                  setActiveTab('admin');
+                }}
+              />
+
+              {/* Unified Neon Command Center Quick-Switch Strip */}
+              <section className="rounded-2xl border border-slate-200 dark:border-[#00D9FF]/25 black:border-neutral-800 bg-white dark:bg-[#0B0F19]/90 black:bg-[#0a0a0a] backdrop-blur-xl p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 transition-colors duration-150">
+                <div className="space-y-1">
+                  <div className="text-xs font-mono text-indigo-700 dark:text-[#00D9FF] font-semibold">
+                    NISAR AI STUDIO · Super AI Toolbox · Firebase gen-lang-client-0727141331
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-extrabold text-slate-950 dark:text-white">
+                    Build Smarter. Automate Better. Create More.
+                  </h2>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 black:text-neutral-400">
+                    Active Plan: <strong className="font-mono text-indigo-700 dark:text-[#22D3EE]">{userProfile?.plan || 'FREE'}</strong> · Live Credits: <strong className="font-mono tabular-nums text-slate-950 dark:text-white">{userProfile?.credits ?? remainingFreeCredits}</strong> · JazzCash / Easypaisa: <strong className="font-mono text-emerald-700 dark:text-emerald-400">0323-5052148</strong>
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('search_collect')}
+                    className="min-h-[40px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-[#00D9FF]/35 black:border-neutral-800 bg-slate-50 dark:bg-[#050811] black:bg-black hover:border-[#00D9FF] text-xs font-semibold text-slate-800 dark:text-[#22D3EE] inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer transition"
+                  >
+                    <Globe className="w-3.5 h-3.5" />
+                    <span>Search &amp; Collect</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('agent_evolver')}
+                    className="min-h-[40px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-[#6366F1]/40 black:border-neutral-800 bg-slate-50 dark:bg-[#050811] black:bg-black hover:border-[#6366F1] text-xs font-semibold text-slate-800 dark:text-indigo-300 inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer transition"
+                  >
+                    <Cpu className="w-3.5 h-3.5" />
+                    <span>Agent Evolver</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('billing')}
+                    className="min-h-[40px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-emerald-500/35 black:border-neutral-800 bg-slate-50 dark:bg-[#050811] black:bg-black hover:border-emerald-400 text-xs font-semibold text-emerald-800 dark:text-emerald-400 inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer transition"
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    <span>Billing Hub</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('analytics')}
+                    className="min-h-[40px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-[#8B5CF6]/40 black:border-neutral-800 bg-slate-50 dark:bg-[#050811] black:bg-black hover:border-[#8B5CF6] text-xs font-semibold text-violet-800 dark:text-violet-300 inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer transition"
+                  >
+                    <BarChart3 className="w-3.5 h-3.5" />
+                    <span>Analytics &amp; Sync</span>
+                  </button>
+                </div>
+              </section>
+
               <LeadForm source="dashboard" />
 
-              {/* Studio Tools Directory (Clean single-elevation dark + emerald grid) */}
-              <section className="bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl p-6 sm:p-8 space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-200 dark:border-emerald-950/50 pb-5">
+              {/* Studio Tools Directory */}
+              <section className="bg-white dark:bg-[#0B0F19] black:bg-[#0a0a0a] border border-slate-200 dark:border-slate-800 black:border-neutral-800 rounded-2xl p-6 sm:p-8 space-y-6 transition-colors duration-150">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-200 dark:border-emerald-950/50 black:border-neutral-800 pb-5">
                   <div className="space-y-1">
                     <h2 className="text-lg sm:text-xl font-bold text-slate-950 dark:text-white">
                       AI Studio Tools Directory
                     </h2>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 black:text-neutral-400">
                       {enabledToolsCatalog.length} active tools ready · Toggle availability anytime from Admin Panel.
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
                     <Link
                       href="/tools"
-                      className="min-h-[40px] px-4 py-2 rounded-xl border border-indigo-500/30 bg-indigo-50 dark:bg-[#070B14] hover:border-[#00D9FF] text-xs font-semibold text-indigo-700 dark:text-[#00D9FF] whitespace-nowrap inline-flex items-center gap-1.5"
+                      className="min-h-[40px] px-4 py-2 rounded-xl border border-indigo-500/30 black:border-neutral-800 bg-indigo-50 dark:bg-[#070B14] black:bg-black hover:border-[#00D9FF] text-xs font-semibold text-indigo-700 dark:text-[#00D9FF] whitespace-nowrap inline-flex items-center gap-1.5"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                       <span>Public 10 SEO Tools</span>
@@ -1893,7 +2042,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
                         setAdminSubTab('tools');
                         setActiveTab('admin');
                       }}
-                      className="min-h-[40px] px-4 py-2 rounded-xl border border-slate-200 dark:border-emerald-950/70 bg-slate-50 dark:bg-[#090d11] hover:border-emerald-500/50 text-xs font-semibold text-emerald-700 dark:text-emerald-400 whitespace-nowrap cursor-pointer"
+                      className="min-h-[40px] px-4 py-2 rounded-xl border border-slate-200 dark:border-emerald-950/70 black:border-neutral-800 bg-slate-50 dark:bg-[#090d11] black:bg-black hover:border-emerald-500/50 text-xs font-semibold text-emerald-700 dark:text-emerald-400 whitespace-nowrap cursor-pointer"
                     >
                       Tools On/Off Settings
                     </button>
@@ -1901,7 +2050,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
                 </div>
 
                 {enabledToolsCatalog.length === 0 ? (
-                  <div className="py-10 text-center rounded-xl border border-dashed border-slate-300 dark:border-emerald-950/70 bg-slate-50 dark:bg-[#090d11]">
+                  <div className="py-10 text-center rounded-xl border border-dashed border-slate-300 dark:border-emerald-950/70 black:border-neutral-800 bg-slate-50 dark:bg-[#090d11] black:bg-black">
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
                       Tamam tools abhi Admin Panel se OFF hain
                     </p>
@@ -1915,7 +2064,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
                         <div
                           key={`overview_tool_${tool.id}`}
                           onClick={() => setActiveTab(tool.tabId)}
-                          className="p-5 rounded-xl border border-slate-200 dark:border-emerald-950/60 hover:border-emerald-500/50 bg-slate-50 dark:bg-[#090d11] transition flex flex-col justify-between gap-4 cursor-pointer group"
+                          className="p-5 rounded-xl border border-slate-200 dark:border-emerald-950/60 black:border-neutral-800 hover:border-emerald-500/50 black:hover:border-neutral-600 bg-slate-50 dark:bg-[#090d11] black:bg-black transition flex flex-col justify-between gap-4 cursor-pointer group"
                         >
                           <div className="space-y-3">
                             <div className="flex items-start justify-between gap-3">
@@ -1959,7 +2108,31 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
             </div>
           )}
 
-          {/* Standalone Global Tools (Super AI Toolbox, Chatbot Lab, Vibe, Empire) available with or without a workspace */}
+          {/* Standalone Global Tools (Search & Collect, Agent Evolver, Billing, Analytics, Super AI Toolbox, Chatbot Lab, Backlink, Affiliate, Memory Chat, Vibe, Empire) available with or without a workspace */}
+          {!isActiveToolDisabled && activeTab === 'search_collect' && (
+            <div className="space-y-6">
+              <SearchAutoCollectAgent />
+            </div>
+          )}
+
+          {!isActiveToolDisabled && activeTab === 'agent_evolver' && (
+            <div className="space-y-6">
+              <AgentEvolverControl />
+            </div>
+          )}
+
+          {!isActiveToolDisabled && activeTab === 'billing' && (
+            <div className="space-y-6">
+              <BillingHub userProfile={userProfile} />
+            </div>
+          )}
+
+          {!isActiveToolDisabled && activeTab === 'analytics' && (
+            <div className="space-y-6">
+              <AnalyticsCommandPanel userProfile={userProfile} />
+            </div>
+          )}
+
           {!isActiveToolDisabled && activeTab === 'toolbox' && (
             <div className="space-y-6">
               <SuperAiToolbox />
@@ -2008,9 +2181,9 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
           )}
 
           {/* If there are no workspaces created yet and on workspace-dependent tab */}
-          {!isActiveToolDisabled && projects.length === 0 && !projectsLoading && activeTab !== 'overview' && activeTab !== 'admin' && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'backlink_detect' && activeTab !== 'affiliate_converter' && activeTab !== 'chat_history' && activeTab !== 'vibe' && activeTab !== 'empire' && (
-            <div className="flex flex-col items-center justify-center text-center py-16 bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl max-w-2xl mx-auto p-8 space-y-5">
-              <Database className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
+          {!isActiveToolDisabled && projects.length === 0 && !projectsLoading && activeTab !== 'overview' && activeTab !== 'search_collect' && activeTab !== 'agent_evolver' && activeTab !== 'billing' && activeTab !== 'analytics' && activeTab !== 'admin' && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'backlink_detect' && activeTab !== 'affiliate_converter' && activeTab !== 'chat_history' && activeTab !== 'vibe' && activeTab !== 'empire' && (
+            <div className="flex flex-col items-center justify-center text-center py-16 bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl mx-auto p-8 space-y-5">
+              <Database className="w-12 h-12 text-[#00D9FF]" />
               <div className="space-y-2">
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-950 dark:text-white">Initialize Your First Workspace</h2>
                 <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto">
@@ -2020,7 +2193,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
               <button
                 type="button"
                 onClick={() => setIsCreatingProject(true)}
-                className="min-h-[44px] flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 px-6 rounded-xl font-semibold transition cursor-pointer"
+                className="min-h-[44px] flex items-center gap-2 bg-gradient-to-r from-[#00D9FF] to-[#6366F1] text-slate-950 py-2.5 px-6 rounded-xl font-bold transition cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>Create Workspace</span>
@@ -2029,7 +2202,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
           )}
 
           {/* Render Active Workspace Content */}
-          {!isActiveToolDisabled && projects.length > 0 && currentProject && activeTab !== 'admin' && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'backlink_detect' && activeTab !== 'affiliate_converter' && activeTab !== 'chat_history' && (
+          {!isActiveToolDisabled && projects.length > 0 && currentProject && activeTab !== 'search_collect' && activeTab !== 'agent_evolver' && activeTab !== 'billing' && activeTab !== 'analytics' && activeTab !== 'admin' && activeTab !== 'toolbox' && activeTab !== 'chatbot_lab' && activeTab !== 'backlink_detect' && activeTab !== 'affiliate_converter' && activeTab !== 'chat_history' && (
             <div className="space-y-8">
               
               {/* Active Project Header Bar */}

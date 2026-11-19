@@ -1,9 +1,10 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+@custom-variant black (&:where(.theme-black, .theme-black *));
 
 @theme {
-  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 :root {
@@ -16,12 +17,21 @@
 }
 
 .dark {
-  --surface-canvas: #070B14;
-  --surface-card: #0D1322;
+  --surface-canvas: #050811;
+  --surface-card: #0B0F19;
   --text-primary: #f1f5f9;
-  --scrollbar-track: #070B14;
+  --scrollbar-track: #050811;
   --scrollbar-thumb: #1e293b;
   --scrollbar-thumb-hover: #00D9FF;
+}
+
+.theme-black {
+  --surface-canvas: #000000;
+  --surface-card: #0a0a0a;
+  --text-primary: #fafafa;
+  --scrollbar-track: #000000;
+  --scrollbar-thumb: #262626;
+  --scrollbar-thumb-hover: #525252;
 }
 
 body {

@@ -100,7 +100,7 @@ export function LeadForm({ source = 'dashboard' }: LeadFormProps) {
   return (
     <section
       aria-label="Free Offer Lead Form"
-      className="w-full bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl p-6 sm:p-8"
+      className="w-full bg-white dark:bg-[#0e1318] black:bg-[#0a0a0a] border border-slate-200 dark:border-emerald-950/70 black:border-neutral-800 rounded-2xl p-6 sm:p-8 transition-colors duration-150"
     >
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
@@ -159,7 +159,7 @@ export function LeadForm({ source = 'dashboard' }: LeadFormProps) {
                     value={naam}
                     onChange={(e) => setNaam(e.target.value)}
                     placeholder="Apna naam likhein"
-                    className="w-full min-h-[46px] bg-slate-50 dark:bg-[#090d11] border border-slate-300 dark:border-emerald-950/70 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-950 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full min-h-[46px] bg-slate-50 dark:bg-[#090d11] black:bg-black border border-slate-300 dark:border-emerald-950/70 black:border-neutral-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-950 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
               </div>
@@ -183,7 +183,7 @@ export function LeadForm({ source = 'dashboard' }: LeadFormProps) {
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     placeholder="0300-1234567"
-                    className="w-full min-h-[46px] bg-slate-50 dark:bg-[#090d11] border border-slate-300 dark:border-emerald-950/70 rounded-xl pl-10 pr-4 py-2.5 text-sm font-mono tabular-nums text-slate-950 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full min-h-[46px] bg-slate-50 dark:bg-[#090d11] black:bg-black border border-slate-300 dark:border-emerald-950/70 black:border-neutral-800 rounded-xl pl-10 pr-4 py-2.5 text-sm font-mono tabular-nums text-slate-950 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
               </div>
@@ -206,7 +206,7 @@ export function LeadForm({ source = 'dashboard' }: LeadFormProps) {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="Lahore, Karachi, Islamabad..."
-                    className="w-full min-h-[46px] bg-slate-50 dark:bg-[#090d11] border border-slate-300 dark:border-emerald-950/70 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-950 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full min-h-[46px] bg-slate-50 dark:bg-[#090d11] black:bg-black border border-slate-300 dark:border-emerald-950/70 black:border-neutral-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-950 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
               </div>

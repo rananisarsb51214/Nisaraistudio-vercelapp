@@ -61,6 +61,74 @@ service cloud.firestore {
         && data.updatedAt is timestamp;
     }
 
+    function isValidStudioUserCreate(userId, data) {
+      return data.keys().hasAll(['uid', 'plan', 'credits', 'dailyFreeRemaining', 'dailyLimit', 'lastResetDate'])
+        && data.keys().hasOnly(['uid', 'email', 'displayName', 'plan', 'credits', 'dailyFreeRemaining', 'dailyLimit', 'lastResetDate', 'createdAt', 'updatedAt'])
+        && data.uid == userId
+        && data.plan == 'FREE'
+        && data.credits is number && data.credits >= 0 && data.credits <= 10
+        && data.dailyFreeRemaining is number && data.dailyFreeRemaining >= 0 && data.dailyFreeRemaining <= 10
+        && data.dailyLimit is number && data.dailyLimit == 10
+        && data.lastResetDate is string && data.lastResetDate.size() == 10;
+    }
+
+    function isValidStudioUserSelfUpdate(userId) {
+      let data = request.resource.data;
+      return data.uid == userId
+        && data.plan == resource.data.plan
+        && data.credits is number && data.credits >= 0
+        && (
+          data.credits <= resource.data.credits
+          || (data.lastResetDate != resource.data.lastResetDate && data.credits <= 10)
+        )
+        && data.dailyFreeRemaining is number && data.dailyFreeRemaining >= 0 && data.dailyFreeRemaining <= 10
+        && data.lastResetDate is string && data.lastResetDate.size() == 10;
+    }
+
+    function isValidCollectedResearch(data) {
+      return data.keys().hasAll(['userId', 'query', 'title', 'summary', 'createdAt'])
+        && data.keys().hasOnly(['userId', 'query', 'title', 'category', 'summary', 'keyMetrics', 'sourceUrl', 'sourceTitle', 'sources', 'modelUsed', 'createdAt'])
+        && data.userId == request.auth.uid
+        && data.query is string && data.query.size() >= 1 && data.query.size() <= 500
+        && data.title is string && data.title.size() >= 1 && data.title.size() <= 220
+        && data.summary is string && data.summary.size() <= 2000
+        && (!('category' in data) || (data.category is string && data.category.size() <= 80))
+        && (!('keyMetrics' in data) || (data.keyMetrics is string && data.keyMetrics.size() <= 320))
+        && (!('sourceUrl' in data) || (data.sourceUrl is string && data.sourceUrl.size() <= 600))
+        && (!('sourceTitle' in data) || (data.sourceTitle is string && data.sourceTitle.size() <= 220))
+        && (!('sources' in data) || (data.sources is list && data.sources.size() <= 10))
+        && (!('modelUsed' in data) || (data.modelUsed is string && data.modelUsed.size() <= 80))
+        && data.createdAt == request.time;
+    }
+
+    function isValidToolboxRun(data) {
+      return data.keys().hasAll(['userId', 'toolMode', 'providerUsed', 'modelUsed', 'createdAt'])
+        && data.keys().hasOnly(['userId', 'toolMode', 'toolLabel', 'providerUsed', 'modelUsed', 'fallbackUsed', 'promptPreview', 'outputPreview', 'promptLength', 'executionTimeMs', 'createdAt'])
+        && data.userId == request.auth.uid
+        && data.toolMode is string && data.toolMode.size() >= 1 && data.toolMode.size() <= 60
+        && data.providerUsed in ['gemini', 'claude']
+        && data.modelUsed is string && data.modelUsed.size() >= 1 && data.modelUsed.size() <= 100
+        && (!('promptPreview' in data) || (data.promptPreview is string && data.promptPreview.size() <= 600))
+        && (!('outputPreview' in data) || (data.outputPreview is string && data.outputPreview.size() <= 4000))
+        && (!('promptLength' in data) || (data.promptLength is number && data.promptLength >= 0 && data.promptLength <= 10000))
+        && (!('executionTimeMs' in data) || (data.executionTimeMs is number && data.executionTimeMs >= 0))
+        && data.createdAt == request.time;
+    }
+
+    function isValidLocalPaymentCreate(data) {
+      return data.keys().hasAll(['userId', 'method', 'accountNumber', 'plan', 'amountPkr', 'credits', 'tid', 'senderNumber', 'status', 'createdAt'])
+        && data.keys().hasOnly(['userId', 'userEmail', 'method', 'accountNumber', 'plan', 'amountPkr', 'credits', 'tid', 'senderNumber', 'status', 'createdAt', 'updatedAt'])
+        && data.userId == request.auth.uid
+        && data.method in ['JazzCash', 'Easypaisa']
+        && data.accountNumber == '0323-5052148'
+        && data.plan in ['STARTER', 'PRO']
+        && ((data.plan == 'STARTER' && data.amountPkr == 499 && data.credits == 100) || (data.plan == 'PRO' && data.amountPkr == 1499 && data.credits == 500))
+        && data.tid is string && data.tid.size() >= 4 && data.tid.size() <= 80
+        && data.senderNumber is string && data.senderNumber.size() >= 5 && data.senderNumber.size() <= 30
+        && data.status == 'PENDING_VERIFICATION'
+        && data.createdAt == request.time;
+    }
+
     // Projects Rules
     match /projects/{projectId} {
       allow create: if !isAuthenticated() || request.resource.data.tenantId == request.auth.uid;
@@ -217,6 +285,47 @@ service cloud.firestore {
         && request.resource.data.updatedAt == request.time
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['title', 'messages', 'updatedAt']);
       allow delete: if isAuthenticated() && isValidLeadId(sessionId) && resource.data.userId == request.auth.uid;
+    }
+
+    // Studio User Quota Profiles (users/{userId})
+    match /users/{userId} {
+      allow get: if isLeadsAdmin() || (isAuthenticated() && request.auth.uid == userId);
+      allow list: if isLeadsAdmin();
+      allow create: if isAuthenticated() && request.auth.uid == userId && isValidStudioUserCreate(userId, request.resource.data);
+      allow update: if isLeadsAdmin() || (isAuthenticated() && request.auth.uid == userId && isValidStudioUserSelfUpdate(userId));
+      allow delete: if isLeadsAdmin();
+    }
+
+    // Search & Auto-Collect Research Vault (collected_research_data/{recordId})
+    match /collected_research_data/{recordId} {
+      allow create: if isAuthenticated() && isValidLeadId(recordId) && isValidCollectedResearch(request.resource.data);
+      allow get, list: if isLeadsAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow update: if false;
+      allow delete: if isLeadsAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+    }
+
+    // Agent Evolver Execution Logs (super_ai_toolbox_runs/{runId})
+    match /super_ai_toolbox_runs/{runId} {
+      allow create: if isAuthenticated() && isValidLeadId(runId) && isValidToolboxRun(request.resource.data);
+      allow get, list: if isLeadsAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow update: if false;
+      allow delete: if isLeadsAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+    }
+
+    // Pakistan Local Payments TID Verification (local_payments/{paymentId})
+    match /local_payments/{paymentId} {
+      allow create: if isAuthenticated() && isValidLeadId(paymentId) && isValidLocalPaymentCreate(request.resource.data);
+      allow get, list: if isLeadsAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow update: if isLeadsAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'reviewedBy', 'updatedAt'])
+        && request.resource.data.status in ['APPROVED', 'REJECTED'];
+      allow delete: if isLeadsAdmin();
+    }
+
+    // Idempotent Stripe Events Ledger (stripe_events/{eventId})
+    match /stripe_events/{eventId} {
+      allow get, list: if isLeadsAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow create, update, delete: if isLeadsAdmin();
     }
   }
 }

@@ -1,23 +1,8 @@
 import type { Metadata } from 'next';
-import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 import Providers from './providers';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { BRAND_DESCRIPTION, BRAND_NAME, SITE_URL } from '@/lib/seo/site-config';
 import './globals.css';
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-sans',
-  display: 'swap',
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-mono',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -84,14 +69,19 @@ const themeInitScript = `
     var t = window.localStorage.getItem('nisar-studio-theme');
     var root = document.documentElement;
     if (t === 'light') {
-      root.classList.remove('dark');
+      root.classList.remove('dark', 'theme-black');
       root.classList.add('light-high-contrast');
       root.dataset.theme = 'light';
       root.style.colorScheme = 'light';
-    } else {
+    } else if (t === 'dark') {
       root.classList.add('dark');
-      root.classList.remove('light-high-contrast');
+      root.classList.remove('theme-black', 'light-high-contrast');
       root.dataset.theme = 'dark';
+      root.style.colorScheme = 'dark';
+    } else {
+      root.classList.add('dark', 'theme-black');
+      root.classList.remove('light-high-contrast');
+      root.dataset.theme = 'black';
       root.style.colorScheme = 'dark';
     }
   } catch (e) {}
@@ -100,12 +90,16 @@ const themeInitScript = `
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`dark ${plusJakartaSans.variable} ${jetbrainsMono.variable}`}
-      suppressHydrationWarning
-    >
-      <body className="bg-slate-50 text-slate-950 dark:bg-[#070B14] dark:text-slate-100 font-sans antialiased transition-colors duration-150">
+    <html lang="en" className="dark theme-black" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="bg-slate-50 text-slate-950 dark:bg-[#050811] black:bg-black dark:text-slate-100 black:text-neutral-100 font-sans antialiased transition-colors duration-150">
         <JsonLd />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <Providers>

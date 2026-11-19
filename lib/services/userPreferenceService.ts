@@ -3,7 +3,7 @@ import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 
 export const USER_PREFERENCES_COLLECTION = 'user_preferences';
 
-export type ThemeMode = 'dark' | 'light';
+export type ThemeMode = 'black' | 'dark' | 'light';
 
 export interface UserPreferences {
   favoriteTools?: string[];
@@ -35,7 +35,8 @@ export const userPreferenceService = {
   // Persist theme preference in Firestore user metadata
   setThemePreference: async (userId: string, theme: ThemeMode): Promise<ThemeMode> => {
     if (!userId) return theme;
-    const normalizedTheme: ThemeMode = theme === 'light' ? 'light' : 'dark';
+    const normalizedTheme: ThemeMode =
+      theme === 'light' || theme === 'dark' || theme === 'black' ? theme : 'black';
     const docRef = doc(db, USER_PREFERENCES_COLLECTION, userId);
     try {
       await setDoc(

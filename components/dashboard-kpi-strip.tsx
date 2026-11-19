@@ -42,7 +42,7 @@ export function DashboardKpiStrip({
       className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6"
     >
       {/* Card 1: Free Credits */}
-      <div className="bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl p-6 flex flex-col justify-between gap-5 transition-colors">
+      <div className="bg-white dark:bg-[#0e1318] black:bg-[#0a0a0a] border border-slate-200 dark:border-emerald-950/70 black:border-neutral-800 rounded-2xl p-6 flex flex-col justify-between gap-5 transition-colors">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
             <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
@@ -70,7 +70,7 @@ export function DashboardKpiStrip({
         </div>
 
         <div className="space-y-2.5">
-          <div className="w-full h-1.5 rounded-full bg-slate-200 dark:bg-[#161f26] overflow-hidden">
+          <div className="w-full h-1.5 rounded-full bg-slate-200 dark:bg-[#161f26] black:bg-neutral-900 overflow-hidden">
             <div
               className="h-full rounded-full bg-emerald-600 dark:bg-emerald-500 transition-all duration-300"
               style={{ width: `${freePct}%` }}
@@ -84,7 +84,7 @@ export function DashboardKpiStrip({
       </div>
 
       {/* Card 2: Paid Credits */}
-      <div className="bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl p-6 flex flex-col justify-between gap-5 transition-colors">
+      <div className="bg-white dark:bg-[#0e1318] black:bg-[#0a0a0a] border border-slate-200 dark:border-emerald-950/70 black:border-neutral-800 rounded-2xl p-6 flex flex-col justify-between gap-5 transition-colors">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
             <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
@@ -104,7 +104,7 @@ export function DashboardKpiStrip({
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-3 pt-1 border-t border-slate-100 dark:border-emerald-950/50 text-xs">
+        <div className="flex items-center justify-between gap-3 pt-1 border-t border-slate-100 dark:border-emerald-950/50 black:border-neutral-800 text-xs">
           <span className="text-slate-600 dark:text-slate-400 font-mono tabular-nums truncate">
             {totalEarned.toLocaleString()} earned · {totalSpent.toLocaleString()} spent
           </span>
@@ -120,7 +120,7 @@ export function DashboardKpiStrip({
       </div>
 
       {/* Card 3: Total Leads */}
-      <div className="bg-white dark:bg-[#0e1318] border border-slate-200 dark:border-emerald-950/70 rounded-2xl p-6 flex flex-col justify-between gap-5 transition-colors">
+      <div className="bg-white dark:bg-[#0e1318] black:bg-[#0a0a0a] border border-slate-200 dark:border-emerald-950/70 black:border-neutral-800 rounded-2xl p-6 flex flex-col justify-between gap-5 transition-colors">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
             <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
@@ -140,7 +140,7 @@ export function DashboardKpiStrip({
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-3 pt-1 border-t border-slate-100 dark:border-emerald-950/50 text-xs">
+        <div className="flex items-center justify-between gap-3 pt-1 border-t border-slate-100 dark:border-emerald-950/50 black:border-neutral-800 text-xs">
           <span className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 font-mono tabular-nums truncate">
             <span className="inline-flex items-center gap-1 text-amber-700 dark:text-amber-400 font-semibold">
               <Flame className="w-3.5 h-3.5" />

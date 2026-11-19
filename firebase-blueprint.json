@@ -336,6 +336,99 @@
         "updatedAt": { "type": "object" }
       },
       "required": ["title", "userId", "messages", "createdAt", "updatedAt"]
+    },
+    "StudioUser": {
+      "title": "StudioUser",
+      "description": "Authenticated NISAR AI STUDIO user profile with live plan and atomic daily credit quota.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "plan": { "type": "string", "enum": ["FREE", "STARTER", "PRO"] },
+        "credits": { "type": "number" },
+        "dailyFreeRemaining": { "type": "number" },
+        "dailyLimit": { "type": "number" },
+        "lastResetDate": { "type": "string" },
+        "createdAt": { "type": "object" },
+        "updatedAt": { "type": "object" }
+      },
+      "required": ["uid", "plan", "credits", "lastResetDate"]
+    },
+    "CollectedResearchRecord": {
+      "title": "CollectedResearchRecord",
+      "description": "Structured web intelligence record auto-collected via Gemini Google Search grounding.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "query": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "summary": { "type": "string" },
+        "keyMetrics": { "type": "string" },
+        "sourceUrl": { "type": "string" },
+        "sourceTitle": { "type": "string" },
+        "sources": { "type": "array" },
+        "modelUsed": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["userId", "query", "title", "summary", "createdAt"]
+    },
+    "ToolboxAgentRun": {
+      "title": "ToolboxAgentRun",
+      "description": "Agent Evolver execution log tracking Gemini and Claude AI runs.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "toolMode": { "type": "string" },
+        "toolLabel": { "type": "string" },
+        "providerUsed": { "type": "string", "enum": ["gemini", "claude"] },
+        "modelUsed": { "type": "string" },
+        "fallbackUsed": { "type": "boolean" },
+        "promptPreview": { "type": "string" },
+        "outputPreview": { "type": "string" },
+        "promptLength": { "type": "number" },
+        "executionTimeMs": { "type": "number" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["userId", "toolMode", "providerUsed", "modelUsed", "createdAt"]
+    },
+    "LocalPayment": {
+      "title": "LocalPayment",
+      "description": "Pakistan JazzCash / Easypaisa TID verification submission for credit packs.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "method": { "type": "string", "enum": ["JazzCash", "Easypaisa"] },
+        "accountNumber": { "type": "string" },
+        "plan": { "type": "string", "enum": ["STARTER", "PRO"] },
+        "amountPkr": { "type": "number" },
+        "credits": { "type": "number" },
+        "tid": { "type": "string" },
+        "senderNumber": { "type": "string" },
+        "status": { "type": "string", "enum": ["PENDING_VERIFICATION", "APPROVED", "REJECTED"] },
+        "reviewedBy": { "type": "string" },
+        "createdAt": { "type": "object" },
+        "updatedAt": { "type": "object" }
+      },
+      "required": ["userId", "method", "plan", "amountPkr", "credits", "tid", "senderNumber", "status"]
+    },
+    "StripeEvent": {
+      "title": "StripeEvent",
+      "description": "Idempotent Stripe webhook event record for USD checkout fulfillment.",
+      "type": "object",
+      "properties": {
+        "eventId": { "type": "string" },
+        "eventType": { "type": "string" },
+        "userId": { "type": "string" },
+        "plan": { "type": "string" },
+        "amountUsd": { "type": "number" },
+        "credits": { "type": "number" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["eventId", "eventType", "userId", "status"]
     }
   },
   "firestore": {
@@ -434,6 +527,26 @@
     "/chat_sessions/{sessionId}": {
       "schema": "ChatSession",
       "description": "Saved Gemini chatbot conversation threads linked to each signed-in user."
+    },
+    "/users/{userId}": {
+      "schema": "StudioUser",
+      "description": "Live user plan and atomic daily credit quota profiles."
+    },
+    "/collected_research_data/{recordId}": {
+      "schema": "CollectedResearchRecord",
+      "description": "Search & Auto-Collect grounded web research vault."
+    },
+    "/super_ai_toolbox_runs/{runId}": {
+      "schema": "ToolboxAgentRun",
+      "description": "Agent Evolver Gemini & Claude execution telemetry logs."
+    },
+    "/local_payments/{paymentId}": {
+      "schema": "LocalPayment",
+      "description": "JazzCash and Easypaisa TID payment verification submissions."
+    },
+    "/stripe_events/{eventId}": {
+      "schema": "StripeEvent",
+      "description": "Idempotent Stripe checkout webhook event log."
     }
   }
 }

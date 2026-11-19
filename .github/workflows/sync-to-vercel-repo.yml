@@ -1,0 +1,39 @@
+name: Sync Agent Skills Hub to Vercel Production Repo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync-to-vercel-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Agent Skills Hub (Full History)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify VERCEL_REPO_PAT secret
+        env:
+          VERCEL_REPO_PAT: ${{ secrets.VERCEL_REPO_PAT }}
+        run: |
+          if [ -z "$VERCEL_REPO_PAT" ]; then
+            echo "::error::Missing VERCEL_REPO_PAT secret in repository settings."
+            exit 1
+          fi
+
+      - name: Push main branch to rananisarsb51214/Nisaraistudio-vercelapp
+        env:
+          VERCEL_REPO_PAT: ${{ secrets.VERCEL_REPO_PAT }}
+        run: |
+          git config user.name "NISAR AI STUDIO Bot"
+          git config user.email "nisarrsna@gmail.com"
+          git remote remove vercel-prod 2>/dev/null || true
+          git remote add vercel-prod "https://x-access-token:${VERCEL_REPO_PAT}@github.com/rananisarsb51214/Nisaraistudio-vercelapp.git"
+          git push vercel-prod HEAD:refs/heads/main --force-with-lease || git push vercel-prod HEAD:refs/heads/main
+          echo "Synchronized rananisarsb51214/NisarAI-Studio---Agent-Skills-Hub -> rananisarsb51214/Nisaraistudio-vercelapp"
