@@ -9,7 +9,7 @@ import { Login } from '../components/login';
 import { Dashboard } from '../components/dashboard';
 import { LeadForm } from '../components/lead-form';
 import { ThemeSwitcher } from '../components/theme-switcher';
-import { Shield, Cpu, RefreshCw, LayoutDashboard, Sparkles, Bot, ArrowRight, ExternalLink } from 'lucide-react';
+import { Shield, Cpu, RefreshCw, LayoutDashboard, Sparkles, Bot, ArrowRight, ExternalLink, Leaf } from 'lucide-react';
 import {
   GOOGLE_AI_STUDIO_APP_URL,
   VERCEL_PRODUCTION_URL,
@@ -31,7 +31,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-slate-950 dark:bg-[#050811] dark:text-slate-100 transition-colors">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-slate-950 dark:bg-[#050811] black:bg-black dark:text-slate-100 black:text-neutral-100 transition-colors">
         <RefreshCw className="w-8 h-8 animate-spin text-indigo-700 dark:text-[#00D9FF] mb-4" />
         <p className="font-mono text-xs text-slate-700 dark:text-slate-400">Synchronizing user session...</p>
       </div>
@@ -40,7 +40,7 @@ export default function Home() {
 
   if (user) {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-[#050811] dark:text-slate-100 selection:bg-[#00D9FF]/30 transition-colors">
+      <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-[#050811] black:bg-black dark:text-slate-100 black:text-neutral-100 selection:bg-[#00D9FF]/30 transition-colors">
         <Dashboard />
       </div>
     );
@@ -48,14 +48,14 @@ export default function Home() {
 
   if (showDashboardPreview) {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-[#050811] dark:text-slate-100 selection:bg-[#00D9FF]/30 transition-colors">
+      <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-[#050811] black:bg-black dark:text-slate-100 black:text-neutral-100 selection:bg-[#00D9FF]/30 transition-colors">
         <Dashboard previewMode onExitPreview={() => setShowDashboardPreview(false)} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-[#050811] dark:text-slate-100 selection:bg-[#00D9FF]/30 transition-colors">
+    <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-[#050811] black:bg-black dark:text-slate-100 black:text-neutral-100 selection:bg-[#00D9FF]/30 transition-colors">
       <div className="relative flex flex-col items-center justify-start min-h-screen px-4 sm:px-6 py-8 md:py-10 gap-8 overflow-x-hidden">
         <header className="w-full max-w-6xl flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
@@ -74,8 +74,15 @@ export default function Home() {
 
           <nav aria-label="Primary" className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             <Link
+              href="/green-playbook"
+              className="min-h-[40px] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-emerald-500/40 bg-emerald-50 dark:bg-[#0B0F19] black:bg-[#0a0a0a] hover:border-emerald-400 text-xs font-semibold text-emerald-800 dark:text-emerald-400 transition whitespace-nowrap"
+            >
+              <Leaf className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>Green Playbook</span>
+            </Link>
+            <Link
               href="/tools"
-              className="min-h-[40px] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0B0F19] hover:border-[#00D9FF] text-xs font-semibold text-slate-800 dark:text-slate-100 transition whitespace-nowrap"
+              className="min-h-[40px] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 black:border-neutral-800 bg-white dark:bg-[#0B0F19] black:bg-[#0a0a0a] hover:border-[#00D9FF] text-xs font-semibold text-slate-800 dark:text-slate-100 transition whitespace-nowrap"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#00D9FF]" />
               <span>AI Tools</span>

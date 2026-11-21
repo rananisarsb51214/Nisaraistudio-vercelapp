@@ -16,10 +16,12 @@ import {
   Cpu,
   CreditCard,
   BarChart3,
+  Leaf,
 } from 'lucide-react';
 
 export type DashboardTab =
   | 'overview'
+  | 'green_playbook'
   | 'search_collect'
   | 'agent_evolver'
   | 'billing'
@@ -58,6 +60,19 @@ export interface AIToolItem {
 }
 
 export const AI_TOOLS_CATALOG: AIToolItem[] = [
+  {
+    id: 'green_playbook',
+    name: 'Green Playbook',
+    category: 'Low-Carbon AI & Cloud Checklist',
+    description:
+      'Interactive 21-action sustainability checklist across AI usage, Compute, Data, Frontend, Media, and Measure with local progress tracking.',
+    icon: Leaf,
+    badge: 'Low-Carbon Guide',
+    tabId: 'green_playbook',
+    accentColor:
+      'border-emerald-200 dark:border-emerald-500/35 hover:border-emerald-500 bg-white dark:bg-[#0B0F19]',
+    badgeBg: 'text-emerald-700 dark:text-emerald-400',
+  },
   {
     id: 'search_collect',
     name: 'Search & Auto-Collect Agent',

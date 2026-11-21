@@ -12,7 +12,7 @@ import {
   Settings, Clipboard, ExternalLink, RefreshCw, Calendar, 
   CheckCircle, ArrowRight, Brain, UserCheck, AlertCircle, Eye, EyeOff,
   Bot, Cpu, Sliders, Layout, Clock, Zap, Activity, Search, Star, MessageSquare, Tag,
-  Shield, Menu, X, Lock, BarChart3, CreditCard
+  Shield, Menu, X, Lock, BarChart3, CreditCard, Leaf
 } from 'lucide-react';
 import { addDoc, collection, Timestamp, query, where, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
@@ -34,6 +34,7 @@ import { AgentEvolverControl } from './ai/agent-evolver-control';
 import { BillingHub } from './billing/billing-hub';
 import { AnalyticsCommandPanel } from './ai/analytics-command-panel';
 import { NisarGoogleCommandHome } from './ai/google-command-home';
+import { GreenPlaybook } from './ai/green-playbook';
 import { LeadForm } from './lead-form';
 import { DashboardKpiStrip } from './dashboard-kpi-strip';
 import { AdminPanel } from './admin-panel';
@@ -1209,6 +1210,18 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
           </button>
           <button
             type="button"
+            onClick={() => setActiveTab('green_playbook')}
+            className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 inline-flex items-center gap-1 ${
+              activeTab === 'green_playbook'
+                ? 'border-emerald-500 text-emerald-700 dark:text-emerald-400 font-semibold'
+                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
+            }`}
+          >
+            <Leaf className="w-3.5 h-3.5" />
+            <span>Green Playbook</span>
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab('search_collect')}
             className={`py-1 transition whitespace-nowrap shrink-0 cursor-pointer border-b-2 ${
               activeTab === 'search_collect'
@@ -1678,6 +1691,7 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
               {(
                 [
                   { id: 'overview', label: 'Overview' },
+                  { id: 'green_playbook', label: 'Green Playbook' },
                   { id: 'search_collect', label: 'Search' },
                   { id: 'agent_evolver', label: 'Evolver' },
                   { id: 'billing', label: 'Billing' },
@@ -1982,6 +1996,14 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
                 <div className="flex flex-wrap items-center gap-2 shrink-0">
                   <button
                     type="button"
+                    onClick={() => setActiveTab('green_playbook')}
+                    className="min-h-[40px] px-3.5 py-2 rounded-xl border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/30 black:bg-black hover:border-emerald-400 text-xs font-semibold text-emerald-800 dark:text-emerald-400 inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer transition"
+                  >
+                    <Leaf className="w-3.5 h-3.5" />
+                    <span>Green Playbook</span>
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setActiveTab('search_collect')}
                     className="min-h-[40px] px-3.5 py-2 rounded-xl border border-slate-200 dark:border-[#00D9FF]/35 black:border-neutral-800 bg-slate-50 dark:bg-[#050811] black:bg-black hover:border-[#00D9FF] text-xs font-semibold text-slate-800 dark:text-[#22D3EE] inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer transition"
                   >
@@ -2108,7 +2130,13 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
             </div>
           )}
 
-          {/* Standalone Global Tools (Search & Collect, Agent Evolver, Billing, Analytics, Super AI Toolbox, Chatbot Lab, Backlink, Affiliate, Memory Chat, Vibe, Empire) available with or without a workspace */}
+          {/* Standalone Global Tools (Green Playbook, Search & Collect, Agent Evolver, Billing, Analytics, Super AI Toolbox, Chatbot Lab, Backlink, Affiliate, Memory Chat, Vibe, Empire) available with or without a workspace */}
+          {!isActiveToolDisabled && activeTab === 'green_playbook' && (
+            <div className="space-y-6">
+              <GreenPlaybook />
+            </div>
+          )}
+
           {!isActiveToolDisabled && activeTab === 'search_collect' && (
             <div className="space-y-6">
               <SearchAutoCollectAgent />
