@@ -136,15 +136,7 @@ The project follows a standard Next.js application structure with a focus on com
         GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
         APP_URL="https://console.cloud.google.com/iam-admin/serviceaccounts/details/116935465562908832954%3Bedit=true?previousPage=%2Fapis%2Fcredentials%3Fproject%3Dsuper-ai-toolbox&project=super-ai-toolbox"
         # For Firebase, ensure your firebase-applet-config.json is correctly configured
-        # or set Firebase credentials here if not using the config file.
-        NEXT_PUBLIC_FIREBASE_API_KEY="YOUR_FIREBASE_API_KEY"
-        NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="YOUR_FIREBASE_AUTH_DOMAIN"
-        NEXT_PUBLIC_FIREBASE_PROJECT_ID="YOUR_FIREBASE_PROJECT_ID"
-        NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="YOUR_FIREBASE_STORAGE_BUCKET"
-        NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="YOUR_FIREBASE_MESSAGING_SENDER_ID"
-        NEXT_PUBLIC_FIREBASE_APP_ID="YOUR_FIREBASE_APP_ID"
-        NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="YOUR_FIREBASE_MEASUREMENT_ID"
-        NEXT_PUBLIC_FIRESTORE_DATABASE_ID="YOUR_FIRESTORE_DATABASE_ID"
+        
         ```
     *   Ensure your `firebase-applet-config.json` is updated with your Firebase project details.
 
