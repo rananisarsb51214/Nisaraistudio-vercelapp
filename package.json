@@ -16,7 +16,7 @@
     "firebase": "^12.14.0",
     "ioredis": "^6.0.0",
     "lucide-react": "^1.21.0",
-    "next": "15.2.0",
+    "next": "15.2.8",
     "postcss": "^8.5.15",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
