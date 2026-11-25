@@ -12,7 +12,7 @@ import { trackStudioEvent } from '@/lib/analytics';
 
 export function ToolPageNav() {
   return (
-    <header className="sticky top-0 z-30 h-16 px-4 sm:px-6 lg:px-10 border-b border-slate-200 dark:border-[#00D9FF]/20 bg-white/95 dark:bg-[#050811]/90 backdrop-blur-md flex items-center justify-between gap-4 sm:gap-6">
+    <header className="sticky top-0 z-30 h-16 px-4 sm:px-6 lg:px-10 border-b border-slate-200 dark:border-[#00D9FF]/20 black:border-neutral-800 bg-white/95 dark:bg-[#050811]/90 black:bg-black/95 backdrop-blur-md flex items-center justify-between gap-4 sm:gap-6 transition-colors duration-150">
       <Link
         href="/"
         className="flex items-center gap-2.5 text-base sm:text-lg font-extrabold tracking-tight text-slate-950 dark:text-white whitespace-nowrap shrink-0"

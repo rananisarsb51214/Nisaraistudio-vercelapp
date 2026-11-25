@@ -130,7 +130,7 @@ export default async function ToolSlugPage({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#070B14] text-slate-950 dark:text-slate-100">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#070B14] black:bg-black text-slate-950 dark:text-slate-100 black:text-neutral-100 transition-colors duration-150">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}

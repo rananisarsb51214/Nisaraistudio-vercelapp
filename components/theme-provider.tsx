@@ -62,19 +62,29 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [isSavingTheme, setIsSavingTheme] = useState(false);
   const [themeSyncError, setThemeSyncError] = useState<string | null>(null);
 
-  // Hydrate initial cached theme on client mount before auth resolves
+  // Hydrate initial cached theme on client mount before auth resolves & stay synced across tabs
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
       if (isValidThemeMode(saved)) {
         setThemeState(saved);
         applyThemeToDom(saved);
-        return;
+      } else {
+        applyThemeToDom('black');
       }
     } catch {
-      // Ignore storage access errors
+      applyThemeToDom('black');
     }
-    applyThemeToDom('black');
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === THEME_STORAGE_KEY && isValidThemeMode(event.newValue)) {
+        setThemeState(event.newValue);
+        applyThemeToDom(event.newValue);
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   // Subscribe to Firestore user_preferences/{uid} metadata once auth is ready

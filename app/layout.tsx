@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Providers from './providers';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { FloatingThemeToggle } from '@/components/floating-theme-toggle';
 import { BRAND_DESCRIPTION, BRAND_NAME, SITE_URL } from '@/lib/seo/site-config';
 import './globals.css';
 
@@ -104,6 +105,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <Providers>
           {children}
+          <FloatingThemeToggle />
         </Providers>
       </body>
     </html>

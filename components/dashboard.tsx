@@ -1162,7 +1162,10 @@ export function Dashboard({ previewMode = false, onExitPreview }: DashboardProps
   const currentProject = projects.find(p => p.id === selectedProjectId);
 
   return (
-    <div className="flex flex-col min-h-screen text-slate-950 dark:text-slate-100 black:text-neutral-100 bg-slate-50 dark:bg-[#050811] black:bg-black transition-colors duration-150">
+    <div
+      data-dashboard-shell="true"
+      className="flex flex-col min-h-screen text-slate-950 dark:text-slate-100 black:text-neutral-100 bg-slate-50 dark:bg-[#050811] black:bg-black transition-colors duration-150"
+    >
       {/* Clean 3-Zone Top Header: Brand | Primary Nav | Actions */}
       <header className="sticky top-0 z-30 h-16 sm:h-[72px] px-4 sm:px-6 lg:px-8 border-b border-slate-200 dark:border-[#00D9FF]/20 black:border-neutral-800 bg-white/95 dark:bg-[#070B14]/90 black:bg-black/95 backdrop-blur-xl flex items-center justify-between gap-3 sm:gap-5 transition-colors duration-150">
         {/* Zone 1: Brand Wordmark + Mobile Menu Trigger */}

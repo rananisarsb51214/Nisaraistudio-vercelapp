@@ -27,7 +27,7 @@ export default async function ToolsIndexPage({
   const initialQuery = typeof resolvedParams?.q === 'string' ? resolvedParams.q : '';
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#070B14] text-slate-950 dark:text-slate-100">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#070B14] black:bg-black text-slate-950 dark:text-slate-100 black:text-neutral-100 transition-colors duration-150">
       <ToolPageNav />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-10 sm:py-14 space-y-10">
